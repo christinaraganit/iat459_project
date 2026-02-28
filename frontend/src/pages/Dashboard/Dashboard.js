@@ -5,7 +5,7 @@ import { Test } from "../../components/Test/Test";
 import TCGdex from "@tcgdex/sdk";
 export const Dashboard = () => {
   const tcgdex = new TCGdex("en");
-  const { role } = useAuthContext();
+  const { user, role } = useAuthContext();
 
   const [card, setCard] = useState(null);
   useEffect(() => {
@@ -21,15 +21,8 @@ export const Dashboard = () => {
       <header className="App-header">
         <h1>Dashboard</h1>
 
-        <p>Welcome {role}</p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <p>Welcome {user?.displayName || user?.username}</p>
+
         {card !== null && (
           <img src={card.image + "/low.webp"} alt={card.name} />
         )}

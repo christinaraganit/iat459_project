@@ -12,7 +12,10 @@ export const AuthProvider = ({ children }) => {
       try {
         const decoded = jwtDecode(token);
         console.log(decoded);
-        setUser(decoded.username);
+        setUser({
+          username: decoded.username,
+          displayName: decoded.displayName,
+        });
         setRole(decoded.role);
       } catch (err) {
         console.log("Token is invalid or corrupted", err);
