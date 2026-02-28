@@ -11,6 +11,7 @@ export const AuthProvider = ({ children }) => {
       try {
         const decoded = jwtDecode(token);
         setUser(decoded);
+        console.log(decoded);
       } catch (err) {
         console.log("Token is invalid or corrupted", err);
         logout();
