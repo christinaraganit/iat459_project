@@ -5,13 +5,15 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
 
   useEffect(() => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        setUser(decoded);
         console.log(decoded);
+        setUser(decoded.username);
+        setRole(decoded.role);
       } catch (err) {
         console.log("Token is invalid or corrupted", err);
         logout();
@@ -35,6 +37,7 @@ export const AuthProvider = ({ children }) => {
   const contextItems = {
     token,
     user,
+    role,
     login,
     logout,
   };

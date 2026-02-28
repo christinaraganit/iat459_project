@@ -27,7 +27,7 @@ export const Login = () => {
 
       if (res.ok) {
         login(data.token);
-        navigate("/");
+        navigate("/dashboard");
       } else {
         alert(data.message || "Login failed");
       }

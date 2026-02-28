@@ -1,7 +1,9 @@
 import "./App.css";
 import { AuthProvider } from "./context/AuthContext";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { Layout } from "./components/Layout/Layout";
 import { Index } from "./pages/Index/Index";
+import { Dashboard } from "./pages/Dashboard/Dashboard";
 import { Login } from "./components/Login/Login";
 import { Register } from "./components/Register/Register";
 import { ProtectedRoute } from "./components/ProtectedRoute/ProtectedRoute";
@@ -15,14 +17,16 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           {/* Protected routes */}
-          <Route
-            path="/protected"
-            element={
-              <ProtectedRoute>
-                <Index />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/" element={<Layout />}>
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
         </Routes>
       </Router>
     </AuthProvider>
