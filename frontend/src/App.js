@@ -13,11 +13,11 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          {/* Protected routes */}
           <Route path="/" element={<Layout />}>
+            <Route path="/" element={<Index />} />
+            {/* Protected routes */}
             <Route
               path="/dashboard"
               element={
