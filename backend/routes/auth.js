@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const verifyToken = require("../middleware/authMiddleware");
 
 // Register
 router.post("/register", async (req, res) => {
@@ -18,7 +19,12 @@ router.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // 3. save the user
-    const newUser = new User({ username, password: hashedPassword });
+    const newUser = new User({
+      username,
+      password: hashedPassword,
+      isNew: true,
+      displayName: null,
+    });
     await newUser.save();
 
     res.status(201).json({ message: "User registered successfully" });
@@ -52,6 +58,17 @@ router.post("/login", async (req, res) => {
     );
 
     res.json({ token, user: { id: user._id, username: user.username } });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get name
+router.get("/name/:id", verifyToken, async (req, res) => {
+  try {
+    // 1. find user
+    const user = await User.findOne({ username: req.params.id });
+    res.json(user.displayName);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

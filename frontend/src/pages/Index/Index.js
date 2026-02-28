@@ -1,5 +1,5 @@
 import logo from "../../logo.svg";
-
+import { Test } from "../../components/Test/Test";
 export const Index = () => {
   return (
     <div className="App">
@@ -16,6 +16,7 @@ export const Index = () => {
         >
           Learn React
         </a>
+        <Test />
       </header>
     </div>
   );
