@@ -1,27 +1,11 @@
-import { Outlet, Link } from "react-router-dom";
-import { useAuthContext } from "../../context/AuthContext";
-
-import { useEffect } from "react";
+import "./Layout.css";
+import { Outlet } from "react-router-dom";
+import { Navbar } from "../Nav/Navbar";
 export const Layout = () => {
-  const { user, logout } = useAuthContext();
-  useEffect(() => {
-    console.log("User in Layout:", user);
-  }, [user]);
   return (
-    <div className="App">
+    <div className="app">
       <header className="App-header">
-        <nav>
-          <span>{user?.username}</span>
-          <span>{user?.displayName}</span>
-          {!user ? (
-            <div>
-              <Link to="/login">Login</Link>
-              <Link to="/register">Sign up</Link>
-            </div>
-          ) : (
-            <button onClick={logout}>Log out</button>
-          )}
-        </nav>
+        <Navbar />
       </header>
       <main>
         <Outlet />
