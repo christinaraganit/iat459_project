@@ -10,6 +10,13 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  isNew: {
+    type: Boolean,
+    default: true,
+  },
+  displayName: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("User", UserSchema);
