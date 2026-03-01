@@ -14,7 +14,7 @@ export const Dashboard = () => {
   const getWishlist = async () => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/auth/wishlist/${user?.username}`,
+        `http://localhost:5000/api/account/wishlist/${user?.username}`,
         {
           method: "GET",
           headers: {
@@ -45,7 +45,7 @@ export const Dashboard = () => {
         return;
       }
       const res = await fetch(
-        `http://localhost:5000/api/auth/wishlist/${user?.username}`,
+        `http://localhost:5000/api/account/wishlist/${user?.username}`,
         {
           method: "POST",
           headers: {
@@ -68,7 +68,7 @@ export const Dashboard = () => {
   const removeCardFromWishlist = async (index) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/auth/wishlist/${user?.username}/${index}`,
+        `http://localhost:5000/api/account/wishlist/${user?.username}/${index}`,
         {
           method: "DELETE",
           headers: {
