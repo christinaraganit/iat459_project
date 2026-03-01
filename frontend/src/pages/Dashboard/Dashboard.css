@@ -1,0 +1,11 @@
+.dashboard__wishlist {
+  padding: 1rem;
+  background: color-mix(in srgb, var(--background), var(--foreground) 5%);
+  /* overflow-x: auto; */
+
+  & .dashboard__wishlist__cards {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+  }
+}

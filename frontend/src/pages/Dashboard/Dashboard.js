@@ -1,5 +1,5 @@
-import logo from "../../logo.svg";
-import { useState, useEffect } from "react";
+import "./Dashboard.css";
+import { Fragment, useState, useEffect } from "react";
 import { useAuthContext } from "../../context/AuthContext";
 import { Test } from "../../components/Test/Test";
 import TCGdex from "@tcgdex/sdk";
@@ -17,17 +17,21 @@ export const Dashboard = () => {
     fetchCard();
   }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Dashboard</h1>
+    <Fragment>
+      <h1>Dashboard</h1>
 
-        <p>Welcome {user?.displayName || user?.username}</p>
+      <p>Welcome {user?.displayName || user?.username}</p>
 
-        {card !== null && (
-          <img src={card.image + "/low.webp"} alt={card.name} />
-        )}
-        <Test />
-      </header>
-    </div>
+      <section className="dashboard__wishlist">
+        <h2>My wishlist</h2>
+        <div className="dashboard__wishlist__cards">
+          {Array(10)
+            .fill(null)
+            .map((_, i) => (
+              <img src={card?.image + "/low.webp"} alt={card?.name} />
+            ))}
+        </div>
+      </section>
+    </Fragment>
   );
 };
