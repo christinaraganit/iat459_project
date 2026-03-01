@@ -25,6 +25,17 @@ const UserSchema = new mongoose.Schema({
     type: [String],
     default: [],
   },
+  listings: {
+    type: [Object],
+    default: [],
+  },
+  email: {
+    type: String,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 module.exports = mongoose.model("User", UserSchema);
