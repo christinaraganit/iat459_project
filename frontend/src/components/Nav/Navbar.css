@@ -94,11 +94,13 @@
 
     & .navbar__actions_menu__user {
       & .navbar__actions_menu__user__display-name {
-        display: block;
-        font-weight: bold;
-        text-overflow: ellipsis;
-        white-space: nowrap;
         overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        max-width: 100%;
+        font-weight: bold;
+        white-space: nowrap;
+
         margin-bottom: 0.25em;
       }
       & .navbar__actions_menu__user__username {
