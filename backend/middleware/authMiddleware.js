@@ -14,6 +14,7 @@ function verifyToken(req, res, next) {
       process.env.JWT_SECRET || "fallbackSecret",
     );
     req.userId = decoded.id; // add user ID to request
+    req.username = decoded.username; // add username to request
     next();
   } catch (error) {
     res.status(401).json({ error: "Invalid token" });

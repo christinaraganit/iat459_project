@@ -88,7 +88,11 @@ router.get("/wishlist/:id", verifyToken, async (req, res) => {
 
 router.post("/wishlist/:id", verifyToken, async (req, res) => {
   try {
+    // 0. check if user is modifying their own wishlist
+    if (req.params.id !== req.username)
+      return res.status(403).json({ error: "Forbidden" });
     // 1. find user
+    console.log(req.userId);
     const user = await User.findOne({ username: req.params.id });
     // 2. get cardID from body
     const { cardID } = req.body;
@@ -103,7 +107,11 @@ router.post("/wishlist/:id", verifyToken, async (req, res) => {
 
 router.delete("/wishlist/:id/:index", verifyToken, async (req, res) => {
   try {
+    // 0. check if user is modifying their own wishlist
+    if (req.params.id !== req.username)
+      return res.status(403).json({ error: "Forbidden" });
     // 1. find user
+    console.log(req.userId);
     const user = await User.findOne({ username: req.params.id });
 
     user.wishlist = user.wishlist.filter(
