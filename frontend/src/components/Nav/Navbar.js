@@ -1,12 +1,21 @@
 import "./Navbar.css";
 import logo from "../../logo.svg";
 import { useAuthContext } from "../../context/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Fragment, useState } from "react";
 
 export const Navbar = () => {
   const { user, logout } = useAuthContext();
   const [navOpen, setNavOpen] = useState(true);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    navigate("/");
+    setTimeout(() => {
+      logout();
+    }, 100);
+  };
+
   return (
     <nav className="navbar">
       <Link className="navbar__logo" to="/">
@@ -31,18 +40,27 @@ export const Navbar = () => {
         )}
       </ul>
       {user && navOpen && (
-        <menu className="navbar__menu">
-          <div className="navbar__menu__user">
+        <menu className="navbar__actions_menu">
+          <div className="navbar__actions_menu__user">
             {user.displayName && (
-              <div className="navbar__menu__user__display-name">
+              <Link
+                className="navbar__actions_menu__user__display-name"
+                to="/dashboard"
+              >
                 {user.displayName}
-              </div>
+              </Link>
             )}
-            <div className="navbar__menu__user__username">@{user.username}</div>
+            <div className="navbar__actions_menu__user__username">
+              @{user.username}
+            </div>
           </div>
-
+          <li className="navbar__actions_menu__item">
+            <Link className="navbar__actions_menu__item__link" to="/dashboard">
+              View dashboard
+            </Link>
+          </li>
           <div>
-            <button onClick={logout}>Logout</button>
+            <button onClick={handleLogout}>Logout</button>
           </div>
         </menu>
       )}
