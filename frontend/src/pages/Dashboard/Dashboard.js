@@ -7,6 +7,8 @@ export const Dashboard = () => {
   const tcgdex = new TCGdex("en");
   const { token, user, role } = useAuthContext();
 
+  const [fieldname, setFieldname] = useState("");
+
   const [wishlist, setWishlist] = useState([]);
 
   const getWishlist = async () => {
@@ -32,7 +34,16 @@ export const Dashboard = () => {
   };
 
   const addCardToWishlist = async (cardId) => {
+    if (cardId === "") {
+      alert("Please enter a card ID");
+      return;
+    }
     try {
+      const card = await tcgdex.card.get(cardId);
+      if (!card) {
+        alert("Card not found");
+        return;
+      }
       const res = await fetch(
         `http://localhost:5000/api/auth/wishlist/${user?.username}`,
         {
@@ -45,12 +56,35 @@ export const Dashboard = () => {
         },
       );
       const data = await res.json();
+      console.log("Add to wishlist response:", data);
       if (res.ok) {
-        const card = await tcgdex.card.get(cardId);
         setWishlist([...wishlist, card]);
       }
     } catch (er) {
       console.error("Failed to add card to wishlist:", er);
+    }
+  };
+
+  const removeCardFromWishlist = async (index) => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/auth/wishlist/${user?.username}/${index}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          body: JSON.stringify({ index }),
+        },
+      );
+      const data = await res.json();
+      console.log("Remove from wishlist response:", data);
+      if (res.ok) {
+        setWishlist(wishlist.filter((_, i) => i !== index));
+      }
+    } catch (er) {
+      console.error("Failed to remove card from wishlist:", er);
     }
   };
   useEffect(() => {
@@ -76,12 +110,22 @@ export const Dashboard = () => {
                 key={`wishlist-card-${i}`}
                 src={card?.image + "/low.webp"}
                 alt={card?.name}
+                onClick={() => removeCardFromWishlist(i)}
+                style={{
+                  cursor: "pointer",
+                }}
               />
             ))}
         </div>
-        <button onClick={() => addCardToWishlist("swsh3-136")}>
-          Add Ferret
+        <input
+          type="text"
+          value={fieldname}
+          onChange={(e) => setFieldname(e.target.value)}
+        />
+        <button onClick={() => addCardToWishlist(fieldname)}>
+          Add card by ID
         </button>
+        <button onClick={() => removeCardFromWishlist(0)}>Delete card</button>
       </section>
     </Fragment>
   );

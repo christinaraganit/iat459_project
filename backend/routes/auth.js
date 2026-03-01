@@ -101,4 +101,19 @@ router.post("/wishlist/:id", verifyToken, async (req, res) => {
   }
 });
 
+router.delete("/wishlist/:id/:index", verifyToken, async (req, res) => {
+  try {
+    // 1. find user
+    const user = await User.findOne({ username: req.params.id });
+
+    user.wishlist = user.wishlist.filter(
+      (_, i) => i !== parseInt(req.params.index),
+    );
+    await user.save();
+    res.json(user.wishlist);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
