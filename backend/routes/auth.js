@@ -25,6 +25,7 @@ router.post("/register", async (req, res) => {
       role: "member",
       isNew: true,
       displayName: null,
+      wishlist: [],
     });
     await newUser.save();
 
@@ -74,12 +75,27 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// Get name
-router.get("/name/:id", verifyToken, async (req, res) => {
+// Get wishlist
+router.get("/wishlist/:id", verifyToken, async (req, res) => {
   try {
     // 1. find user
     const user = await User.findOne({ username: req.params.id });
-    res.json(user.displayName);
+    res.json(user.wishlist);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post("/wishlist/:id", verifyToken, async (req, res) => {
+  try {
+    // 1. find user
+    const user = await User.findOne({ username: req.params.id });
+    // 2. get cardID from body
+    const { cardID } = req.body;
+    // 2. add card to wishlist
+    user.wishlist.push(req.body.cardId);
+    await user.save();
+    res.json(user.wishlist);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

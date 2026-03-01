@@ -6,7 +6,7 @@ export const Test = ({ username = "admin", password = "admin" }) => {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/auth/name/${username}`,
+        `http://localhost:5000/api/auth/wishlist/${username}`,
         {
           method: "GET",
           headers: {
@@ -17,7 +17,7 @@ export const Test = ({ username = "admin", password = "admin" }) => {
       const data = await res.json();
       console.log(data);
     } catch (er) {
-      console.error("Failed to retrieve display name:", er);
+      console.error("Failed to retrieve wishlist:", er);
     }
   };
 
@@ -26,7 +26,7 @@ export const Test = ({ username = "admin", password = "admin" }) => {
       style={{ padding: "1rem", background: "red", color: "white" }}
       onClick={handleLogin}
     >
-      Test name
+      Test wishlist
     </button>
   );
 };
