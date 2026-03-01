@@ -1,7 +1,14 @@
 :root {
   --background: #ffffff;
   --foreground: #111111;
+  --margin: 1rem;
   --max: 90rem;
+}
+
+@media screen and (min-width: 768px) {
+  :root {
+    --margin: 2rem;
+  }
 }
 
 html {

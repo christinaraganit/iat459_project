@@ -5,7 +5,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem var(--margin);
   z-index: 1000;
 
   & .navbar__logo {
@@ -33,7 +33,7 @@
   }
 
   & .navbar__toggle_actions {
-    background: red;
+    background: var(--foreground);
     height: 2rem;
     width: 2rem;
     border: none;
@@ -41,6 +41,7 @@
     cursor: pointer;
     &.navbar__toggle_actions--active {
       background: var(--foreground);
+      border-radius: 0;
     }
   }
 
@@ -48,7 +49,7 @@
     position: absolute;
     top: 100%;
     margin: 0;
-    right: 1rem;
+    right: var(--margin);
     background: var(--background);
     border: 1px solid var(--foreground);
     border-radius: 0.5rem;

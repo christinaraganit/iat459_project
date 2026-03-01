@@ -3,15 +3,21 @@
   color: var(--foreground);
   min-height: 150vh;
   position: relative;
-}
-.app__header {
-  position: sticky;
-  top: 0;
-  background: var(--background);
-  border-bottom: 1px solid var(--foreground);
-  color: var(--foreground);
-}
 
+  & .app__header {
+    position: sticky;
+    top: 0;
+    background: var(--background);
+    border-bottom: 1px solid var(--foreground);
+    color: var(--foreground);
+  }
+
+  & .app__body {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 var(--margin);
+  }
+}
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;

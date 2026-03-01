@@ -7,7 +7,7 @@ export const Layout = () => {
       <header className="app__header">
         <Navbar />
       </header>
-      <main>
+      <main className="app__body">
         <Outlet />
       </main>
     </div>
