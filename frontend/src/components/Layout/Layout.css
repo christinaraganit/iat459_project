@@ -1,11 +1,15 @@
 .app {
   background: var(--background);
   color: var(--foreground);
-  min-height: 100vh;
+  min-height: 150vh;
+  position: relative;
 }
-.App-logo {
-  height: 20vmin;
-  pointer-events: none;
+.app__header {
+  position: sticky;
+  top: 0;
+  background: var(--background);
+  border-bottom: 1px solid var(--foreground);
+  color: var(--foreground);
 }
 
 @media (prefers-reduced-motion: no-preference) {

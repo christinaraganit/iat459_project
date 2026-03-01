@@ -4,7 +4,7 @@ import { Navbar } from "../Nav/Navbar";
 export const Layout = () => {
   return (
     <div className="app">
-      <header className="App-header">
+      <header className="app__header">
         <Navbar />
       </header>
       <main>

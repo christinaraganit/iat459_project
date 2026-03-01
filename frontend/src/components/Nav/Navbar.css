@@ -1,11 +1,7 @@
 .navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: var(--background);
-  border-bottom: 1px solid var(--foreground);
-  color: var(--foreground);
+  position: relative;
+  max-width: var(--max);
+  margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
