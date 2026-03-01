@@ -7,6 +7,7 @@ import { Fragment, useState } from "react";
 export const Navbar = () => {
   const { user, logout } = useAuthContext();
   const [navOpen, setNavOpen] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -21,6 +22,25 @@ export const Navbar = () => {
       <Link className="navbar__logo" to="/">
         <img src={logo} alt="logo" />
       </Link>
+
+      <div className="navbar__search">
+        <div className="navbar__search__icon" />
+        <input
+          className="navbar__search__input"
+          type="text"
+          placeholder="Search cards..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        {searchTerm && (
+          <button
+            className="navbar__search__confirm"
+            onClick={() => navigate(`/search?s=${searchTerm}`)}
+          >
+            Search
+          </button>
+        )}
+      </div>
 
       <ul className="navbar__actions">
         {!user ? (

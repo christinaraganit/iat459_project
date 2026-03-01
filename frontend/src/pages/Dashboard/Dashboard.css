@@ -1,6 +1,7 @@
 .dashboard__wishlist {
-  padding: 1rem;
-  background: color-mix(in srgb, var(--background), var(--foreground) 5%);
+  padding: 1rem var(--margin);
+  background: color-mix(in srgb, var(--background), var(--foreground) 7%);
+  border-radius: 1rem;
   /* overflow-x: auto; */
 
   & .dashboard__wishlist__cards {
