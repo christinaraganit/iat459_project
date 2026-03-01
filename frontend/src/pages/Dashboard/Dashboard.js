@@ -101,7 +101,7 @@ export const Dashboard = () => {
 
       <p>Welcome {user?.displayName || user?.username}</p>
 
-      <section className="dashboard__wishlist">
+      <section className="dashboard__section dashboard__wishlist">
         <h2>My wishlist ({wishlist?.length || 0})</h2>
         <div className="dashboard__wishlist__cards">
           {wishlist &&
@@ -126,6 +126,10 @@ export const Dashboard = () => {
           Add card by ID
         </button>
         <button onClick={() => removeCardFromWishlist(0)}>Delete card</button>
+      </section>
+      <section className="dashboard__section dashboard__offers">
+        <h2>My offers (x)</h2>
+        <button>Create new offer</button>
       </section>
     </Fragment>
   );
