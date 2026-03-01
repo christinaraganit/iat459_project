@@ -1,8 +1,8 @@
 import { useAuthContext } from "../../context/AuthContext";
 import { Navigate } from "react-router-dom";
 
-export const ProtectedRoute = ({ children }) => {
+export const ProtectedRoute = ({ children, redirect }) => {
   const { token } = useAuthContext();
 
-  return !token ? <Navigate to="/" /> : children;
+  return !token ? <Navigate to={redirect || "/"} /> : children;
 };
