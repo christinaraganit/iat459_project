@@ -14,19 +14,8 @@ export const Index = () => {
   }, []);
   return (
     <Fragment>
-      <p>
-        Edit <code>src/App.js</code> and save to reload.
-      </p>
-      <a
-        className="App-link"
-        href="https://reactjs.org"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Learn React
-      </a>
-      {card !== null && <img src={card.image + "/low.webp"} alt={card.name} />}
-      <Test />
+      <h1>Listings near you</h1>
+      <h2>Test</h2>
     </Fragment>
   );
 };
