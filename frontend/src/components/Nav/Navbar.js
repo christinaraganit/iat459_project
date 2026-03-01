@@ -1,4 +1,5 @@
 import "./Navbar.css";
+import logo from "../../logo.svg";
 import { useAuthContext } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
 import { Fragment, useState } from "react";
@@ -8,7 +9,9 @@ export const Navbar = () => {
   const [navOpen, setNavOpen] = useState(true);
   return (
     <nav className="navbar">
-      <div className="navbar__logo"></div>
+      <Link className="navbar__logo" to="/">
+        <img src={logo} alt="logo" />
+      </Link>
 
       <ul className="navbar__actions">
         {!user ? (

@@ -8,8 +8,22 @@
   color: var(--foreground);
   display: flex;
   justify-content: space-between;
-  padding: 1rem;
+  align-items: center;
+  padding: 0.5rem 1rem;
   z-index: 1000;
+
+  & .navbar__logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    & img {
+      width: 3rem;
+    }
+    &:hover {
+      opacity: 0.8;
+    }
+  }
 
   & .navbar__actions {
     display: flex;
