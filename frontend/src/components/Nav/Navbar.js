@@ -18,6 +18,20 @@ export const Navbar = () => {
     }, 100);
   };
 
+  const handleNavOpen = () => {
+    if (searchOpen) {
+      setSearchOpen(false);
+    }
+    setNavOpen(!navOpen);
+  };
+
+  const handleSearchOpen = () => {
+    if (navOpen) {
+      setNavOpen(false);
+    }
+    setSearchOpen(!searchOpen);
+  };
+
   return (
     <nav className="navbar">
       <Link className="navbar__logo" to="/">
@@ -48,7 +62,7 @@ export const Navbar = () => {
           )}
           <button
             className={`navbar__search__mobile_toggle ${searchOpen ? "navbar__search__mobile_toggle--active" : ""}`}
-            onClick={() => setSearchOpen(!searchOpen)}
+            onClick={handleSearchOpen}
           >
             <div className="navbar__search__icon" />
           </button>
@@ -99,7 +113,7 @@ export const Navbar = () => {
         {
           <button
             className={`navbar__toggle_actions ${navOpen ? "navbar__toggle_actions--active" : ""}`}
-            onClick={() => setNavOpen(!navOpen)}
+            onClick={handleNavOpen}
           ></button>
         }
       </div>
