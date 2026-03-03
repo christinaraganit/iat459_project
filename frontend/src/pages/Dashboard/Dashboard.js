@@ -136,7 +136,11 @@ export const Dashboard = () => {
           Create new offer
         </button>
         {newListingOpen && (
-          <CreateListing username={user?.username} token={token} />
+          <CreateListing
+            username={user?.username}
+            token={token}
+            tcgdex={tcgdex}
+          />
         )}
       </section>
     </Fragment>
