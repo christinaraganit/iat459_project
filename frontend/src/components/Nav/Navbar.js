@@ -6,7 +6,7 @@ import { Fragment, useState } from "react";
 
 export const Navbar = () => {
   const { user, logout } = useAuthContext();
-  const [navOpen, setNavOpen] = useState(true);
+  const [navOpen, setNavOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
