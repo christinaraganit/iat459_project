@@ -14,7 +14,10 @@ export const CreateListing = ({ username, token, tcgdex }) => {
     if (listing.cardId) {
       const search = async () => {
         const results = await tcgdex.card.list(
-          new Query().like("name", listing.cardId).paginate(1, 5),
+          new Query()
+            .like("name", listing.cardId)
+            .not.equal("image", null)
+            .paginate(1, 10),
         );
         setSearchQs(results);
       };
