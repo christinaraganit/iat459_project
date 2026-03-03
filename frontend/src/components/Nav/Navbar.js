@@ -69,7 +69,7 @@ export const Navbar = () => {
         </div>
 
         <menu
-          className={`navbar__actions_menu ${navOpen ? "navbar__actions_menu--active" : ""}`}
+          className={`navbar__actions_menu ${user ? "navbar__actions_menu--activeUser" : ""} ${navOpen ? "navbar__actions_menu--active" : ""}`}
         >
           {user ? (
             <Fragment>

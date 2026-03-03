@@ -24,6 +24,7 @@
   }
   & .navbar__actions {
     display: flex;
+    align-items: center;
     gap: 1rem;
     & .navbar__search {
       @media screen and (min-width: 768px) {
@@ -127,9 +128,6 @@
         background: var(--foreground);
         border-radius: 0;
       }
-      @media screen and (min-width: 768px) {
-        display: none;
-      }
     }
 
     & .navbar__actions_menu {
@@ -171,14 +169,19 @@
         }
       }
       @media screen and (min-width: 768px) {
-        display: flex;
-        position: static;
-        align-items: center;
-        flex-direction: row;
-        width: auto;
-        background: none;
-        border: none;
-        padding: 0;
+        &:not(.navbar__actions_menu--activeUser) {
+          display: flex;
+          position: static;
+          align-items: center;
+          flex-direction: row;
+          width: auto;
+          background: none;
+          border: none;
+
+          & + .navbar__toggle_actions {
+            display: none;
+          }
+        }
       }
     }
   }
