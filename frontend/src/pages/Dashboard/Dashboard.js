@@ -1,7 +1,7 @@
 import "./Dashboard.css";
 import { Fragment, useState, useEffect } from "react";
 import { useAuthContext } from "../../context/AuthContext";
-import { Test } from "../../components/Test/Test";
+import { CreateListing } from "../../components/Listing/CreateListing";
 import TCGdex from "@tcgdex/sdk";
 export const Dashboard = () => {
   const tcgdex = new TCGdex("en");
@@ -10,6 +10,7 @@ export const Dashboard = () => {
   const [fieldname, setFieldname] = useState("");
 
   const [wishlist, setWishlist] = useState([]);
+  const [newListingOpen, setNewListingOpen] = useState(false);
 
   const getWishlist = async () => {
     try {
@@ -24,10 +25,12 @@ export const Dashboard = () => {
       );
       const data = await res.json();
       console.log("Wishlist:", data);
-      const cards = await Promise.all(
-        data.map((cardId) => tcgdex.card.get(cardId)),
-      );
-      setWishlist(cards);
+      if (data) {
+        const cards = await Promise.all(
+          data.map((cardId) => tcgdex.card.get(cardId)),
+        );
+        setWishlist(cards);
+      }
     } catch (er) {
       console.error("Failed to retrieve wishlist:", er);
     }
@@ -129,7 +132,12 @@ export const Dashboard = () => {
       </section>
       <section className="dashboard__section dashboard__offers">
         <h2>My offers (x)</h2>
-        <button>Create new offer</button>
+        <button onClick={() => setNewListingOpen(!newListingOpen)}>
+          Create new offer
+        </button>
+        {newListingOpen && (
+          <CreateListing username={user?.username} token={token} />
+        )}
       </section>
     </Fragment>
   );
