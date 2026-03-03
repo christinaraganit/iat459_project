@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Query } from "@tcgdex/sdk";
 export const CreateListing = ({ username, token, tcgdex }) => {
-  const [searchQs, setSearchQs] = useState([]);
+  const [searchQs, setSearchQs] = useState({ results: [], page: 0 });
   const [listing, setListing] = useState({
     cardId: "",
     seller: username,
@@ -9,7 +9,7 @@ export const CreateListing = ({ username, token, tcgdex }) => {
     condition: "Mint",
     notes: "",
   });
-
+  // Current listings do not actually choose a card. This is just testing search queries within the API
   useEffect(() => {
     if (listing.cardId) {
       const search = async () => {
@@ -17,16 +17,16 @@ export const CreateListing = ({ username, token, tcgdex }) => {
           new Query()
             .like("name", listing.cardId)
             .not.equal("image", null)
-            .paginate(1, 10),
+            .paginate(searchQs.page, 5),
         );
-        setSearchQs(results);
+        setSearchQs({ ...searchQs, results });
       };
       search();
       console.log("Search results:", searchQs);
     } else {
-      setSearchQs([]);
+      setSearchQs({ results: [], page: 1 });
     }
-  }, [listing.cardId]);
+  }, [listing.cardId, searchQs.page]);
 
   const addListing = async () => {
     try {
@@ -63,8 +63,8 @@ export const CreateListing = ({ username, token, tcgdex }) => {
           gap: "5px",
         }}
       >
-        {searchQs &&
-          searchQs.map((card, i) => (
+        {searchQs.results &&
+          searchQs.results.map((card, i) => (
             <div key={card.id}>
               {card.name} {card.id}
               <img
@@ -107,6 +107,14 @@ export const CreateListing = ({ username, token, tcgdex }) => {
           <textarea
             onChange={(e) => setListing({ ...listing, notes: e.target.value })}
           ></textarea>
+        </label>
+        <label>
+          Page{" "}
+          <input
+            type="number"
+            value={searchQs.page}
+            onChange={(e) => setSearchQs({ ...searchQs, page: e.target.value })}
+          />
         </label>
         <button type="submit">Create Listing</button>
       </form>
