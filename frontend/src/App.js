@@ -7,30 +7,42 @@ import { Dashboard } from "./pages/Dashboard/Dashboard";
 import { Login } from "./components/Login/Login";
 import { Register } from "./components/Register/Register";
 import { ProtectedRoute } from "./components/ProtectedRoute/ProtectedRoute";
+import {QueryClientProvider, QueryClient} from "@tanstack/react-query"
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+      retry: 2,
+    },
+  },
+});
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/" element={<Layout />}>
-            <Route path="/" element={<Index />} />
-            <Route path="/search" element={<Search />} />
-            {/* Protected routes */}
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute redirect="/login">
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-          </Route>
-        </Routes>
-      </Router>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <Router>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/" element={<Layout />}>
+              <Route path="/" element={<Index />} />
+              <Route path="/search" element={<Search />} />
+              {/* Protected routes */}
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute redirect="/login">
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
+          </Routes>
+        </Router>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 

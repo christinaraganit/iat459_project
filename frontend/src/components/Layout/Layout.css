@@ -3,6 +3,7 @@
   color: var(--foreground);
   min-height: 100vh;
   position: relative;
+  margin: 0 auto;
 
   & .app__header {
     position: sticky;
@@ -14,8 +15,7 @@
   }
 
   & .app__body {
-    max-width: var(--max);
-    margin: 0 auto;
+    max-width: calc(100vw - 350px);
     padding: 0 var(--margin);
   }
 }
