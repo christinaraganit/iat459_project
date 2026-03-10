@@ -12,6 +12,8 @@ export const Dashboard = () => {
 
   const [fieldname, setFieldname] = useState("");
   
+  // Wishlist fetch
+  // Maps the saved card ids to the actual card from tcgdex
   const wishlistQuery = useQuery({
     queryKey: ["wishlist", user, token],
     queryFn: async () => {
@@ -20,6 +22,8 @@ export const Dashboard = () => {
     },
   });
   
+  // Function to remove card from wishlist
+  // Make the query refetch the data on success
   const removeCardMutation = useMutation({
     mutationFn: (index) => removeCardFromWishlist(user, token, index),
     onSuccess: () => {
@@ -32,6 +36,8 @@ export const Dashboard = () => {
     }
   });
   
+  // Function add card to wishlist
+  // Make query refetch the data on success
   const addCardMutation = useMutation({
     mutationFn: async (cardId) => {
       const card = await tcgdex.card.get(cardId);

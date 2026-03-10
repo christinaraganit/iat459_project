@@ -27,6 +27,8 @@ export const Index = () => {
   const [order, setOrder] = useState("desc");
   const [sort, setSort] = useState("createdAt");
   
+  // Listings fetch
+  // Maps the saved cards ids to the card from tcgdex
   const listingsQuery = useQuery({
     queryKey: ['listings', search, order, sort],
     queryFn: async () => {
@@ -42,8 +44,6 @@ export const Index = () => {
   const handleSortChange = (ev) => {
     setSort(ev.target.value);
   }
-  
-  console.log(listingsQuery.data);
   
   return (
     <Fragment>
