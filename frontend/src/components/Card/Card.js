@@ -1,6 +1,8 @@
 import "./Card.css";
+import {useAuthContext} from "../../context/AuthContext";
 
 function Card({seller, price, condition, image, cardId, cardName}) {
+  const { user } = useAuthContext();
   return (
     <div className="card">
       <img className="card__img" src={image} alt={cardId}/>
@@ -9,6 +11,7 @@ function Card({seller, price, condition, image, cardId, cardName}) {
         <p>Condition: {condition}</p>
         <p>Price: ${price.toFixed(2)}</p>
         <p>Seller: {seller}</p>
+        {user && <button>Send Interest</button>}
       </div>
     </div>
   )

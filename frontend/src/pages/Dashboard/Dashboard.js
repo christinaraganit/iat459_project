@@ -34,33 +34,10 @@ export const Dashboard = () => {
     },
     onError: (err) => {
       console.error(err)
-
-  const [wishlist, setWishlist] = useState([]);
-  const [newListingOpen, setNewListingOpen] = useState(false);
-
-  const getWishlist = async () => {
-    try {
-      const res = await fetch(
-        `http://localhost:5000/api/account/wishlist/${user?.username}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: token,
-          },
-        },
-      );
-      const data = await res.json();
-      console.log("Wishlist:", data);
-      if (data) {
-        const cards = await Promise.all(
-          data.map((cardId) => tcgdex.card.get(cardId)),
-        );
-        setWishlist(cards);
-      }
-    } catch (er) {
-      console.error("Failed to retrieve wishlist:", er);
     }
   });
+  
+  const [newListingOpen, setNewListingOpen] = useState(false);
   
   // Function add card to wishlist
   // Make query refetch the data on success
@@ -90,7 +67,7 @@ export const Dashboard = () => {
       <p>Welcome {user?.displayName || user?.username}</p>
 
       <section className="dashboard__section dashboard__wishlist">
-        <h2>My wishlist ({wishlist?.length || 0})</h2>
+        <h2>My wishlist ({wishlistQuery.data?.length || 0})</h2>
         <div className="dashboard__wishlist__cards">
           {wishlistQuery.data?.map((card, i) => (
               <img
@@ -112,7 +89,7 @@ export const Dashboard = () => {
         <button onClick={() => addCardMutation.mutate(fieldname)}>
           Add card by ID
         </button>
-        <button onClick={() => removeCardFromWishlist(0)}>Delete card</button>
+        <button onClick={() => removeCardMutation.mutate(0)}>Delete card</button>
       </section>
       <section className="dashboard__section dashboard__offers">
         <h2>My offers (x)</h2>
@@ -129,4 +106,4 @@ export const Dashboard = () => {
       </section>
     </Fragment>
   );
-};
+}
