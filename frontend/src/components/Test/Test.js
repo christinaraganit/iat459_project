@@ -6,7 +6,7 @@ export const Test = ({ username = "admin", password = "admin" }) => {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/auth/wishlist/${username}`,
+        `http://localhost:5000/api/account/wishlist/${username}`,
         {
           method: "GET",
           headers: {
