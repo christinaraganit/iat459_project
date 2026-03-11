@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Query } from "@tcgdex/sdk";
-export const CreateListing = ({ username, token, tcgdex }) => {
+export const CreateListing = ({ username, token, tcgdex, handleClose }) => {
   const [searchQs, setSearchQs] = useState({ results: [], page: 0 });
+  const [searchTerm, setSearchTerm] = useState("");
+  const ref = useRef(null);
   const [listing, setListing] = useState({
     cardId: "",
     seller: username,
@@ -11,11 +13,11 @@ export const CreateListing = ({ username, token, tcgdex }) => {
   });
   // Current listings do not actually choose a card. This is just testing search queries within the API
   useEffect(() => {
-    if (listing.cardId) {
+    if (searchTerm) {
       const search = async () => {
         const results = await tcgdex.card.list(
           new Query()
-            .like("name", listing.cardId)
+            .like("name", searchTerm)
             .not.equal("image", null)
             .paginate(searchQs.page, 5),
         );
@@ -26,7 +28,7 @@ export const CreateListing = ({ username, token, tcgdex }) => {
     } else {
       setSearchQs({ results: [], page: 1 });
     }
-  }, [listing.cardId, searchQs.page]);
+  }, [searchTerm, searchQs.page]);
 
   const addListing = async () => {
     try {
@@ -49,6 +51,7 @@ export const CreateListing = ({ username, token, tcgdex }) => {
     e.preventDefault();
     console.log("Submitting listing:", listing);
     addListing();
+    handleClose();
   };
 
   return (
@@ -71,15 +74,52 @@ export const CreateListing = ({ username, token, tcgdex }) => {
                 key={`wishlist-card-${i}`}
                 src={card?.image + "/low.webp"}
                 alt={card?.name}
+                onClick={() => {
+                  setListing({ ...listing, cardId: card.id });
+                  ref.current.value = card.id;
+                }}
+                style={{
+                  cursor: "pointer",
+                }}
               />
             </div>
           ))}
+      </div>
+      <div>
+        <label>
+          Search for card
+          <input
+            type="text"
+            onChange={(e) => setSearchTerm(e.target.value)}
+          ></input>
+        </label>
+        <label>
+          Page{" "}
+          <input
+            type="number"
+            value={searchQs.page}
+            onChange={(e) => setSearchQs({ ...searchQs, page: e.target.value })}
+          />
+        </label>
+        <button
+          type="button"
+          onClick={() => setSearchQs({ ...searchQs, page: searchQs.page + 1 })}
+        >
+          ^
+        </button>
+        <button
+          type="button"
+          onClick={() => setSearchQs({ ...searchQs, page: searchQs.page + 1 })}
+        >
+          v
+        </button>
       </div>
       <form onSubmit={handleSubmit}>
         <label>
           Card name
           <input
             type="text"
+            ref={ref}
             onChange={(e) => setListing({ ...listing, cardId: e.target.value })}
           ></input>
         </label>
@@ -108,14 +148,7 @@ export const CreateListing = ({ username, token, tcgdex }) => {
             onChange={(e) => setListing({ ...listing, notes: e.target.value })}
           ></textarea>
         </label>
-        <label>
-          Page{" "}
-          <input
-            type="number"
-            value={searchQs.page}
-            onChange={(e) => setSearchQs({ ...searchQs, page: e.target.value })}
-          />
-        </label>
+
         <button type="submit">Create Listing</button>
       </form>
     </div>
