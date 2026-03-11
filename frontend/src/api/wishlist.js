@@ -1,7 +1,7 @@
 export const getWishlist = async (user, token) => {
   try {
     const res = await fetch(
-      `http://localhost:5000/api/auth/wishlist/${user?.username}`,
+      `http://localhost:5000/api/account/wishlist/${user?.username}`,
       {
         method: "GET",
         headers: {
@@ -24,7 +24,7 @@ export const addCardToWishlist = async (user, token, cardId) => {
   }
   try {
     const res = await fetch(
-      `http://localhost:5000/api/auth/wishlist/${user?.username}`,
+      `http://localhost:5000/api/account/wishlist/${user?.username}`,
       {
         method: "POST",
         headers: {
@@ -44,7 +44,7 @@ export const addCardToWishlist = async (user, token, cardId) => {
 export const removeCardFromWishlist = async (user, token, index) => {
   try {
     const res = await fetch(
-      `http://localhost:5000/api/auth/wishlist/${user?.username}/${index}`,
+      `http://localhost:5000/api/account/wishlist/${user?.username}/${index}`,
       {
         method: "DELETE",
         headers: {
