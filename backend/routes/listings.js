@@ -31,7 +31,7 @@ router.post("/new", verifyToken, async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const { search, sort, order } = req.query;
+    const { search, sort, order, condition } = req.query;
     
     const query = {};
     if (search) {
@@ -40,6 +40,10 @@ router.get("/", async (req, res) => {
         { seller: { $regex: search, $options: "i" } },
         { notes:  { $regex: search, $options: "i" } },
       ];
+    }
+    if (condition) {
+      const conditions = Array.isArray(condition) ? condition : [condition];
+      query.condition = { $in: conditions };
     }
     const sortField = sort ?? 'createdAt';
     const sortOrder = order === "asc" ? 1 : -1;

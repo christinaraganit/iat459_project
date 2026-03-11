@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getListings } from "../../api/listings";
 import Card from "../../components/Card/Card";
 import './Index.css';
+import ConditionFilter from "../../components/Condition/ConditionFilter";
 
 const options = [
   {
@@ -26,13 +27,14 @@ export const Index = () => {
   const [search, setSearch] = useState("");
   const [order, setOrder] = useState("desc");
   const [sort, setSort] = useState("createdAt");
+  const [selected, setSelected] = useState([]);
   
   // Listings fetch
   // Maps the saved cards ids to the card from tcgdex
   const listingsQuery = useQuery({
-    queryKey: ['listings', search, order, sort],
+    queryKey: ['listings', search, order, sort, selected],
     queryFn: async () => {
-      const listings = await  getListings(search, sort, order);
+      const listings = await  getListings(search, sort, order, selected);
       const cards = await Promise.all(listings?.map((listing) => tcgdex.card.get(listing.cardId)));
       return listings.map((listing, i) => ({
         ...listing,
@@ -59,6 +61,7 @@ export const Index = () => {
           </select>
           <button onClick={() => setOrder('asc')}>Asc</button>
           <button onClick={() => setOrder('desc')}>Desc</button>
+          <ConditionFilter selected={selected} setSelected={setSelected} />
         </div>
       </div>
       <div className="listing__list">
