@@ -109,7 +109,7 @@ export const CreateListing = ({ username, token, tcgdex, handleClose }) => {
         </button>
         <button
           type="button"
-          onClick={() => setSearchQs({ ...searchQs, page: searchQs.page + 1 })}
+          onClick={() => setSearchQs({ ...searchQs, page: searchQs.page - 1 })}
         >
           v
         </button>
