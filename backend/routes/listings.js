@@ -8,15 +8,13 @@ const verifyToken = require("../middleware/authMiddleware");
 
 router.post("/new", verifyToken, async (req, res) => {
   try {
-    const { cardId, seller, price, condition, notes } = req.body;
+    const { cardId, price, condition, notes } = req.body;
     console.log("Received listing data:", req.body);
-    // 1. check if user already exists
-    const existingUser = await User.findOne({ username: seller });
-
+    // console.log(req);
     // 3. save the user
     const newListing = new Listing({
       cardId,
-      seller,
+      seller: req.userId,
       price,
       condition,
       notes,
@@ -32,22 +30,22 @@ router.post("/new", verifyToken, async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const { search, sort, order, condition } = req.query;
-    
+
     const query = {};
     if (search) {
       query.$or = [
         { cardId: { $regex: search, $options: "i" } },
         { seller: { $regex: search, $options: "i" } },
-        { notes:  { $regex: search, $options: "i" } },
+        { notes: { $regex: search, $options: "i" } },
       ];
     }
     if (condition) {
       const conditions = Array.isArray(condition) ? condition : [condition];
       query.condition = { $in: conditions };
     }
-    const sortField = sort ?? 'createdAt';
+    const sortField = sort ?? "createdAt";
     const sortOrder = order === "asc" ? 1 : -1;
-    
+
     const listings = await Listing.find(query).sort({ [sortField]: sortOrder });
     res.json(listings);
   } catch (err) {

@@ -120,7 +120,6 @@ export const Dashboard = () => {
         )}
         {newListingOpen && (
           <CreateListing
-            username={user?.username}
             token={token}
             tcgdex={tcgdex}
             handleClose={() => setNewListingOpen(false)}

@@ -1,12 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { Query } from "@tcgdex/sdk";
-export const CreateListing = ({ username, token, tcgdex, handleClose }) => {
+export const CreateListing = ({ token, tcgdex, handleClose }) => {
   const [searchQs, setSearchQs] = useState({ results: [], page: 0 });
   const [searchTerm, setSearchTerm] = useState("");
   const ref = useRef(null);
   const [listing, setListing] = useState({
     cardId: "",
-    seller: username,
     price: 0,
     condition: "Mint",
     notes: "",

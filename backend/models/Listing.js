@@ -6,7 +6,8 @@ const ListingSchema = new mongoose.Schema({
     required: true,
   },
   seller: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
     required: true,
   },
   price: {
