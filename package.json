@@ -3,6 +3,6 @@
     "concurrently": "^9.2.1"
   },
   "scripts": {
-    "start": "concurrently \"npm --prefix frontend start\" \"npm --prefix backend start\""
+    "start": "concurrently \"cd frontend && $npm_execpath run start\" \"cd backend && $npm_execpath run start\""
   }
 }
