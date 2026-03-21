@@ -29,7 +29,7 @@ function App() {
             <Route path="/" element={<Layout />}>
               <Route path="/" element={<Index />} />
               <Route path="listing" element={<Layout />}>
-                <Route path="listing" element={<Layout />}></Route>
+                <Route path=":cardId" element={<Layout />}></Route>
               </Route>
               <Route path="search" element={<Search />} />
               {/* Protected routes */}
