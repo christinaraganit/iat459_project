@@ -18,6 +18,7 @@ router.get("/", async (req, res) => {
         { seller: { $regex: search, $options: "i" } },
         { notes: { $regex: search, $options: "i" } },
       ];
+      query.$and = [{ seller: { $regex: search, $options: "i" } }];
     }
     if (condition) {
       const conditions = Array.isArray(condition) ? condition : [condition];

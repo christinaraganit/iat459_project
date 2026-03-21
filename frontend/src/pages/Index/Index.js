@@ -70,7 +70,7 @@ export const Index = () => {
         {listingsQuery.data?.map((item) => (
           <Card
             key={item._id}
-            seller={item.seller.displayName || item.seller.username}
+            seller={item.seller}
             price={item.price}
             condition={item.condition}
             image={item.card?.getImageURL("low")}
