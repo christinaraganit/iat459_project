@@ -55,6 +55,15 @@ router.delete("/wishlist/:id/:index", verifyToken, async (req, res) => {
   }
 });
 
+router.get("/isNewUser", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findOne({ _id: req.userId });
+    res.json(user.isNewUser);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.post("/rename", verifyToken, async (req, res) => {
   try {
     // 1. find user

@@ -1,0 +1,15 @@
+export const getNewUserState = async (token) => {
+  try {
+    const res = await fetch(`http://localhost:5000/api/account/isNewUser`, {
+      method: "GET",
+      headers: {
+        Authorization: token,
+      },
+    });
+    const data = await res.json();
+    console.log("New user state:", data);
+    return data;
+  } catch (er) {
+    console.error("Failed to retrieve new user state:", er);
+  }
+};

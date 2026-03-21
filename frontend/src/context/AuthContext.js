@@ -1,5 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 import { useState, useEffect, createContext, useContext } from "react";
+import { getNewUserState } from "../api/account";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -12,13 +13,17 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        console.log(decoded);
+        console.log("decoded", decoded);
         setUser({
           username: decoded.username,
           displayName: decoded.displayName,
         });
         setRole(decoded.role);
-        setIsNewUser(decoded.isNewUser);
+        getNewUserState(token).then((data) => {
+          console.log("New user state:", data);
+          setIsNewUser(data);
+        });
+        // setIsNewUser(decoded.isNewUser);
       } catch (err) {
         console.log("Token is invalid or corrupted", err);
         logout();
@@ -39,12 +44,16 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setRole(null);
   };
+  const activateNewUser = () => {
+    setIsNewUser(false);
+  };
 
   const contextItems = {
     token,
     user,
     role,
     isNewUser,
+    activateNewUser,
     login,
     logout,
   };

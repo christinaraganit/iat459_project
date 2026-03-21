@@ -56,7 +56,6 @@ router.post("/login", async (req, res) => {
         username: user.username,
         displayName: user.displayName,
         role: user.role,
-        isNewUser: user.isNewUser,
       },
       process.env.JWT_SECRET || "fallbackSecret",
       { expiresIn: "1h" },
