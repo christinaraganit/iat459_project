@@ -11,10 +11,11 @@ import {
 import { getListings, getListingsFromCurrentUser } from "../../api/listings";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "../../App";
+import { Onboarding } from "../../components/Onboarding/Onboarding";
 
 export const Dashboard = () => {
   const tcgdex = new TCGdex("en");
-  const { token, user } = useAuthContext();
+  const { token, user, isNewUser } = useAuthContext();
 
   const [fieldname, setFieldname] = useState("");
 
@@ -77,7 +78,6 @@ export const Dashboard = () => {
     queryKey: ["listings"],
     queryFn: async () => {
       const listings = await getListingsFromCurrentUser(token);
-      console.log(listings);
       return await Promise.all(
         listings?.map((listing) => tcgdex.card.get(listing.cardId)),
       );
@@ -146,6 +146,7 @@ export const Dashboard = () => {
           />
         )}
       </section>
+      {isNewUser && <Onboarding user={user} token={token} />}
     </Fragment>
   );
 };

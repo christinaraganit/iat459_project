@@ -74,14 +74,13 @@ export const Navbar = () => {
           {user ? (
             <Fragment>
               <div className="navbar__actions_menu__user">
-                {user.displayName && (
-                  <Link
-                    className="navbar__actions_menu__user__display-name"
-                    to="/dashboard"
-                  >
-                    {user.displayName}
-                  </Link>
-                )}
+                <Link
+                  className="navbar__actions_menu__user__display-name"
+                  to="/dashboard"
+                >
+                  {user.displayName || user.username}
+                </Link>
+
                 <div className="navbar__actions_menu__user__username">
                   @{user.username}
                 </div>

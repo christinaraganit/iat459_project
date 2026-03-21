@@ -14,12 +14,13 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  isNew: {
+  isNewUser: {
     type: Boolean,
     default: true,
   },
   displayName: {
     type: String,
+    default: "",
   },
   wishlist: {
     type: [String],

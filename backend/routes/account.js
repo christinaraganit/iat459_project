@@ -25,7 +25,8 @@ router.post("/wishlist/:id", verifyToken, async (req, res) => {
     console.log(req.userId);
     const user = await User.findOne({ username: req.params.id });
     // 2. get cardID from body
-    const { cardID } = req.body;
+    const cardID = req.body;
+    console.log("Adding card to wishlist:", cardID);
     // 2. add card to wishlist
     user.wishlist.push(req.body.cardId);
     await user.save();
@@ -49,6 +50,25 @@ router.delete("/wishlist/:id/:index", verifyToken, async (req, res) => {
     );
     await user.save();
     res.json(user.wishlist);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post("/rename", verifyToken, async (req, res) => {
+  try {
+    // 1. find user
+    // console.log(req.userId);
+    // console.log(req.body);
+    const user = await User.findOne({ _id: req.userId });
+    // console.log(user);
+    user.isNewUser = false;
+    console.log(req.body);
+    user.displayName = req.body.displayName;
+    await user.save();
+
+    console.log(user);
+    res.json(user);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

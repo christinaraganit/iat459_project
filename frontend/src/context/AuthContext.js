@@ -6,6 +6,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
+  const [isNewUser, setIsNewUser] = useState(false);
 
   useEffect(() => {
     if (token) {
@@ -17,6 +18,7 @@ export const AuthProvider = ({ children }) => {
           displayName: decoded.displayName,
         });
         setRole(decoded.role);
+        setIsNewUser(decoded.isNewUser);
       } catch (err) {
         console.log("Token is invalid or corrupted", err);
         logout();
@@ -42,6 +44,7 @@ export const AuthProvider = ({ children }) => {
     token,
     user,
     role,
+    isNewUser,
     login,
     logout,
   };

@@ -23,8 +23,8 @@ router.post("/register", async (req, res) => {
       username,
       password: hashedPassword,
       role: "member",
-      isNew: true,
-      displayName: null,
+      isNewUser: true,
+      displayName: "",
       wishlist: [],
     });
     await newUser.save();
@@ -56,6 +56,7 @@ router.post("/login", async (req, res) => {
         username: user.username,
         displayName: user.displayName,
         role: user.role,
+        isNewUser: user.isNewUser,
       },
       process.env.JWT_SECRET || "fallbackSecret",
       { expiresIn: "1h" },
@@ -68,6 +69,7 @@ router.post("/login", async (req, res) => {
         username: user.username,
         displayName: user.displayName,
         role: user.role,
+        isNewUser: user.isNewUser,
       },
     });
   } catch (err) {
