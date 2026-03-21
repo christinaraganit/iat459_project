@@ -12,6 +12,7 @@ import { getListingsFromCurrentUser } from "../../api/listings";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "../../App";
 import { Onboarding } from "../../components/Onboarding/Onboarding";
+import { NameField } from "../../components/Dashboard/NameField/NameField";
 
 export const Dashboard = () => {
   const tcgdex = new TCGdex("en");
@@ -88,7 +89,9 @@ export const Dashboard = () => {
     <Fragment>
       <h1>Dashboard</h1>
 
-      <p>Welcome {user?.displayName || user?.username}</p>
+      <p>
+        Welcome <NameField />
+      </p>
 
       <section className="dashboard__section dashboard__wishlist">
         <h2>My wishlist ({wishlistQuery.data?.length || 0})</h2>
