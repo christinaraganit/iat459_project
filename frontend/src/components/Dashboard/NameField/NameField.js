@@ -1,7 +1,7 @@
 import { useState, Fragment } from "react";
 import { useAuthContext } from "../../../context/AuthContext";
 export const NameField = () => {
-  const { user, updateDisplayName, token } = useAuthContext();
+  const { user, updateDisplayName, token, reassignToken } = useAuthContext();
   const [editing, setEditing] = useState(false);
   const [prospectiveDisplayName, setProspectiveDisplayName] = useState(
     user?.displayName || user?.username || "",
@@ -25,6 +25,7 @@ export const NameField = () => {
       if (res.ok) {
         alert("Name updated successfully!");
         updateDisplayName(prospectiveDisplayName);
+        reassignToken(data.token);
         setEditing(false);
       }
     } catch (er) {

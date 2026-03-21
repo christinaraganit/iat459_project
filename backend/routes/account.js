@@ -84,9 +84,18 @@ router.post("/rename", verifyToken, async (req, res) => {
     console.log(req.body);
     user.displayName = req.body.displayName;
     await user.save();
-
+    const token = jwt.sign(
+      {
+        id: user._id,
+        username: user.username,
+        displayName: user.displayName,
+        role: user.role,
+      },
+      process.env.JWT_SECRET || "fallbackSecret",
+      { expiresIn: "1h" },
+    );
     console.log(user);
-    res.json(user);
+    res.json({ token, user });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

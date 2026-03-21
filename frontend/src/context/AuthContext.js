@@ -23,14 +23,6 @@ export const AuthProvider = ({ children }) => {
           console.log("New user state:", data);
           setIsNewUser(data);
         });
-        getDisplayName(token).then((data) => {
-          console.log("Display name:", data);
-          setUser((prevUser) => ({
-            ...prevUser,
-            displayName: data,
-          }));
-        });
-        // setIsNewUser(decoded.isNewUser);
       } catch (err) {
         console.log("Token is invalid or corrupted", err);
         logout();
@@ -40,9 +32,13 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token]);
 
-  const login = (newToken) => {
+  const reassignToken = (newToken) => {
     localStorage.setItem("token", newToken);
     setToken(newToken);
+  };
+
+  const login = (newToken) => {
+    reassignToken(newToken);
   };
 
   const logout = () => {
@@ -72,6 +68,7 @@ export const AuthProvider = ({ children }) => {
     activateNewUser,
     login,
     logout,
+    reassignToken,
   };
 
   return <AuthContext value={contextItems}>{children}</AuthContext>;
