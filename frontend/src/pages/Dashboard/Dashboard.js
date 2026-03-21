@@ -8,6 +8,7 @@ import {
   getWishlist,
   removeCardFromWishlist,
 } from "../../api/wishlist";
+import { getListings, getListingsFromCurrentUser } from "../../api/listings";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "../../App";
 
@@ -29,7 +30,7 @@ export const Dashboard = () => {
 
   // Function to remove card from wishlist
   // Make the query refetch the data on success
-  const removeCardMutation = useMutation({
+  const removeWishlistCardMutation = useMutation({
     mutationFn: (index) => removeCardFromWishlist(user, token, index),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -45,7 +46,7 @@ export const Dashboard = () => {
 
   // Function add card to wishlist
   // Make query refetch the data on success
-  const addCardMutation = useMutation({
+  const addWishlistCardMutation = useMutation({
     mutationFn: async (cardId) => {
       const card = await tcgdex.card.get(cardId);
       if (!card) {
@@ -64,6 +65,25 @@ export const Dashboard = () => {
     },
   });
 
+  // const wishlistQuery = useQuery({
+  //   queryKey: ["wishlist", user, token],
+  //   queryFn: async () => {
+  //     const data = await getWishlist(user, token);
+  //     return await Promise.all(data?.map((card) => tcgdex.card.get(card)));
+  //   },
+  // });
+
+  const listingsQuery = useQuery({
+    queryKey: ["listings"],
+    queryFn: async () => {
+      const listings = await getListingsFromCurrentUser(token);
+      console.log(listings);
+      return await Promise.all(
+        listings?.map((listing) => tcgdex.card.get(listing.cardId)),
+      );
+    },
+  });
+
   return (
     <Fragment>
       <h1>Dashboard</h1>
@@ -78,7 +98,7 @@ export const Dashboard = () => {
               key={`wishlist-card-${i}`}
               src={card?.image + "/low.webp"}
               alt={card?.name}
-              onClick={() => removeCardMutation.mutate(i)}
+              onClick={() => removeWishlistCardMutation.mutate(i)}
               style={{
                 cursor: "pointer",
               }}
@@ -90,17 +110,17 @@ export const Dashboard = () => {
           value={fieldname}
           onChange={(e) => setFieldname(e.target.value)}
         />
-        <button onClick={() => addCardMutation.mutate(fieldname)}>
+        <button onClick={() => addWishlistCardMutation.mutate(fieldname)}>
           Add card by ID
         </button>
-        <button onClick={() => removeCardMutation.mutate(0)}>
+        <button onClick={() => removeWishlistCardMutation.mutate(0)}>
           Delete card
         </button>
       </section>
       <section className="dashboard__section dashboard__offers">
-        <h2>My offers (x)</h2>
+        <h2>My offers ({listingsQuery.data?.length || 0})</h2>
         <div className="dashboard__offers__cards">
-          {wishlistQuery.data?.map((card, i) => (
+          {listingsQuery.data?.map((card, i) => (
             <img
               key={`offers-card-${i}`}
               src={card?.image + "/low.webp"}

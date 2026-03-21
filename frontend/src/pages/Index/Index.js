@@ -3,22 +3,22 @@ import TCGdex from "@tcgdex/sdk";
 import { useQuery } from "@tanstack/react-query";
 import { getListings } from "../../api/listings";
 import Card from "../../components/Card/Card";
-import './Index.css';
+import "./Index.css";
 import ConditionFilter from "../../components/Condition/ConditionFilter";
 
 const options = [
   {
-    value: 'createdAt',
-    label: 'Created At',
+    value: "createdAt",
+    label: "Created At",
   },
   {
-    value: 'price',
-    label: 'Price',
+    value: "price",
+    label: "Price",
   },
   {
-    value: 'condition',
-    label: 'Condition',
-  }
+    value: "condition",
+    label: "Condition",
+  },
 ];
 
 export const Index = () => {
@@ -28,25 +28,27 @@ export const Index = () => {
   const [order, setOrder] = useState("desc");
   const [sort, setSort] = useState("createdAt");
   const [selected, setSelected] = useState([]);
-  
+
   // Listings fetch
   // Maps the saved cards ids to the card from tcgdex
   const listingsQuery = useQuery({
-    queryKey: ['listings', search, order, sort, selected],
+    queryKey: ["listings", search, order, sort, selected],
     queryFn: async () => {
-      const listings = await  getListings(search, sort, order, selected);
-      const cards = await Promise.all(listings?.map((listing) => tcgdex.card.get(listing.cardId)));
+      const listings = await getListings(search, sort, order, selected);
+      const cards = await Promise.all(
+        listings?.map((listing) => tcgdex.card.get(listing.cardId)),
+      );
       return listings.map((listing, i) => ({
         ...listing,
-        card: cards[i]
+        card: cards[i],
       }));
-    }
+    },
   });
-  
+
   const handleSortChange = (ev) => {
     setSort(ev.target.value);
-  }
-  
+  };
+
   return (
     <Fragment>
       <div className="listing__nav">
@@ -59,8 +61,8 @@ export const Index = () => {
               </option>
             ))}
           </select>
-          <button onClick={() => setOrder('asc')}>Asc</button>
-          <button onClick={() => setOrder('desc')}>Desc</button>
+          <button onClick={() => setOrder("asc")}>Asc</button>
+          <button onClick={() => setOrder("desc")}>Desc</button>
           <ConditionFilter selected={selected} setSelected={setSelected} />
         </div>
       </div>
@@ -68,10 +70,10 @@ export const Index = () => {
         {listingsQuery.data?.map((item) => (
           <Card
             key={item._id}
-            seller={item.seller}
+            seller={item.seller.displayName || item.seller.username}
             price={item.price}
             condition={item.condition}
-            image={item.card?.getImageURL('low')}
+            image={item.card?.getImageURL("low")}
             cardId={item.card?.id}
             cardName={item.card?.name}
           />

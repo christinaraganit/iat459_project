@@ -30,19 +30,32 @@ export const getListings = async (
   return res.json();
 };
 
-// export const getListingsFromUser = async (id = "") => {
-//   const params = new URLSearchParams();
-//   if (id) {
-//     params.append("id", search);
-//   }
+export const getListingsFromUser = async (id = "") => {
+  const params = new URLSearchParams();
+  if (id) {
+    params.append("id", id);
+  }
 
-//   const res = await fetch(
-//     `http://localhost:5000/api/listings?${params.toString()}`,
-//   );
+  const res = await fetch(
+    `http://localhost:5000/api/listings?${params.toString()}`,
+  );
 
-//   if (!res.ok) {
-//     throw new Error("Failed to fetch listings");
-//   }
+  if (!res.ok) {
+    throw new Error("Failed to fetch listings");
+  }
 
-//   return res.json();
-// };
+  return res.json();
+};
+
+export const getListingsFromCurrentUser = async (token) => {
+  const res = await fetch(`http://localhost:5000/api/listings/currentUser`, {
+    headers: {
+      Authorization: token,
+    },
+  });
+  if (!res.ok) {
+    throw new Error("Failed to fetch listings for current user");
+  }
+
+  return res.json();
+};
