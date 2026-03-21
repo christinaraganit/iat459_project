@@ -12,6 +12,8 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
+    enum: ["member", "admin"],
+    default: "member",
     required: true,
   },
   isNewUser: {
