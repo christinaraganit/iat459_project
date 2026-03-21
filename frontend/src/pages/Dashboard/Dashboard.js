@@ -8,8 +8,7 @@ import {
   getWishlist,
   removeCardFromWishlist,
 } from "../../api/wishlist";
-import { getNewUserState } from "../../api/account";
-import { getListings, getListingsFromCurrentUser } from "../../api/listings";
+import { getListingsFromCurrentUser } from "../../api/listings";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "../../App";
 import { Onboarding } from "../../components/Onboarding/Onboarding";

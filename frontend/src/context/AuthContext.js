@@ -1,6 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 import { useState, useEffect, createContext, useContext } from "react";
-import { getNewUserState } from "../api/account";
+import { getNewUserState, getDisplayName } from "../api/account";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -23,6 +23,13 @@ export const AuthProvider = ({ children }) => {
           console.log("New user state:", data);
           setIsNewUser(data);
         });
+        getDisplayName(token).then((data) => {
+          console.log("Display name:", data);
+          setUser((prevUser) => ({
+            ...prevUser,
+            displayName: data,
+          }));
+        });
         // setIsNewUser(decoded.isNewUser);
       } catch (err) {
         console.log("Token is invalid or corrupted", err);
@@ -44,6 +51,14 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setRole(null);
   };
+
+  const updateDisplayName = (displayName) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      displayName,
+    }));
+  };
+
   const activateNewUser = () => {
     setIsNewUser(false);
   };
@@ -53,6 +68,7 @@ export const AuthProvider = ({ children }) => {
     user,
     role,
     isNewUser,
+    updateDisplayName,
     activateNewUser,
     login,
     logout,

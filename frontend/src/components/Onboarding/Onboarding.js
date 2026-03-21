@@ -2,7 +2,7 @@ import "./Onboarding.css";
 import { useState, useEffect } from "react";
 import { useAuthContext } from "../../context/AuthContext";
 export const Onboarding = () => {
-  const { user, token, activateNewUser } = useAuthContext();
+  const { user, token, activateNewUser, updateDisplayName } = useAuthContext();
   const [prospectiveDisplayName, setProspectiveDisplayName] = useState("");
   const handleRename = async (e) => {
     e.preventDefault();
@@ -21,15 +21,18 @@ export const Onboarding = () => {
       console.log("Rename response:", data);
       if (res.ok) {
         alert("Name updated successfully!");
+        updateDisplayName(prospectiveDisplayName);
         activateNewUser();
       }
     } catch (er) {
       console.error("Rename failed:", er);
     }
   };
+
   useEffect(() => {
     console.log(prospectiveDisplayName);
   }, [prospectiveDisplayName]);
+
   return (
     <article className="onboarding">
       <h2>What's your name?</h2>
