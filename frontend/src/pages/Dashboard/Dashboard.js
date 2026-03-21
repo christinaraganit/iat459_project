@@ -16,7 +16,7 @@ import { NameField } from "../../components/Dashboard/NameField/NameField";
 
 export const Dashboard = () => {
   const tcgdex = new TCGdex("en");
-  const { token, user, isNewUser } = useAuthContext();
+  const { token, user, isNewUser, role } = useAuthContext();
 
   const [fieldname, setFieldname] = useState("");
 
@@ -90,7 +90,7 @@ export const Dashboard = () => {
       <h1>Dashboard</h1>
 
       <p>
-        Welcome <NameField />
+        Welcome <NameField /> {role === "admin" && <span>(Admin)</span>}
       </p>
 
       <section className="dashboard__section dashboard__wishlist">
