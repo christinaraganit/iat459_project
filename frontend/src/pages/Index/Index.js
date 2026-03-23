@@ -38,6 +38,7 @@ export const Index = () => {
       const cards = await Promise.all(
         listings?.map((listing) => tcgdex.card.get(listing.cardId)),
       );
+      console.log(listings);
       return listings.map((listing, i) => ({
         ...listing,
         card: cards[i],
@@ -76,6 +77,7 @@ export const Index = () => {
             image={item.card?.getImageURL("low")}
             cardId={item.card?.id}
             cardName={item.card?.name}
+            id={item._id}
           />
         ))}
       </div>

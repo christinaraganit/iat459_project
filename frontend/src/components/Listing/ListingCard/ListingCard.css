@@ -1,19 +1,26 @@
 :root {
   --card-ratio: 245/337;
 }
-.card {
+a.card {
   display: flex;
-  border: 1px solid black;
-  padding: 32px;
-  gap: 16px;
+  border-radius: 4%;
+  max-height: 600px;
+
   .card__info {
     h2 {
       margin: 0;
     }
   }
   .card__img {
-    width: 245px;
-    height: 337px;
+    aspect-ratio: var(--card-ratio);
+    width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+  .card__img_placeholder {
+    aspect-ratio: var(--card-ratio);
+    width: 100%;
+    max-height: 100%;
     background: black;
   }
 }

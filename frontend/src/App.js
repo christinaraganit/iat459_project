@@ -29,7 +29,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/" element={<Layout />}>
               <Route path="/" element={<Index />} />
-              <Route path="listing" element={<Layout />}>
+              <Route path="listings">
                 <Route path=":cardId" element={<ListingItem />}></Route>
               </Route>
               <Route path="search" element={<Search />} />
