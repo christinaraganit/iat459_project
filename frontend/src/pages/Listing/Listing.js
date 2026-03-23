@@ -5,6 +5,7 @@ import { getListingByID, deleteListingByID } from "../../api/listings";
 import TCGdex from "@tcgdex/sdk";
 import { Navigate, redirect } from "react-router";
 import { useAuthContext } from "../../context/AuthContext";
+import { addListingOfInterest } from "../../api/account";
 
 export const Listing = () => {
   const { role, user, token } = useAuthContext();
@@ -14,6 +15,7 @@ export const Listing = () => {
   const [validListing, setValidListing] = useState(false);
   const [activeOwner, setActiveOwner] = useState(false);
   const [deleted, setDeleted] = useState(false);
+  const [currentUserIsInterested, setCurrentUserIsInterested] = useState(false);
 
   const listingQuery = useQuery({
     queryKey: ["listings", cardId],
@@ -32,6 +34,12 @@ export const Listing = () => {
     deleteListingByID(listingQuery.data?._id, token).then(() => {
       setDeleted(true);
     });
+  };
+
+  const handleSendInterest = () => {
+    addListingOfInterest(token, listingQuery.data?._id);
+    // setCurrentUserIsInterested(true);
+    // alert("Interest sent to seller!");
   };
 
   return deleted ? (
@@ -63,9 +71,18 @@ export const Listing = () => {
           <p>Seller not found</p>
         )}
       </div>
-      {(role === "admin" || listingQuery.data?.seller._id === user?.id) && (
-        <button onClick={handleDelete}>Delete Listing</button>
-      )}
+      {activeOwner &&
+        user &&
+        listingQuery.data?.seller._id !== user?.id &&
+        (currentUserIsInterested ? (
+          <div>Interest sent!</div>
+        ) : (
+          <button onClick={handleSendInterest}>Send interest</button>
+        ))}
+      {activeOwner &&
+        (role === "admin" || listingQuery.data?.seller._id === user?.id) && (
+          <button onClick={handleDelete}>Delete Listing</button>
+        )}
     </div>
   );
 };

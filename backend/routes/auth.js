@@ -1,14 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
+const Listing = require("../models/Listing");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { verifyToken } = require("../middleware/authMiddleware");
-
 // Register
 router.post("/register", async (req, res) => {
   try {
     const { username, password } = req.body;
+    console.log("Registering user:", username, password);
 
     // 1. check if user already exists
     const existingUser = await User.findOne({ username });
@@ -27,6 +27,7 @@ router.post("/register", async (req, res) => {
       displayName: "",
       wishlist: [],
     });
+    console.log("New user created:", newUser);
     await newUser.save();
 
     res.status(201).json({ message: "User registered successfully" });

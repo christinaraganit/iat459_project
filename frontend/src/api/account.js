@@ -43,3 +43,22 @@ export const getUser = async (username) => {
 
   return data;
 };
+
+export const addListingOfInterest = async (token, listingId) => {
+  try {
+    const res = await fetch(
+      `http://localhost:5000/api/account/interest/${listingId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      },
+    );
+    const data = await res.json();
+    console.log("Add listing of interest response:", data);
+  } catch (er) {
+    console.error("Failed to add listing of interest:", er);
+  }
+};

@@ -29,7 +29,13 @@ const UserSchema = new mongoose.Schema({
     default: [],
   },
   listings: {
-    type: [Object],
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "Listing",
+    default: [],
+  },
+  listingsOfInterest: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "Listing",
     default: [],
   },
   email: {

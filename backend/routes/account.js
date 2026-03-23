@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
+const Listing = require("../models/Listing");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { verifyToken } = require("../middleware/authMiddleware");
@@ -112,6 +113,35 @@ router.post("/rename", verifyToken, async (req, res) => {
     );
     console.log(user);
     res.json({ token, user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Create a new listing
+router.post("/interest/:id", verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log("Adding interesting listing:", id);
+
+    const listing = await Listing.findById(id);
+    console.log("Found listing:", listing);
+    if (!listing) {
+      return res.status(404).json({ error: "Listing not found" });
+    }
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    console.log("Found user:", user);
+    console.log(user.listingsOfInterest);
+    if (user.listingsOfInterest.includes(id)) {
+      return res.status(400).json({ error: "Listing already in interests" });
+    }
+    user.listingsOfInterest.push(id);
+    await user.save();
+
+    res.status(201).json({ message: "Interest added successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
