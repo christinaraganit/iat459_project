@@ -15,8 +15,7 @@ export const User = () => {
     queryKey: ["username", user],
     queryFn: async () => {
       const res = await getUser(user);
-      console.log("res", res);
-      if (res.username) setIsValidUser(true);
+      if (res) setIsValidUser(true);
       return res;
     },
   });

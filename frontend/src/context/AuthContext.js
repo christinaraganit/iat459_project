@@ -13,7 +13,6 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        console.log("decoded", decoded);
         setUser({
           username: decoded.username,
           displayName: decoded.displayName,
@@ -21,7 +20,6 @@ export const AuthProvider = ({ children }) => {
         });
         setRole(decoded.role);
         getNewUserState(token).then((data) => {
-          console.log("New user state:", data);
           setIsNewUser(data);
         });
       } catch (err) {
@@ -32,9 +30,6 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
     }
   }, [token]);
-  useEffect(() => {
-    console.log("User changed:", user);
-  }, [user]);
 
   const reassignToken = (newToken) => {
     localStorage.setItem("token", newToken);
