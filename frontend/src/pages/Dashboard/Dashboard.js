@@ -1,7 +1,7 @@
 import "./Dashboard.css";
 import { Fragment, useState } from "react";
 import { useAuthContext } from "../../context/AuthContext";
-import { CreateListing } from "../../components/Listing/CreateListing/CreateListing";
+import { CreateListing } from "../../components/Dashboard/CreateListing/CreateListing";
 import TCGdex from "@tcgdex/sdk";
 import {
   addCardToWishlist,

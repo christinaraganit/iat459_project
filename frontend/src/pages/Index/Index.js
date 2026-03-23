@@ -2,7 +2,7 @@ import { Fragment, useState } from "react";
 import TCGdex from "@tcgdex/sdk";
 import { useQuery } from "@tanstack/react-query";
 import { getListings } from "../../api/listings";
-import Card from "../../components/Card/Card";
+import ListingCard from "../../components/Listing/ListingCard/ListingCard";
 import "./Index.css";
 import ConditionFilter from "../../components/Condition/ConditionFilter";
 
@@ -68,7 +68,7 @@ export const Index = () => {
       </div>
       <div className="listing__list">
         {listingsQuery.data?.map((item) => (
-          <Card
+          <ListingCard
             key={item._id}
             seller={item.seller}
             price={item.price}

@@ -1,0 +1,19 @@
+:root {
+  --card-ratio: 245/337;
+}
+.card {
+  display: flex;
+  border: 1px solid black;
+  padding: 32px;
+  gap: 16px;
+  .card__info {
+    h2 {
+      margin: 0;
+    }
+  }
+  .card__img {
+    width: 245px;
+    height: 337px;
+    background: black;
+  }
+}
