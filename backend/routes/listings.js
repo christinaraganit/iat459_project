@@ -106,8 +106,19 @@ router.delete("/item/:id", verifyToken, async (req, res) => {
       return res.status(404).json({ error: "Listing not found" });
     }
 
-    if (listing.seller._id.toString() !== req.userId && req.role !== "admin") {
-      return res.status(403).json({ error: "Forbidden" });
+    const hasSellerInfo = listing.seller !== null;
+
+    if (hasSellerInfo) {
+      if (
+        listing.seller._id.toString() !== req.userId &&
+        req.role !== "admin"
+      ) {
+        return res.status(403).json({ error: "Forbidden" });
+      }
+    } else {
+      if (req.role !== "admin") {
+        return res.status(403).json({ error: "Forbidden" });
+      }
     }
 
     await Listing.findByIdAndDelete(req.params.id);

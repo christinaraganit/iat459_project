@@ -106,10 +106,10 @@ export const Listing = () => {
         ) : (
           <button onClick={handleSendInterest}>Send interest</button>
         ))}
-      {activeOwner &&
-        (role === "admin" || listingQuery.data?.seller._id === user?.id) && (
-          <button onClick={handleDelete}>Delete Listing</button>
-        )}
+      {(role === "admin" ||
+        (activeOwner && listingQuery.data?.seller._id === user?.id)) && (
+        <button onClick={handleDelete}>Delete Listing</button>
+      )}
     </div>
   );
 };
