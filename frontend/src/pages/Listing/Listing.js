@@ -1,5 +1,5 @@
 import { useParams } from "react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getListingByID, deleteListingByID } from "../../api/listings";
 import TCGdex from "@tcgdex/sdk";
@@ -18,10 +18,14 @@ export const Listing = () => {
       const card = await tcgdex.card.get(listing.cardId);
       console.log(card);
       setCard(card);
-      setValidListing(listing.seller.username !== null);
+      setValidListing(listing.seller && listing.seller.username !== null);
       return { ...listing, card };
     },
   });
+
+  useEffect(() => {
+    console.log("data", listingQuery.data);
+  }, [listingQuery.data]);
 
   const [validListing, setValidListing] = useState(false);
 
