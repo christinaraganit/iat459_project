@@ -1,11 +1,15 @@
 import { useParams } from "react-router";
-import { useState, useEffect } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getListingByID, deleteListingByID } from "../../api/listings";
 import TCGdex from "@tcgdex/sdk";
 import { Navigate, redirect } from "react-router";
 import { useAuthContext } from "../../context/AuthContext";
-import { addListingOfInterest } from "../../api/account";
+import {
+  addListingOfInterest,
+  removeListingOfInterest,
+  getListingsOfInterest,
+} from "../../api/account";
 
 export const Listing = () => {
   const { role, user, token } = useAuthContext();
@@ -15,7 +19,23 @@ export const Listing = () => {
   const [validListing, setValidListing] = useState(false);
   const [activeOwner, setActiveOwner] = useState(false);
   const [deleted, setDeleted] = useState(false);
+  const [listingsOfInterest, setListingsOfInterest] = useState([]);
   const [currentUserIsInterested, setCurrentUserIsInterested] = useState(false);
+
+  const listingOfInterestQuery = useQuery({
+    queryKey: ["listingsOfInterest"],
+    queryFn: async () => {
+      if (token) {
+        const interests = await getListingsOfInterest(token);
+        setListingsOfInterest(interests);
+        if (interests.some((listing) => listing._id === cardId)) {
+          setCurrentUserIsInterested(true);
+        }
+        return interests;
+      }
+      return [];
+    },
+  });
 
   const listingQuery = useQuery({
     queryKey: ["listings", cardId],
@@ -38,8 +58,12 @@ export const Listing = () => {
 
   const handleSendInterest = () => {
     addListingOfInterest(token, listingQuery.data?._id);
-    // setCurrentUserIsInterested(true);
-    // alert("Interest sent to seller!");
+    setCurrentUserIsInterested(true);
+  };
+
+  const handleRevokeInterest = () => {
+    removeListingOfInterest(token, listingQuery.data?._id);
+    setCurrentUserIsInterested(false);
   };
 
   return deleted ? (
@@ -75,7 +99,10 @@ export const Listing = () => {
         user &&
         listingQuery.data?.seller._id !== user?.id &&
         (currentUserIsInterested ? (
-          <div>Interest sent!</div>
+          <Fragment>
+            <div>Interest sent!</div>
+            <button onClick={handleRevokeInterest}>Revoke interest</button>
+          </Fragment>
         ) : (
           <button onClick={handleSendInterest}>Send interest</button>
         ))}

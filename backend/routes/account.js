@@ -118,6 +118,18 @@ router.post("/rename", verifyToken, async (req, res) => {
   }
 });
 
+router.get("/interest", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findOne({ _id: req.userId }).populate(
+      "listingsOfInterest",
+    );
+    console.log("User's listings of interest:", user.listingsOfInterest);
+    res.json(user.listingsOfInterest);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Create a new listing
 router.post("/interest/:id", verifyToken, async (req, res) => {
   try {
@@ -142,6 +154,27 @@ router.post("/interest/:id", verifyToken, async (req, res) => {
     await user.save();
 
     res.status(201).json({ message: "Interest added successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete("/interest/:id", verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log("Removing interesting listing:", id);
+
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    console.log("Found user:", user);
+    user.listingsOfInterest = user.listingsOfInterest.filter(
+      (listingId) => listingId.toString() !== id,
+    );
+    await user.save();
+
+    res.json({ message: "Interest removed successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

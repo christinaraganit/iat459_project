@@ -62,3 +62,37 @@ export const addListingOfInterest = async (token, listingId) => {
     console.error("Failed to add listing of interest:", er);
   }
 };
+
+export const removeListingOfInterest = async (token, listingId) => {
+  try {
+    const res = await fetch(
+      `http://localhost:5000/api/account/interest/${listingId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: token,
+        },
+      },
+    );
+    const data = await res.json();
+    console.log("Remove listing of interest response:", data);
+  } catch (er) {
+    console.error("Failed to remove listing of interest:", er);
+  }
+};
+
+export const getListingsOfInterest = async (token) => {
+  try {
+    const res = await fetch(`http://localhost:5000/api/account/interest`, {
+      method: "GET",
+      headers: {
+        Authorization: token,
+      },
+    });
+    const data = await res.json();
+    console.log("Listings of interest:", data);
+    return data;
+  } catch (er) {
+    console.error("Failed to retrieve listings of interest:", er);
+  }
+};
