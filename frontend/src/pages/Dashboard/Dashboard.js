@@ -25,6 +25,7 @@ export const Dashboard = () => {
   const wishlistQuery = useQuery({
     queryKey: ["wishlist", user, token],
     queryFn: async () => {
+      if (!user || !token) return [];
       const data = await getWishlist(user, token);
       return await Promise.all(data?.map((card) => tcgdex.card.get(card)));
     },
@@ -85,10 +86,6 @@ export const Dashboard = () => {
       return { listings, cards };
     },
   });
-
-  useEffect(() => {
-    console.log(listingsQuery);
-  }, [listingsQuery]);
 
   return (
     <Fragment>
