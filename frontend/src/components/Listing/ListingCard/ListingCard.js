@@ -12,6 +12,7 @@ function ListingCard({
   id,
 }) {
   const { user } = useAuthContext();
+
   return (
     <a href={`/listings/${id}`} className="card">
       <Suspense fallback={<div className="card__img_placeholder"></div>}>

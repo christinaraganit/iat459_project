@@ -96,18 +96,21 @@ router.get("/item/:id", async (req, res) => {
 //   }
 // });
 
-router.delete("/item/:id", verifyToken, verifyAdmin, async (req, res) => {
+router.delete("/item/:id", verifyToken, async (req, res) => {
   try {
-    console.log("Delete request for listing ID:", req.params.id);
-    const listing = await Listing.findByIdAndDelete(req.params.id);
+    const listing = await Listing.findById(req.params.id).populate(
+      "seller",
+      "username displayName _id",
+    );
     if (!listing) {
       return res.status(404).json({ error: "Listing not found" });
     }
 
-    // if (listing.seller.toString() !== req.userId) {
-    //   return res.status(403).json({ error: "Forbidden" });
-    // }
-    // await Listing.findByIdAndDelete(req.params.id);
+    if (listing.seller._id.toString() !== req.userId && req.role !== "admin") {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    await Listing.findByIdAndDelete(req.params.id);
     res.json({ message: "Listing deleted successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
