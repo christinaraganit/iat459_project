@@ -31,3 +31,15 @@ export const getDisplayName = async (token) => {
     console.error("Failed to retrieve display name:", er);
   }
 };
+
+export const getUser = async (username) => {
+  const res = await fetch(
+    `http://localhost:5000/api/account/user/${username}`,
+    {
+      method: "GET",
+    },
+  );
+  const data = await res.json();
+
+  return data;
+};

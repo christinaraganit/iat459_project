@@ -4,11 +4,22 @@ import { useQuery } from "@tanstack/react-query";
 import { getListingsFromUser } from "../../api/listings";
 import ListingCard from "../../components/Listing/ListingCard/ListingCard";
 import TCGdex from "@tcgdex/sdk";
+import { getUser } from "../../api/account";
 
 export const User = () => {
   const tcgdex = new TCGdex("en");
   const { user } = useParams();
-  const [card, setCard] = useState();
+  const [isValidUser, setIsValidUser] = useState(false);
+
+  const userQuery = useQuery({
+    queryKey: ["username", user],
+    queryFn: async () => {
+      const res = await getUser(user);
+      console.log("res", res);
+      if (res.username) setIsValidUser(true);
+      return res;
+    },
+  });
 
   const listingQuery = useQuery({
     queryKey: ["listings", user],
@@ -24,7 +35,7 @@ export const User = () => {
     },
   });
 
-  return (
+  return isValidUser ? (
     <div>
       <h1>Profile {user}</h1>
       <div className="listing__list">
@@ -42,5 +53,7 @@ export const User = () => {
         ))}
       </div>
     </div>
+  ) : (
+    <div>Invalid user</div>
   );
 };
