@@ -48,7 +48,12 @@ router.get("/currentUser", verifyToken, async (req, res) => {
 
 router.get("/user/:user", async (req, res) => {
   try {
-    const listings = await Listing.find({ seller: req.params.user });
+    const seller = await User.findOne({ username: req.params.user });
+    console.log(seller);
+    if (!seller) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    const listings = await Listing.find({ seller: seller._id });
     res.json(listings);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -57,7 +62,10 @@ router.get("/user/:user", async (req, res) => {
 
 router.get("/item/:id", async (req, res) => {
   try {
-    const listing = await Listing.findById(req.params.id);
+    const listing = await Listing.findById(req.params.id).populate(
+      "seller",
+      "username displayName",
+    );
     if (!listing) {
       return res.status(404).json({ error: "Listing not found" });
     }

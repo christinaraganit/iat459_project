@@ -48,13 +48,15 @@ export const getListingsById = async (id = "") => {
   return res.json();
 };
 
-export const getListingsFromUser = async (id = "") => {
+export const getListingsFromUser = async (user = "") => {
   const params = new URLSearchParams();
-  if (id) {
-    params.append("id", id);
+  if (user) {
+    params.append("user", user);
   }
 
-  const res = await fetch(`http://localhost:5000/api/listings/user/${id}`);
+  console.log(params);
+
+  const res = await fetch(`http://localhost:5000/api/listings/user/${user}`);
 
   if (!res.ok) {
     throw new Error("Failed to fetch listings");

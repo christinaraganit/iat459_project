@@ -29,6 +29,18 @@ export const Listing = () => {
           <img src={card?.image + "/low.webp"} alt={card.name} />
         </div>
       )}
+      <div>
+        <p>Condition: {listingQuery.data?.condition}</p>
+        <p>Price: ${listingQuery.data?.price.toFixed(2)}</p>
+        <a href={`/user/${listingQuery.data?.seller.username}`}>
+          Seller:{" "}
+          {listingQuery.data?.seller.displayName ? (
+            <span>{listingQuery.data?.seller.displayName}</span>
+          ) : (
+            <span>{listingQuery.data?.seller.username}</span>
+          )}
+        </a>
+      </div>
     </div>
   );
 };
