@@ -83,7 +83,10 @@ export const Dashboard = () => {
       const cards = await Promise.all(
         listings?.map((listing) => tcgdex.card.get(listing.cardId)),
       );
-      return { listings, cards };
+      return listings.map((listing, i) => ({
+        ...listing,
+        card: cards[i],
+      }));
     },
   });
 
@@ -123,14 +126,14 @@ export const Dashboard = () => {
         </button>
       </section>
       <section className="dashboard__section dashboard__offers">
-        <h2>My offers ({listingsQuery.data?.listings.length || 0})</h2>
+        <h2>My offers ({listingsQuery.data?.length || 0})</h2>
         <div className="dashboard__offers__cards">
-          {listingsQuery.data?.listings?.map((listing, i) => (
+          {listingsQuery.data?.map((listing, i) => (
             <a href={`/listings/${listing._id}`} key={`offers-card-${i}`}>
               <img
                 key={`offers-card-${i}`}
-                src={listingsQuery.data?.cards[i]?.image + "/low.webp"}
-                alt={listingsQuery.data?.cards[i]?.name}
+                src={listing.card?.image + "/low.webp"}
+                alt={listing.card?.name}
                 style={{
                   cursor: "pointer",
                 }}

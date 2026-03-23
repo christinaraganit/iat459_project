@@ -18,7 +18,7 @@ export const getListings = async (
   if (filter.length > 0) {
     filter.forEach((condition) => params.append("condition", condition));
   }
-
+  console.log(params.toString());
   const res = await fetch(
     `http://localhost:5000/api/listings?${params.toString()}`,
   );
