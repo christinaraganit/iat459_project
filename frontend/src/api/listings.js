@@ -19,10 +19,10 @@ export const getListings = async (
     filter.forEach((condition) => params.append("condition", condition));
   }
 
-  // const res = await fetch(
-  //   `http://localhost:5000/api/listings?${params.toString()}`,
-  // );
-  const res = await fetch(`http://localhost:5000/api/listings/`);
+  const res = await fetch(
+    `http://localhost:5000/api/listings?${params.toString()}`,
+  );
+  // const res = await fetch(`http://localhost:5000/api/listings/`);
 
   if (!res.ok) {
     throw new Error("Failed to fetch listings");
