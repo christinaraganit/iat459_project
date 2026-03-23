@@ -28,7 +28,8 @@ router.get("/", async (req, res) => {
     const sortOrder = order === "asc" ? 1 : -1;
 
     const listings = await Listing.find(query)
-      .limit(12)
+      .skip(2)
+      .limit(4)
       .populate("seller", "username displayName")
       .sort({ [sortField]: sortOrder });
     res.json(listings);

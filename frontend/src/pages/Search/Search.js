@@ -1,5 +1,4 @@
 import { Fragment, useState, useEffect } from "react";
-import { Test } from "../../components/Test/Test";
 import TCGdex from "@tcgdex/sdk";
 export const Search = () => {
   const tcgdex = new TCGdex("en");
