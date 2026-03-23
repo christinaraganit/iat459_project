@@ -7,8 +7,10 @@ export const getNewUserState = async (token) => {
       },
     });
     const data = await res.json();
-    console.log("New user state:", data);
-    return data;
+    if (res.ok) return data;
+    else {
+      throw new Error("Failed to fetch new user state");
+    }
   } catch (er) {
     console.error("Failed to retrieve new user state:", er);
   }

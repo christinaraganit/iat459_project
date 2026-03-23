@@ -31,7 +31,7 @@ export const getListings = async (
   return res.json();
 };
 
-export const getListingsFromUser = async (id = "") => {
+export const getListingsById = async (id = "") => {
   const params = new URLSearchParams();
   if (id) {
     params.append("id", id);
@@ -43,6 +43,36 @@ export const getListingsFromUser = async (id = "") => {
 
   if (!res.ok) {
     throw new Error("Failed to fetch listings");
+  }
+
+  return res.json();
+};
+
+export const getListingsFromUser = async (id = "") => {
+  const params = new URLSearchParams();
+  if (id) {
+    params.append("id", id);
+  }
+
+  const res = await fetch(`http://localhost:5000/api/listings/user/${id}`);
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch listings");
+  }
+
+  return res.json();
+};
+
+export const getListingByID = async (id = "") => {
+  const params = new URLSearchParams();
+  if (id) {
+    params.append("id", id);
+  }
+
+  const res = await fetch(`http://localhost:5000/api/listings/item/${id}`);
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch listing");
   }
 
   return res.json();

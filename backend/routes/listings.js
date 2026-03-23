@@ -28,6 +28,7 @@ router.get("/", async (req, res) => {
     const sortOrder = order === "asc" ? 1 : -1;
 
     const listings = await Listing.find(query)
+      .limit(12)
       .populate("seller", "username displayName")
       .sort({ [sortField]: sortOrder });
     res.json(listings);
@@ -45,10 +46,22 @@ router.get("/currentUser", verifyToken, async (req, res) => {
   }
 });
 
-router.get("/:user", async (req, res) => {
+router.get("/user/:user", async (req, res) => {
   try {
     const listings = await Listing.find({ seller: req.params.user });
     res.json(listings);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get("/item/:id", async (req, res) => {
+  try {
+    const listing = await Listing.findById(req.params.id);
+    if (!listing) {
+      return res.status(404).json({ error: "Listing not found" });
+    }
+    res.json(listing);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
