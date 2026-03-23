@@ -4,7 +4,7 @@ const User = require("../models/User");
 const Listing = require("../models/Listing");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const verifyToken = require("../middleware/authMiddleware");
+const { verifyToken, verifyAdmin } = require("../middleware/authMiddleware");
 
 // View all listings
 router.get("/", async (req, res) => {
@@ -28,7 +28,7 @@ router.get("/", async (req, res) => {
     const sortOrder = order === "asc" ? 1 : -1;
 
     const listings = await Listing.find(query)
-      .skip(2)
+      // .skip(2)
       .limit(4)
       .populate("seller", "username displayName")
       .sort({ [sortField]: sortOrder });
@@ -65,8 +65,9 @@ router.get("/item/:id", async (req, res) => {
   try {
     const listing = await Listing.findById(req.params.id).populate(
       "seller",
-      "username displayName",
+      "username displayName _id",
     );
+    console.log(listing);
     if (!listing) {
       return res.status(404).json({ error: "Listing not found" });
     }
@@ -76,6 +77,42 @@ router.get("/item/:id", async (req, res) => {
   }
 });
 
+// router.delete("/wishlist/:id/:index", verifyToken, async (req, res) => {
+//   try {
+//     // 0. check if user is modifying their own wishlist
+//     if (req.params.id !== req.username)
+//       return res.status(403).json({ error: "Forbidden" });
+//     // 1. find user
+//     console.log(req.userId);
+//     const user = await User.findOne({ username: req.params.id });
+
+//     user.wishlist = user.wishlist.filter(
+//       (_, i) => i !== parseInt(req.params.index),
+//     );
+//     await user.save();
+//     res.json(user.wishlist);
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// });
+
+router.delete("/item/:id", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    console.log("Delete request for listing ID:", req.params.id);
+    const listing = await Listing.findByIdAndDelete(req.params.id);
+    if (!listing) {
+      return res.status(404).json({ error: "Listing not found" });
+    }
+
+    // if (listing.seller.toString() !== req.userId) {
+    //   return res.status(403).json({ error: "Forbidden" });
+    // }
+    // await Listing.findByIdAndDelete(req.params.id);
+    res.json({ message: "Listing deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 // Create a new listing
 router.post("/new", verifyToken, async (req, res) => {
   try {

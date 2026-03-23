@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
         setUser({
           username: decoded.username,
           displayName: decoded.displayName,
+          id: decoded.id,
         });
         setRole(decoded.role);
         getNewUserState(token).then((data) => {
@@ -31,6 +32,9 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
     }
   }, [token]);
+  useEffect(() => {
+    console.log("User changed:", user);
+  }, [user]);
 
   const reassignToken = (newToken) => {
     localStorage.setItem("token", newToken);

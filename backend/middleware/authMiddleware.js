@@ -15,10 +15,26 @@ function verifyToken(req, res, next) {
     );
     req.userId = decoded.id; // add user ID to request
     req.username = decoded.username; // add username to request
+    req.role = decoded.role; // add role to request
     next();
   } catch (error) {
     res.status(401).json({ error: "Invalid token" });
   }
 }
 
-module.exports = verifyToken;
+function verifyAdmin(req, res, next) {
+  if (!req.userId) {
+    return res.status(401).json({ error: "Unauthorized: Please log in first" });
+  }
+
+  // Check if the user is an admin
+  if (req.role !== "admin") {
+    return res
+      .status(403)
+      .json({ error: "Forbidden: admin privileges required" });
+  }
+
+  next();
+}
+
+module.exports = { verifyToken, verifyAdmin };

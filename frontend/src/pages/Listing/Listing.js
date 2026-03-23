@@ -1,10 +1,12 @@
 import { useParams } from "react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getListingByID } from "../../api/listings";
+import { getListingByID, deleteListingByID } from "../../api/listings";
 import TCGdex from "@tcgdex/sdk";
+import { useAuthContext } from "../../context/AuthContext";
 
 export const Listing = () => {
+  const { role, user, token } = useAuthContext();
   const tcgdex = new TCGdex("en");
   const { cardId } = useParams();
   const [card, setCard] = useState();
@@ -48,6 +50,13 @@ export const Listing = () => {
           <p>Seller not found</p>
         )}
       </div>
+      {(role === "admin" || listingQuery.data?.seller._id === user?.id) && (
+        <button
+          onClick={() => deleteListingByID(listingQuery.data?._id, token)}
+        >
+          Delete Listing
+        </button>
+      )}
     </div>
   );
 };

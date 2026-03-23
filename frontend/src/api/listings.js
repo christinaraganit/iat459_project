@@ -80,6 +80,22 @@ export const getListingByID = async (id = "") => {
   return res.json();
 };
 
+export const deleteListingByID = async (id = "", token) => {
+  const res = await fetch(`http://localhost:5000/api/listings/item/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to delete listing");
+  }
+
+  return res.json();
+};
+
 export const getListingsFromCurrentUser = async (token) => {
   const res = await fetch(`http://localhost:5000/api/listings/currentUser`, {
     headers: {
