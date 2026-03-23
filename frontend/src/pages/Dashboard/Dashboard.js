@@ -1,5 +1,5 @@
 import "./Dashboard.css";
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { useAuthContext } from "../../context/AuthContext";
 import { CreateListing } from "../../components/Dashboard/CreateListing/CreateListing";
 import TCGdex from "@tcgdex/sdk";
@@ -79,11 +79,16 @@ export const Dashboard = () => {
     queryKey: ["listings"],
     queryFn: async () => {
       const listings = await getListingsFromCurrentUser(token);
-      return await Promise.all(
+      const cards = await Promise.all(
         listings?.map((listing) => tcgdex.card.get(listing.cardId)),
       );
+      return { listings, cards };
     },
   });
+
+  useEffect(() => {
+    console.log(listingsQuery);
+  }, [listingsQuery]);
 
   return (
     <Fragment>
@@ -121,17 +126,19 @@ export const Dashboard = () => {
         </button>
       </section>
       <section className="dashboard__section dashboard__offers">
-        <h2>My offers ({listingsQuery.data?.length || 0})</h2>
+        <h2>My offers ({listingsQuery.data?.listings.length || 0})</h2>
         <div className="dashboard__offers__cards">
-          {listingsQuery.data?.map((card, i) => (
-            <img
-              key={`offers-card-${i}`}
-              src={card?.image + "/low.webp"}
-              alt={card?.name}
-              style={{
-                cursor: "pointer",
-              }}
-            />
+          {listingsQuery.data?.listings?.map((listing, i) => (
+            <a href={`/listings/${listing._id}`} key={`offers-card-${i}`}>
+              <img
+                key={`offers-card-${i}`}
+                src={listingsQuery.data?.cards[i]?.image + "/low.webp"}
+                alt={listingsQuery.data?.cards[i]?.name}
+                style={{
+                  cursor: "pointer",
+                }}
+              />
+            </a>
           ))}
         </div>
         {!newListingOpen ? (
