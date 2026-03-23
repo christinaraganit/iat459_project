@@ -3,11 +3,14 @@ import { useState, useEffect, useRef } from "react";
 import { Query } from "@tcgdex/sdk";
 import { useAuthContext } from "../../../context/AuthContext";
 import TCGdex from "@tcgdex/sdk";
+import { Navigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 export const CreateListing = () => {
   const { token } = useAuthContext();
   const tcgdex = new TCGdex("en");
   const [searchQs, setSearchQs] = useState({ results: [], page: 0 });
   const [searchTerm, setSearchTerm] = useState("");
+  const [finished, setFinished] = useState(false);
   const ref = useRef(null);
   const [listing, setListing] = useState({
     cardId: "",
@@ -15,6 +18,7 @@ export const CreateListing = () => {
     condition: "Mint",
     notes: "",
   });
+  const queryClient = useQueryClient();
   // Current listings do not actually choose a card. This is just testing search queries within the API
   useEffect(() => {
     if (searchTerm) {
@@ -45,7 +49,11 @@ export const CreateListing = () => {
         body: JSON.stringify(listing),
       });
       const data = await res.json();
-      console.log("Add to listing response:", data);
+      if (res.ok) {
+        return data;
+      } else {
+        throw new Error("Failed to create listing");
+      }
     } catch (er) {
       console.error("Failed to add listing to db:", er);
     }
@@ -54,10 +62,18 @@ export const CreateListing = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Submitting listing:", listing);
-    addListing();
+    addListing().then((test) => {
+      if (test !== undefined) {
+        queryClient.invalidateQueries({ queryKey: ["listings"] });
+        setFinished(true);
+      }
+      console.log("Add listing result:", test);
+    });
   };
 
-  return (
+  return finished ? (
+    <Navigate to="/" />
+  ) : (
     <div className="create_listing">
       <div
         style={{

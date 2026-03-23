@@ -9,13 +9,11 @@ import { getUser } from "../../api/account";
 export const User = () => {
   const tcgdex = new TCGdex("en");
   const { user } = useParams();
-  const [isValidUser, setIsValidUser] = useState(false);
 
   const userQuery = useQuery({
     queryKey: ["username", user],
     queryFn: async () => {
       const res = await getUser(user);
-      if (res) setIsValidUser(true);
       return res;
     },
   });
@@ -34,7 +32,7 @@ export const User = () => {
     },
   });
 
-  return isValidUser ? (
+  return userQuery.data ? (
     <div>
       <h1>Profile {user}</h1>
       <div className="listing__list">

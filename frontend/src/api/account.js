@@ -6,6 +6,7 @@ export const getNewUserState = async (token) => {
         Authorization: token,
       },
     });
+
     const data = await res.json();
     if (res.ok) return data;
     else {

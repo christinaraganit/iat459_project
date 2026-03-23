@@ -19,6 +19,7 @@ export const AuthProvider = ({ children }) => {
           id: decoded.id,
         });
         setRole(decoded.role);
+
         getNewUserState(token).then((data) => {
           setIsNewUser(data);
         });

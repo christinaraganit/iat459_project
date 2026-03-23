@@ -1,9 +1,9 @@
 import { useParams } from "react-router";
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getListingByID, deleteListingByID } from "../../api/listings";
 import TCGdex from "@tcgdex/sdk";
-import { Navigate, redirect, Link } from "react-router";
+import { Navigate, Link } from "react-router";
 import { useAuthContext } from "../../context/AuthContext";
 import {
   addListingOfInterest,
@@ -15,40 +15,39 @@ export const Listing = () => {
   const { role, user, token } = useAuthContext();
   const tcgdex = new TCGdex("en");
   const { cardId } = useParams();
-  const [card, setCard] = useState();
-  const [validListing, setValidListing] = useState(false);
-  const [activeOwner, setActiveOwner] = useState(false);
   const [deleted, setDeleted] = useState(false);
-  const [listingsOfInterest, setListingsOfInterest] = useState([]);
   const [currentUserIsInterested, setCurrentUserIsInterested] = useState(false);
-
-  const listingOfInterestQuery = useQuery({
-    queryKey: ["listingsOfInterest"],
-    queryFn: async () => {
-      if (token) {
-        const interests = await getListingsOfInterest(token);
-        setListingsOfInterest(interests);
-        if (interests.some((listing) => listing._id === cardId)) {
-          setCurrentUserIsInterested(true);
-        }
-        return interests;
-      }
-      return [];
-    },
-  });
 
   const listingQuery = useQuery({
     queryKey: ["listings", cardId],
     queryFn: async () => {
       const listing = await getListingByID(cardId);
-      if (listing) setValidListing(true);
+      if (!listing) return null;
+
       const card = await tcgdex.card.get(listing.cardId);
-      console.log(card);
-      setCard(card);
-      setActiveOwner(listing.seller && listing.seller.username !== null);
       return { ...listing, card };
     },
   });
+
+  useQuery({
+    queryKey: ["listingsOfInterest", token],
+    queryFn: async () => {
+      if (token) {
+        const interests = await getListingsOfInterest(token);
+        setCurrentUserIsInterested(
+          interests.some((listing) => listing._id === cardId),
+        );
+        return interests;
+      }
+
+      setCurrentUserIsInterested(false);
+      return [];
+    },
+  });
+
+  const card = listingQuery.data?.card;
+  const validListing = Boolean(listingQuery.data);
+  const activeOwner = Boolean(listingQuery.data?.seller?.username);
 
   const handleDelete = () => {
     deleteListingByID(listingQuery.data?._id, token).then(() => {
@@ -68,6 +67,10 @@ export const Listing = () => {
 
   return deleted ? (
     <Navigate to="/" />
+  ) : listingQuery.isPending ? (
+    <div>Loading listing...</div>
+  ) : listingQuery.isError ? (
+    <div>invalid listing</div>
   ) : !validListing ? (
     <div>invalid listing</div>
   ) : (
@@ -81,7 +84,7 @@ export const Listing = () => {
       )}
       <div>
         <p>Condition: {listingQuery.data?.condition}</p>
-        <p>Price: ${listingQuery.data?.price.toFixed(2)}</p>
+        <p>Price: ${listingQuery.data?.price?.toFixed(2)}</p>
         {activeOwner ? (
           <Link to={`/user/${listingQuery.data?.seller.username}`}>
             Seller:{" "}

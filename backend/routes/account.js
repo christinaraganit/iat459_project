@@ -75,6 +75,7 @@ router.get("/user/:username", async (req, res) => {
 router.get("/isNewUser", verifyToken, async (req, res) => {
   try {
     const user = await User.findOne({ _id: req.userId });
+    console.log(user.isNewUser);
     res.json(user.isNewUser);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -93,8 +94,6 @@ router.get("/displayName", verifyToken, async (req, res) => {
 router.post("/rename", verifyToken, async (req, res) => {
   try {
     // 1. find user
-    // console.log(req.userId);
-    // console.log(req.body);
     const user = await User.findOne({ _id: req.userId });
     // console.log(user);
     user.isNewUser = false;

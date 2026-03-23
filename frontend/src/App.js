@@ -11,6 +11,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { Listing } from "./pages/Listing/Listing";
 import { User } from "./pages/User/User";
 import { CreateListing } from "./pages/Dashboard/CreateListing/CreateListing";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,6 +25,7 @@ export const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      <ReactQueryDevtools initialIsOpen={false} />
       <AuthProvider>
         <Router>
           <Routes>
