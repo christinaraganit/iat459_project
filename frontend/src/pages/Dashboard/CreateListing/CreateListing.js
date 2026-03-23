@@ -1,6 +1,11 @@
+import "./CreateListing.css";
 import { useState, useEffect, useRef } from "react";
 import { Query } from "@tcgdex/sdk";
-export const CreateListing = ({ token, tcgdex, handleClose }) => {
+import { useAuthContext } from "../../../context/AuthContext";
+import TCGdex from "@tcgdex/sdk";
+export const CreateListing = () => {
+  const { token } = useAuthContext();
+  const tcgdex = new TCGdex("en");
   const [searchQs, setSearchQs] = useState({ results: [], page: 0 });
   const [searchTerm, setSearchTerm] = useState("");
   const ref = useRef(null);
@@ -50,11 +55,10 @@ export const CreateListing = ({ token, tcgdex, handleClose }) => {
     e.preventDefault();
     console.log("Submitting listing:", listing);
     addListing();
-    handleClose();
   };
 
   return (
-    <div>
+    <div className="create_listing">
       <div
         style={{
           border: "1px solid black",

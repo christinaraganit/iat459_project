@@ -10,6 +10,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute/ProtectedRoute";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { Listing } from "./pages/Listing/Listing";
 import { User } from "./pages/User/User";
+import { CreateListing } from "./pages/Dashboard/CreateListing/CreateListing";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -38,14 +39,17 @@ function App() {
               </Route>
               <Route path="search" element={<Search />} />
               {/* Protected routes */}
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute redirect="/login">
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="/dashboard">
+                <Route
+                  index
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="create" element={<CreateListing />} />
+              </Route>
             </Route>
           </Routes>
         </Router>

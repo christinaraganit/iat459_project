@@ -1,7 +1,6 @@
 import "./Dashboard.css";
 import { Fragment, useState, useEffect } from "react";
 import { useAuthContext } from "../../context/AuthContext";
-import { CreateListing } from "../../components/Dashboard/CreateListing/CreateListing";
 import TCGdex from "@tcgdex/sdk";
 import {
   addCardToWishlist,
@@ -13,6 +12,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "../../App";
 import { Onboarding } from "../../components/Onboarding/Onboarding";
 import { NameField } from "../../components/Dashboard/NameField/NameField";
+import { Link } from "react-router-dom";
 
 export const Dashboard = () => {
   const tcgdex = new TCGdex("en");
@@ -100,7 +100,7 @@ export const Dashboard = () => {
 
       <section className="dashboard__section dashboard__wishlist">
         <h2>My wishlist ({wishlistQuery.data?.length || 0})</h2>
-        <div className="dashboard__wishlist__cards">
+        <div className="dashboard__section__cards dashboard__wishlist__cards">
           {wishlistQuery.data?.map((card, i) => (
             <img
               key={`wishlist-card-${i}`}
@@ -127,9 +127,9 @@ export const Dashboard = () => {
       </section>
       <section className="dashboard__section dashboard__offers">
         <h2>My offers ({listingsQuery.data?.length || 0})</h2>
-        <div className="dashboard__offers__cards">
+        <div className="dashboard__section__cards dashboard__offers__cards">
           {listingsQuery.data?.map((listing, i) => (
-            <a href={`/listings/${listing._id}`} key={`offers-card-${i}`}>
+            <Link to={`/listings/${listing._id}`} key={`offers-card-${i}`}>
               <img
                 key={`offers-card-${i}`}
                 src={listing.card?.image + "/low.webp"}
@@ -138,23 +138,10 @@ export const Dashboard = () => {
                   cursor: "pointer",
                 }}
               />
-            </a>
+            </Link>
           ))}
         </div>
-        {!newListingOpen ? (
-          <button onClick={() => setNewListingOpen(true)}>
-            Create new offer
-          </button>
-        ) : (
-          <button onClick={() => setNewListingOpen(false)}>Cancel</button>
-        )}
-        {newListingOpen && (
-          <CreateListing
-            token={token}
-            tcgdex={tcgdex}
-            handleClose={() => setNewListingOpen(false)}
-          />
-        )}
+        <Link to="/dashboard/create">Create new offer</Link>
       </section>
       {isNewUser && <Onboarding />}
     </Fragment>

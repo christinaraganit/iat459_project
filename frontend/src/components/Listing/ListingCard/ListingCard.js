@@ -1,6 +1,7 @@
 import "./ListingCard.css";
 import { Fragment, Suspense } from "react";
 import { useAuthContext } from "../../../context/AuthContext";
+import { Link } from "react-router-dom";
 
 function ListingCard({
   seller,
@@ -14,11 +15,11 @@ function ListingCard({
   const { user } = useAuthContext();
 
   return (
-    <a href={`/listings/${id}`} className="card">
+    <Link to={`/listings/${id}`} className="card">
       <Suspense fallback={<div className="card__img_placeholder"></div>}>
         <img className="card__img" src={image} alt={cardId} />
       </Suspense>
-    </a>
+    </Link>
   );
 }
 

@@ -3,7 +3,7 @@ import { Fragment, useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getListingByID, deleteListingByID } from "../../api/listings";
 import TCGdex from "@tcgdex/sdk";
-import { Navigate, redirect } from "react-router";
+import { Navigate, redirect, Link } from "react-router";
 import { useAuthContext } from "../../context/AuthContext";
 import {
   addListingOfInterest,
@@ -83,14 +83,14 @@ export const Listing = () => {
         <p>Condition: {listingQuery.data?.condition}</p>
         <p>Price: ${listingQuery.data?.price.toFixed(2)}</p>
         {activeOwner ? (
-          <a href={`/user/${listingQuery.data?.seller.username}`}>
+          <Link to={`/user/${listingQuery.data?.seller.username}`}>
             Seller:{" "}
             {listingQuery.data?.seller.displayName ? (
               <span>{listingQuery.data?.seller.displayName}</span>
             ) : (
               <span>{listingQuery.data?.seller.username}</span>
             )}
-          </a>
+          </Link>
         ) : (
           <p>Seller not found</p>
         )}

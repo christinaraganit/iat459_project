@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Fragment, useState } from "react";
 
 export const Navbar = () => {
-  const { user, logout } = useAuthContext();
+  const { user, logout, role } = useAuthContext();
   const [navOpen, setNavOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,6 +30,12 @@ export const Navbar = () => {
       setNavOpen(false);
     }
     setSearchOpen(!searchOpen);
+  };
+
+  const handleRedirect = () => {
+    if (navOpen) {
+      setNavOpen(false);
+    }
   };
 
   return (
@@ -77,6 +83,7 @@ export const Navbar = () => {
                 <Link
                   className="navbar__actions_menu__user__display-name"
                   to="/dashboard"
+                  onClick={handleRedirect}
                 >
                   {user.displayName || user.username}
                 </Link>
@@ -89,6 +96,7 @@ export const Navbar = () => {
                 <Link
                   className="navbar__actions_menu__item__link"
                   to="/dashboard"
+                  onClick={handleRedirect}
                 >
                   View dashboard
                 </Link>
@@ -108,7 +116,7 @@ export const Navbar = () => {
             </Fragment>
           )}
         </menu>
-
+        {role && <Link to="/dashboard/create">Create listing</Link>}
         {
           <button
             className={`navbar__toggle_actions ${navOpen ? "navbar__toggle_actions--active" : ""}`}
