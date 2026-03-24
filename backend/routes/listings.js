@@ -78,25 +78,6 @@ router.get("/item/:id", async (req, res) => {
   }
 });
 
-// router.delete("/wishlist/:id/:index", verifyToken, async (req, res) => {
-//   try {
-//     // 0. check if user is modifying their own wishlist
-//     if (req.params.id !== req.username)
-//       return res.status(403).json({ error: "Forbidden" });
-//     // 1. find user
-//     console.log(req.userId);
-//     const user = await User.findOne({ username: req.params.id });
-
-//     user.wishlist = user.wishlist.filter(
-//       (_, i) => i !== parseInt(req.params.index),
-//     );
-//     await user.save();
-//     res.json(user.wishlist);
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// });
-
 router.delete("/item/:id", verifyToken, async (req, res) => {
   try {
     const listing = await Listing.findById(req.params.id).populate(
