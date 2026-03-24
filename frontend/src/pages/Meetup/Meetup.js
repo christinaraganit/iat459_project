@@ -10,6 +10,28 @@ import "leaflet/dist/leaflet.css";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
+import {
+  BC_BOUNDS,
+  VANCOUVER_CENTER,
+  clampLatLngToBC,
+} from "../../utils/mapBounds";
+
+const parseCoordinateLocation = (locationValue) => {
+  if (typeof locationValue !== "string") return null;
+
+  const match = locationValue
+    .trim()
+    .match(/^(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)$/);
+
+  if (!match) return null;
+
+  const lat = Number(match[1]);
+  const lng = Number(match[2]);
+
+  if (Number.isNaN(lat) || Number.isNaN(lng)) return null;
+
+  return { lat, lng };
+};
 
 export const Meetup = () => {
   const navigate = useNavigate();
@@ -35,6 +57,15 @@ export const Meetup = () => {
       meetupQuery.refetch();
     },
   });
+
+  const parsedMeetupLocation = parseCoordinateLocation(
+    meetupQuery.data?.location,
+  );
+  const boundedMeetupLocation = parsedMeetupLocation
+    ? clampLatLngToBC(parsedMeetupLocation)
+    : VANCOUVER_CENTER;
+  const mapPosition = [boundedMeetupLocation.lat, boundedMeetupLocation.lng];
+  const mapLabel = meetupQuery.data?.location || "Meetup location";
 
   return (
     <div>
@@ -76,19 +107,20 @@ export const Meetup = () => {
             }}
           >
             <MapContainer
-              center={[51.505, -0.09]}
+              key={`${mapPosition[0]}-${mapPosition[1]}`}
+              center={mapPosition}
               zoom={13}
               scrollWheelZoom={false}
               style={{ height: "100%", width: "100%" }}
+              maxBounds={BC_BOUNDS}
+              maxBoundsViscosity={1.0}
             >
               <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
-              <Marker position={[51.505, -0.09]}>
-                <Popup>
-                  A pretty CSS3 popup. <br /> Easily customizable.
-                </Popup>
+              <Marker position={mapPosition}>
+                <Popup>{mapLabel}</Popup>
               </Marker>
             </MapContainer>
           </div>

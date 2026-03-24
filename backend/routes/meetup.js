@@ -109,6 +109,33 @@ router.patch("/status", verifyToken, async (req, res) => {
     ) {
       return res.status(403).json({ error: "Forbidden" });
     }
+
+    if (status === "accepted") {
+      if (meetup.buyer.toString() !== req.userId) {
+        return res.status(403).json({
+          error: "Only the buyer can confirm a meetup",
+        });
+      }
+
+      const seller = await User.findById(meetup.seller);
+      const preferredLocation = seller?.preferredLocation;
+      const hasCoordinates =
+        Array.isArray(preferredLocation?.coordinates) &&
+        preferredLocation.coordinates.length === 2 &&
+        typeof preferredLocation.coordinates[0] === "number" &&
+        typeof preferredLocation.coordinates[1] === "number";
+
+      if (!hasCoordinates) {
+        return res.status(400).json({
+          error: "Seller has no preferred meeting location set",
+        });
+      }
+
+      const [lng, lat] = preferredLocation.coordinates;
+      const label = preferredLocation.label?.trim();
+      meetup.location = label || `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    }
+
     meetup.status = status;
     await meetup.save();
     res.json({ message: "Meetup status updated successfully" });

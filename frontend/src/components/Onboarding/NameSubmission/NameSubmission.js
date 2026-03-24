@@ -28,7 +28,6 @@ export const NameSubmission = ({
       const data = await res.json();
       console.log("Rename response:", data);
       if (res.ok) {
-        alert("Name updated successfully!");
         updateDisplayName(prospectiveDisplayName);
         reassignToken(data.token);
 

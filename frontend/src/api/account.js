@@ -96,3 +96,53 @@ export const getListingsOfInterest = async (token) => {
     console.error("Failed to retrieve listings of interest:", er);
   }
 };
+
+export const savePreferredLocation = async ({ lat, lng, label }, token) => {
+  try {
+    const res = await fetch(
+      `http://localhost:5000/api/account/preferred-location`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+        body: JSON.stringify({ lat, lng, label }),
+      },
+    );
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data?.error || "Failed to save preferred location");
+    }
+
+    return data;
+  } catch (er) {
+    console.error("Failed to save preferred location:", er);
+    throw er;
+  }
+};
+
+export const getPreferredLocation = async (token) => {
+  try {
+    const res = await fetch(
+      `http://localhost:5000/api/account/preferred-location`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: token,
+        },
+      },
+    );
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data?.error || "Failed to fetch preferred location");
+    }
+
+    return data;
+  } catch (er) {
+    console.error("Failed to retrieve preferred location:", er);
+    throw er;
+  }
+};

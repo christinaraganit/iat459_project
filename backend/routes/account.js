@@ -67,6 +67,55 @@ router.post("/rename", verifyToken, async (req, res) => {
   }
 });
 
+router.post("/preferred-location", verifyToken, async (req, res) => {
+  try {
+    const { lat, lng, label } = req.body;
+
+    if (
+      typeof lat !== "number" ||
+      Number.isNaN(lat) ||
+      typeof lng !== "number" ||
+      Number.isNaN(lng)
+    ) {
+      return res
+        .status(400)
+        .json({ error: "lat and lng must be valid numbers" });
+    }
+
+    const user = await User.findOne({ _id: req.userId });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    user.preferredLocation = {
+      type: "Point",
+      coordinates: [lng, lat],
+      label: label || "",
+      updatedAt: new Date(),
+    };
+    user.isNewUser = false;
+
+    await user.save();
+
+    res.status(200).json({ preferredLocation: user.preferredLocation });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get("/preferred-location", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findOne({ _id: req.userId });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json(user.preferredLocation || null);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.get("/interest", verifyToken, async (req, res) => {
   try {
     const user = await User.findOne({ _id: req.userId }).populate(

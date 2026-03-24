@@ -9,7 +9,7 @@ import {
 } from "../../api/wishlist";
 import { getMyMeetups, updateMeetupStatus } from "../../api/meetup";
 import { getListingsFromCurrentUser } from "../../api/listings";
-import { getListingsOfInterest } from "../../api/account";
+import { getListingsOfInterest, getPreferredLocation } from "../../api/account";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "../../App";
 import { Onboarding } from "../../components/Onboarding/Onboarding";
@@ -22,6 +22,11 @@ import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { WishlistItem } from "../../components/Dashboard/NameField/WishlistItem/WishlistItem";
+import {
+  BC_BOUNDS,
+  VANCOUVER_CENTER,
+  clampLatLngToBC,
+} from "../../utils/mapBounds";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -33,6 +38,8 @@ L.Icon.Default.mergeOptions({
 export const Dashboard = () => {
   const tcgdex = new TCGdex("en");
   const { token, user, isNewUser, role } = useAuthContext();
+
+  const DEFAULT_MAP_POSITION = [VANCOUVER_CENTER.lat, VANCOUVER_CENTER.lng];
 
   const [fieldname, setFieldname] = useState("");
 
@@ -138,6 +145,51 @@ export const Dashboard = () => {
     },
   });
 
+  const preferredLocationQuery = useQuery({
+    queryKey: ["preferredLocation", token],
+    queryFn: async () => {
+      if (!token) return null;
+      return getPreferredLocation(token);
+    },
+  });
+
+  const getMapPosition = () => {
+    const preferred = preferredLocationQuery.data;
+    if (!preferred) return DEFAULT_MAP_POSITION;
+
+    if (
+      Array.isArray(preferred.coordinates) &&
+      preferred.coordinates.length === 2 &&
+      typeof preferred.coordinates[0] === "number" &&
+      typeof preferred.coordinates[1] === "number"
+    ) {
+      const boundedLocation = clampLatLngToBC({
+        lat: preferred.coordinates[1],
+        lng: preferred.coordinates[0],
+      });
+      return [boundedLocation.lat, boundedLocation.lng];
+    }
+
+    if (
+      typeof preferred.lat === "number" &&
+      typeof preferred.lng === "number"
+    ) {
+      const boundedLocation = clampLatLngToBC({
+        lat: preferred.lat,
+        lng: preferred.lng,
+      });
+      return [boundedLocation.lat, boundedLocation.lng];
+    }
+
+    return DEFAULT_MAP_POSITION;
+  };
+
+  const mapPosition = getMapPosition();
+
+  const mapLabel =
+    preferredLocationQuery.data?.label?.trim() ||
+    "Your preferred meeting location";
+
   const updateMeetupStatusMutation = useMutation({
     mutationFn: async ({ meetupId, status }) => {
       const res = await updateMeetupStatus(meetupId, status, token);
@@ -166,19 +218,20 @@ export const Dashboard = () => {
           }}
         >
           <MapContainer
-            center={[51.505, -0.09]}
+            key={`${mapPosition[0]}-${mapPosition[1]}`}
+            center={mapPosition}
             zoom={13}
             scrollWheelZoom={false}
             style={{ height: "100%", width: "100%" }}
+            maxBounds={BC_BOUNDS}
+            maxBoundsViscosity={1.0}
           >
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            <Marker position={[51.505, -0.09]}>
-              <Popup>
-                A pretty CSS3 popup. <br /> Easily customizable.
-              </Popup>
+            <Marker position={mapPosition}>
+              <Popup>{mapLabel}</Popup>
             </Marker>
           </MapContainer>
         </div>
