@@ -41,7 +41,10 @@ export const Dashboard = () => {
     queryFn: async () => {
       if (!user || !token) return [];
       const data = await getWishlist(user, token);
-      return await Promise.all(data?.map((card) => tcgdex.card.get(card)));
+      console.log("Wishlist data from API:", data);
+      return await Promise.all(
+        data?.map((card) => tcgdex.card.get(card.cardId)),
+      );
     },
   });
 
