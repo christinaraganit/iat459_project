@@ -2,19 +2,43 @@ import "./Onboarding.css";
 import { useState, useEffect } from "react";
 import { useAuthContext } from "../../context/AuthContext";
 export const Onboarding = () => {
-  const { user, token, activateNewUser, updateDisplayName, reassignToken } =
-    useAuthContext();
+  const [step, setStep] = useState(1);
+  const incrementStep = () => setStep((prev) => prev + 1);
+  const decrementStep = () => setStep((prev) => prev - 1);
+  const authContext = useAuthContext();
+
+  return (
+    <aside className="onboarding">
+      {step === 1 && (
+        <NameSubmission
+          authContext={authContext}
+          incrementStep={incrementStep}
+          decrementStep={decrementStep}
+        />
+      )}
+    </aside>
+  );
+};
+
+const NameSubmission = ({ authContext, incrementStep, decrementStep }) => {
+  const { token, user, reassignToken, activateNewUser, updateDisplayName } =
+    authContext;
   const [prospectiveDisplayName, setProspectiveDisplayName] = useState("");
   const handleRename = async (e) => {
     e.preventDefault();
-    console.log("Attempting to rename user to:", prospectiveDisplayName);
+
+    const formattedFallbackName =
+      user.username.charAt(0).toUpperCase() + user?.username.slice(1);
 
     try {
       const res = await fetch("http://localhost:5000/api/account/rename", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: token },
         body: JSON.stringify({
-          displayName: prospectiveDisplayName,
+          displayName:
+            prospectiveDisplayName === ""
+              ? formattedFallbackName
+              : prospectiveDisplayName,
         }),
       });
 
@@ -25,22 +49,24 @@ export const Onboarding = () => {
         updateDisplayName(prospectiveDisplayName);
         reassignToken(data.token);
         activateNewUser();
+        incrementStep();
       }
     } catch (er) {
       console.error("Rename failed:", er);
     }
   };
 
-  useEffect(() => {
-    console.log(prospectiveDisplayName);
-  }, [prospectiveDisplayName]);
-
   return (
-    <article className="onboarding">
+    <article>
       <h2>What's your name?</h2>
       <form onSubmit={handleRename} className="onboarding__content">
         <input
-          placeholder={user.username}
+          placeholder={
+            user
+              ? user.username.charAt(0).toUpperCase() + user.username.slice(1)
+              : ""
+          }
+          value={prospectiveDisplayName}
           onChange={(e) => setProspectiveDisplayName(e.target.value)}
         ></input>
         <button>Continue</button>
