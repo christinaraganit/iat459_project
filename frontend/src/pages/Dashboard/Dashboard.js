@@ -20,6 +20,7 @@ import "leaflet/dist/leaflet.css";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
+import { WishlistItem } from "../../components/Dashboard/NameField/WishlistItem/WishlistItem";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -43,7 +44,10 @@ export const Dashboard = () => {
       const data = await getWishlist(user, token);
       console.log("Wishlist data from API:", data);
       return await Promise.all(
-        data?.map((card) => tcgdex.card.get(card.cardId)),
+        data?.map(async (item) => ({
+          ...item,
+          card: await tcgdex.card.get(item.cardId),
+        })),
       );
     },
   });
@@ -71,7 +75,7 @@ export const Dashboard = () => {
         alert("Card not found");
         return;
       }
-      return addCardToWishlist(user, token, cardId);
+      return addCardToWishlist(cardId, token);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -159,15 +163,11 @@ export const Dashboard = () => {
       <section className="dashboard__section dashboard__wishlist">
         <h2>My wishlist ({wishlistQuery.data?.length || 0})</h2>
         <div className="dashboard__section__cards dashboard__wishlist__cards">
-          {wishlistQuery.data?.map((card, i) => (
-            <img
+          {wishlistQuery.data?.map((item, i) => (
+            <WishlistItem
               key={`wishlist-card-${i}`}
-              src={card?.image + "/low.webp"}
-              alt={card?.name}
-              onClick={() => removeWishlistCardMutation.mutate(i)}
-              style={{
-                cursor: "pointer",
-              }}
+              card={item.card}
+              item={item}
             />
           ))}
         </div>

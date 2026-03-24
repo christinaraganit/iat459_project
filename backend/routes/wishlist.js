@@ -20,40 +20,68 @@ router.get("/:id", verifyToken, async (req, res) => {
   }
 });
 
-router.post("/:id", verifyToken, async (req, res) => {
+router.post("/add", verifyToken, async (req, res) => {
   try {
     // 0. check if user is modifying their own wishlist
-    if (req.params.id !== req.username)
-      return res.status(403).json({ error: "Forbidden" });
-    // 1. find user
-
-    const user = await User.findOne({ username: req.params.id });
+    const user = await User.findById(req.userId);
+    console.log(user);
     // 2. get cardID from body
     const wishlistItem = new WishlistItem({
       cardId: req.body.cardId,
     });
-
+    console.log("Creating wishlist item:", wishlistItem);
     // 2. add card to wishlist
     user.wishlist.push(wishlistItem);
     await user.save();
     await wishlistItem.save();
-    res.json(user.wishlist);
+    res.json({ wishlist: user.wishlist, newItem: wishlistItem });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-router.delete("/:id/:index", verifyToken, async (req, res) => {
+router.delete("/remove", verifyToken, async (req, res) => {
   try {
     // 0. check if user is modifying their own wishlist
-    if (req.params.id !== req.username)
-      return res.status(403).json({ error: "Forbidden" });
-    // 1. find user
-    const user = await User.findOne({ username: req.params.id });
 
+    // 1. find user
+    const user = await User.findById(req.userId);
+    const wishlistItem = await WishlistItem.findById(req.body.id);
+    if (!wishlistItem) {
+      return res.status(404).json({ error: "Wishlist item not found" });
+    }
+    console.log("User found for wishlist removal:", user);
     user.wishlist = user.wishlist.filter(
-      (_, i) => i !== parseInt(req.params.index),
+      (item) => item._id.toString() !== req.body.id,
     );
+    await user.save();
+    await WishlistItem.findByIdAndDelete(req.body.id);
+    res.json({ wishlist: user.wishlist, removedItem: wishlistItem });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.patch("/status", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId).populate(
+      "wishlist",
+      "cardId status _id",
+    );
+    console.log(user.wishlist);
+    console.log(req.body.wishlistItemId);
+    // 2. update status of wishlist item
+    const itemInUserWishlist = user.wishlist.find(
+      (i) => i._id.toString() === req.body.wishlistItemId,
+    );
+    console.log("item found:", itemInUserWishlist);
+    if (!itemInUserWishlist)
+      return res.status(404).json({ error: "Wishlist item not found" });
+    const wishlistItemToUpdate = await WishlistItem.findById(
+      req.body.wishlistItemId,
+    );
+    wishlistItemToUpdate.status = req.body.status;
+    await wishlistItemToUpdate.save();
     await user.save();
     res.json(user.wishlist);
   } catch (err) {
