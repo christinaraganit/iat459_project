@@ -4,6 +4,7 @@ export const getListings = async (
   order = "desc",
   filter = [],
   page = 1,
+  count = 4,
 ) => {
   const params = new URLSearchParams();
   if (search) {
@@ -17,6 +18,9 @@ export const getListings = async (
   }
   if (page) {
     params.append("page", page);
+  }
+  if (count) {
+    params.append("count", count);
   }
 
   if (filter.length > 0) {

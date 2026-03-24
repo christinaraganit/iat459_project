@@ -5,6 +5,7 @@ import { getListings } from "../../api/listings";
 import ListingCard from "../../components/Listing/ListingCard/ListingCard";
 import "./Index.css";
 import ConditionFilter from "../../components/Condition/ConditionFilter";
+import { useGridColumns } from "../../hooks/useGridColumns";
 
 const options = [
   {
@@ -29,12 +30,20 @@ export const Index = () => {
   const [sort, setSort] = useState("createdAt");
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(1);
+  const count = useGridColumns();
   // Listings fetch
   // Maps the saved cards ids to the card from tcgdex
   const listingsQuery = useQuery({
-    queryKey: ["listings", search, order, sort, selected, page],
+    queryKey: ["listings", search, order, sort, selected, page, count],
     queryFn: async () => {
-      const listings = await getListings(search, sort, order, selected, page);
+      const listings = await getListings(
+        search,
+        sort,
+        order,
+        selected,
+        page,
+        count,
+      );
       const cards = await Promise.all(
         listings?.map((listing) => tcgdex.card.get(listing.cardId)),
       );
