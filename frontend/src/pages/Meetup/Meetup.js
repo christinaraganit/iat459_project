@@ -2,7 +2,14 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
 import TCGdex from "@tcgdex/sdk";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { getMeetupById } from "../../api/meetup";
+import { getMeetupById, updateMeetupStatus } from "../../api/meetup";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { Fragment } from "react";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 export const Meetup = () => {
   const navigate = useNavigate();
@@ -17,6 +24,15 @@ export const Meetup = () => {
       if (!meetup) return null;
       const card = await tcgdex.card.get(meetup.cardId);
       return { ...meetup, card };
+    },
+  });
+
+  const meetupStatusMutation = useMutation({
+    mutationFn: async (status) => {
+      await updateMeetupStatus(meetupId, status, token);
+    },
+    onSuccess: () => {
+      meetupQuery.refetch();
     },
   });
 
@@ -37,6 +53,45 @@ export const Meetup = () => {
               meetupQuery.data.buyer.username}
           </p>
           <p>Status: {meetupQuery.data.status}</p>
+          <p>Location: {meetupQuery.data.location}</p>
+          <div>
+            {meetupQuery.data.seller._id === user.id ? (
+              <Fragment>
+                <button
+                  onClick={() => meetupStatusMutation.mutate("completed")}
+                >
+                  Mark as completed
+                </button>
+                <button
+                  onClick={() => meetupStatusMutation.mutate("cancelled")}
+                >
+                  Cancel meetup
+                </button>
+              </Fragment>
+            ) : null}
+          </div>
+          <div
+            style={{
+              height: "80vh",
+            }}
+          >
+            <MapContainer
+              center={[51.505, -0.09]}
+              zoom={13}
+              scrollWheelZoom={false}
+              style={{ height: "100%", width: "100%" }}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <Marker position={[51.505, -0.09]}>
+                <Popup>
+                  A pretty CSS3 popup. <br /> Easily customizable.
+                </Popup>
+              </Marker>
+            </MapContainer>
+          </div>
         </div>
       ) : (
         <p>Loading...</p>
