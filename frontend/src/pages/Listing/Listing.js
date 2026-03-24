@@ -10,6 +10,7 @@ import {
   removeListingOfInterest,
   getListingsOfInterest,
 } from "../../api/account";
+import { addInterestedUser, removeInterestedUser } from "../../api/listings";
 import { queryClient } from "../../App";
 
 export const Listing = () => {
@@ -59,7 +60,29 @@ export const Listing = () => {
   });
 
   const sendInterestMutation = useMutation({
-    mutationFn: (listingId) => addListingOfInterest(token, listingId),
+    mutationFn: (listingId) => addListingOfInterest(listingId, token),
+    onSuccess: () => {
+      console.log("Expressing interest for listing:", listingQuery.data?._id);
+      addInterestedUserMutation.mutate(listingQuery.data?._id);
+    },
+    onError: (err) => {
+      console.error(err);
+    },
+  });
+
+  const revokeInterestMutation = useMutation({
+    mutationFn: (listingId) => removeListingOfInterest(listingId, token),
+    onSuccess: () => {
+      console.log("Revoking interest for listing:", listingQuery.data?._id);
+      removeInterestedUserMutation.mutate(listingQuery.data?._id);
+    },
+    onError: (err) => {
+      console.error(err);
+    },
+  });
+
+  const addInterestedUserMutation = useMutation({
+    mutationFn: (listingId) => addInterestedUser(listingId, token),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["listingsOfInterest"],
@@ -70,8 +93,8 @@ export const Listing = () => {
     },
   });
 
-  const revokeInterestMutation = useMutation({
-    mutationFn: (listingId) => removeListingOfInterest(token, listingId),
+  const removeInterestedUserMutation = useMutation({
+    mutationFn: (listingId) => removeInterestedUser(listingId, token),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["listingsOfInterest"],

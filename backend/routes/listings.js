@@ -149,4 +149,46 @@ router.post("/new", verifyToken, async (req, res) => {
   }
 });
 
+router.post(`/interest/:id`, verifyToken, async (req, res) => {
+  try {
+    const listing = await Listing.findById(req.params.id);
+    if (!listing) {
+      return res.status(404).json({ error: "Listing not found" });
+    }
+
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (listing.interestedUsers.includes(req.userId)) {
+      return res.status(400).json({ error: "Listing already in interests" });
+    }
+    listing.interestedUsers.push(req.userId);
+    await listing.save();
+
+    res.status(201).json({ message: "Interest added successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete(`/interest/:id`, verifyToken, async (req, res) => {
+  try {
+    const listing = await Listing.findById(req.params.id);
+    if (!listing) {
+      return res.status(404).json({ error: "Listing not found" });
+    }
+
+    listing.interestedUsers = listing.interestedUsers.filter(
+      (userId) => userId.toString() !== req.userId,
+    );
+    await listing.save();
+
+    res.status(200).json({ message: "Interest removed successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

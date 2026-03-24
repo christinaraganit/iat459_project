@@ -45,7 +45,7 @@ export const getUser = async (username) => {
   return data;
 };
 
-export const addListingOfInterest = async (token, listingId) => {
+export const addListingOfInterest = async (listingId, token) => {
   try {
     const res = await fetch(
       `http://localhost:5000/api/account/interest/${listingId}`,
@@ -64,7 +64,7 @@ export const addListingOfInterest = async (token, listingId) => {
   }
 };
 
-export const removeListingOfInterest = async (token, listingId) => {
+export const removeListingOfInterest = async (listingId, token) => {
   try {
     const res = await fetch(
       `http://localhost:5000/api/account/interest/${listingId}`,

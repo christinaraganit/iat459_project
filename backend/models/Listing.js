@@ -29,6 +29,12 @@ const ListingSchema = new mongoose.Schema({
     enum: ["active", "sold", "removed"],
     default: "active",
   },
+  interestedUsers: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "User",
+    default: [],
+    required: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

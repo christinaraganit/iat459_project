@@ -125,3 +125,40 @@ export const addListing = async (listing, token) => {
 
   return res.json();
 };
+
+export const addInterestedUser = async (listingId, token) => {
+  const res = await fetch(
+    `http://localhost:5000/api/listings/interest/${listingId}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to add interested user");
+  }
+
+  return res.json();
+};
+
+export const removeInterestedUser = async (listingId, token) => {
+  const res = await fetch(
+    `http://localhost:5000/api/listings/interest/${listingId}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: token,
+      },
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to remove interested user");
+  }
+
+  return res.json();
+};
