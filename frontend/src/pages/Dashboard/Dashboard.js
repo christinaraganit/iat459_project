@@ -8,6 +8,7 @@ import {
   removeCardFromWishlist,
 } from "../../api/wishlist";
 import { getListingsFromCurrentUser } from "../../api/listings";
+import { getListingsOfInterest } from "../../api/account";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "../../App";
 import { Onboarding } from "../../components/Onboarding/Onboarding";
@@ -88,6 +89,23 @@ export const Dashboard = () => {
     },
   });
 
+  const listingsOfInterestQuery = useQuery({
+    queryKey: ["listingsOfInterest", token],
+    queryFn: async () => {
+      if (token) {
+        const interests = await getListingsOfInterest(token);
+        const cards = await Promise.all(
+          interests?.map((interest) => tcgdex.card.get(interest.cardId)),
+        );
+        return interests.map((interest, i) => ({
+          ...interest,
+          card: cards[i],
+        }));
+      }
+      return [];
+    },
+  });
+
   return (
     <Fragment>
       <h1>Dashboard</h1>
@@ -140,6 +158,25 @@ export const Dashboard = () => {
           ))}
         </div>
         <Link to="/dashboard/create">Create new offer</Link>
+      </section>
+      <section className="dashboard__section dashboard__listings_of_interest">
+        <h2>
+          Listings of interest ({listingsOfInterestQuery.data?.length || 0})
+        </h2>
+        <div className="dashboard__section__cards dashboard__listings_of_interest__cards">
+          {listingsOfInterestQuery.data?.map((listing, i) => (
+            <Link to={`/listings/${listing._id}`} key={`offers-card-${i}`}>
+              <img
+                key={`offers-card-${i}`}
+                src={listing.card?.image + "/low.webp"}
+                alt={listing.card?.name}
+                style={{
+                  cursor: "pointer",
+                }}
+              />
+            </Link>
+          ))}
+        </div>
       </section>
       {isNewUser && <Onboarding />}
     </Fragment>

@@ -17,7 +17,6 @@ export const Listing = () => {
   const { role, user, token } = useAuthContext();
   const tcgdex = new TCGdex("en");
   const { cardId } = useParams();
-  const [deleted, setDeleted] = useState(false);
 
   const listingQuery = useQuery({
     queryKey: ["listings", cardId],
@@ -31,7 +30,7 @@ export const Listing = () => {
   });
 
   const currentUserIsInterested = useQuery({
-    queryKey: ["listingsOfInterest", token],
+    queryKey: ["listingsOfInterest", cardId, token],
     queryFn: async () => {
       if (token) {
         const interests = await getListingsOfInterest(token);
@@ -49,10 +48,10 @@ export const Listing = () => {
   const deleteListingMutation = useMutation({
     mutationFn: (id) => deleteListingByID(id, token),
     onSuccess: () => {
-      setDeleted(true);
       queryClient.invalidateQueries({
         queryKey: ["listings"],
       });
+      navigate("/");
     },
     onError: (err) => {
       console.error(err);
@@ -79,7 +78,6 @@ export const Listing = () => {
       queryClient.invalidateQueries({
         queryKey: ["listingsOfInterest"],
       });
-      navigate("/");
     },
     onError: (err) => {
       console.error(err);

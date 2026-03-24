@@ -1,6 +1,7 @@
 import { jwtDecode } from "jwt-decode";
 import { useState, useEffect, createContext, useContext } from "react";
 import { getNewUserState, getDisplayName } from "../api/account";
+import { useQueryClient } from "@tanstack/react-query";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -8,6 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
   const [isNewUser, setIsNewUser] = useState(false);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (token) {
@@ -39,6 +41,15 @@ export const AuthProvider = ({ children }) => {
 
   const login = (newToken) => {
     reassignToken(newToken);
+    queryClient.invalidateQueries({
+      queryKey: ["wishlist"],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["listings"],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["listingsOfInterest"],
+    });
   };
 
   const logout = () => {
