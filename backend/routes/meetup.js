@@ -10,16 +10,17 @@ const { verifyToken } = require("../middleware/authMiddleware");
 // Create a new meetup
 router.post("/new", verifyToken, async (req, res) => {
   try {
-    const { listingId, buyer, location, time } = req.body;
+    const { listingId, buyer, location, date } = req.body;
     console.log("Received listing data:", req.body);
 
     const newMeetup = new Meetup({
-      listingId,
+      listingId: listingId,
       buyer,
       seller: req.userId,
       location,
-      time,
+      date,
     });
+    console.log("Created new meetup object:", newMeetup);
     await newMeetup.save();
 
     res.status(201).json({ message: "Meetup created successfully" });

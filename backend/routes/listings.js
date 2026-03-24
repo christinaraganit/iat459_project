@@ -177,9 +177,9 @@ router.get("/interest/:id", async (req, res) => {
   try {
     const listing = await Listing.findById(req.params.id).populate(
       "interestedUsers",
-      "username displayName",
+      "username displayName _id",
     );
-
+    console.log(listing);
     if (!listing) {
       return res.status(404).json({ error: "Listing not found" });
     }

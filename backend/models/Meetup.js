@@ -11,7 +11,7 @@ const MeetupSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  listing: {
+  listingId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Listing",
     required: true,
