@@ -48,6 +48,10 @@ const UserSchema = new mongoose.Schema({
   preferredLocation: {
     type: Object,
   },
+  rating: {
+    type: Number,
+    default: -1,
+  },
 });
 
 module.exports = mongoose.model("User", UserSchema);
