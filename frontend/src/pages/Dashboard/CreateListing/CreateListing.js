@@ -6,6 +6,7 @@ import TCGdex from "@tcgdex/sdk";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { addListing } from "../../../api/listings";
+import { useGridColumns } from "../../../hooks/useGridColumns";
 
 export const CreateListing = () => {
   const navigate = useNavigate();
@@ -13,7 +14,6 @@ export const CreateListing = () => {
   const tcgdex = new TCGdex("en");
   const [searchQs, setSearchQs] = useState({ results: [], page: 0 });
   const [searchTerm, setSearchTerm] = useState("");
-  const [finished, setFinished] = useState(false);
   const ref = useRef(null);
   const [listing, setListing] = useState({
     cardId: "",
@@ -24,15 +24,16 @@ export const CreateListing = () => {
   const queryClient = useQueryClient();
   // Current listings do not actually choose a card. This is just testing search queries within the API
 
+  const gridCols = useGridColumns();
   const searchResultsQuery = useQuery({
-    queryKey: ["searchResults", searchTerm, searchQs.page],
+    queryKey: ["searchResults", searchTerm, searchQs.page, gridCols],
     queryFn: async () => {
       if (searchTerm) {
         const results = await tcgdex.card.list(
           new Query()
             .like("name", searchTerm)
             .not.equal("image", null)
-            .paginate(searchQs.page, 5),
+            .paginate(searchQs.page, gridCols),
         );
         return results;
       }
@@ -44,7 +45,7 @@ export const CreateListing = () => {
     if (!searchTerm) {
       setSearchQs({ results: [], page: 1 });
     }
-  }, [searchTerm]);
+  }, [searchTerm, searchQs.page]);
 
   const addListingMutation = useMutation({
     mutationFn: (listing) => addListing(listing, token),
@@ -66,35 +67,7 @@ export const CreateListing = () => {
 
   return (
     <div className="create_listing">
-      <div
-        style={{
-          border: "1px solid black",
-          padding: "10px",
-          marginBottom: "20px",
-          display: "flex",
-          overflowX: "auto",
-          gap: "5px",
-        }}
-      >
-        {searchResultsQuery.data &&
-          searchResultsQuery.data.map((card, i) => (
-            <div key={card.id}>
-              {card.name} {card.id}
-              <img
-                key={`wishlist-card-${i}`}
-                src={card?.image + "/low.webp"}
-                alt={card?.name}
-                onClick={() => {
-                  setListing({ ...listing, cardId: card.id });
-                  ref.current.value = card.id;
-                }}
-                style={{
-                  cursor: "pointer",
-                }}
-              />
-            </div>
-          ))}
-      </div>
+      <h1>Create new listing</h1>
       <div>
         <label>
           Search for card
@@ -123,6 +96,56 @@ export const CreateListing = () => {
         >
           v
         </button>
+      </div>
+      <div
+        style={{
+          border: "1px solid black",
+          padding: "10px",
+          marginBottom: "20px",
+          display: "flex",
+          overflowX: "hidden",
+          gap: "5px",
+        }}
+      >
+        {searchResultsQuery.data &&
+          searchResultsQuery.data.map((card, i) => (
+            <div
+              key={card.id}
+              style={{
+                border:
+                  listing.cardId === card.id
+                    ? "2px solid blue"
+                    : "2px solid gray",
+                flex: "1 1 0",
+                overflowX: "hidden",
+                boxSizing: "border-box",
+              }}
+            >
+              <h2
+                style={{
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  width: "100%",
+                }}
+              >
+                {card.name}
+              </h2>
+              <p>{card.id}</p>
+              <img
+                key={`wishlist-card-${i}`}
+                src={card?.image + "/low.webp"}
+                alt={card?.name}
+                onClick={() => {
+                  setListing({ ...listing, cardId: card.id });
+                  ref.current.value = card.id;
+                }}
+                style={{
+                  cursor: "pointer",
+                }}
+              />
+            </div>
+          ))}
       </div>
       <form onSubmit={handleSubmit}>
         <label>

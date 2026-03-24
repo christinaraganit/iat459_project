@@ -108,6 +108,9 @@ export const Listing = () => {
       queryClient.invalidateQueries({
         queryKey: ["listingsOfInterest"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["interestedUsers", cardId, token],
+      });
     },
     onError: (err) => {
       console.error(err);
@@ -119,6 +122,9 @@ export const Listing = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["listingsOfInterest"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["interestedUsers", cardId, token],
       });
     },
     onError: (err) => {
@@ -146,10 +152,16 @@ export const Listing = () => {
     <div>invalid listing</div>
   ) : (
     <div>
-      <h1>Listing Item {cardId}</h1>
+      <h1>{card?.name}</h1>
+      <p>#{cardId}</p>
+      {interestedUsersQuery.data?.length > 0 && (
+        <p>
+          {interestedUsersQuery.data.length} interested user
+          {interestedUsersQuery.data.length !== 1 ? "s" : ""}
+        </p>
+      )}
       {card && (
         <div>
-          <h2>{card.name}</h2>
           <img src={card?.image + "/low.webp"} alt={card.name} />
         </div>
       )}
@@ -184,12 +196,7 @@ export const Listing = () => {
         (activeOwner && listingQuery.data?.seller._id === user?.id)) && (
         <button onClick={handleDelete}>Delete Listing</button>
       )}
-      {interestedUsersQuery.data?.length > 0 && (
-        <p>
-          {interestedUsersQuery.data.length} interested user
-          {interestedUsersQuery.data.length !== 1 ? "s" : ""}
-        </p>
-      )}
+
       {activeOwner &&
         user &&
         user.id === listingQuery.data?.seller._id &&

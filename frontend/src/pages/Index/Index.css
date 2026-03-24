@@ -1,3 +1,20 @@
+:root {
+  --gridColumns: 1;
+
+  @media screen and (min-width: 480px) {
+    --gridColumns: 2;
+  }
+  @media screen and (min-width: 768px) {
+    --gridColumns: 3;
+  }
+  @media screen and (min-width: 1024px) {
+    --gridColumns: 4;
+  }
+  @media screen and (min-width: 1532px) {
+    --gridColumns: 6;
+  }
+}
+
 .listing__nav {
   display: flex;
   align-items: center;
@@ -11,21 +28,6 @@
 
 .listing__list {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
+  grid-template-columns: repeat(var(--gridColumns), 1fr);
   gap: 1rem;
-
-  @media screen and (min-width: 480px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media screen and (min-width: 768px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  @media screen and (min-width: 1024px) {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  @media screen and (min-width: 1532px) {
-    grid-template-columns: repeat(6, 1fr);
-  }
 }
