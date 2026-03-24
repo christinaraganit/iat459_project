@@ -131,7 +131,7 @@ export const Dashboard = () => {
         <h2>My preferred meeting location</h2>
         <div
           style={{
-            height: "800px",
+            height: "80vh",
           }}
         >
           <MapContainer
