@@ -15,6 +15,12 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
+        if (decoded.exp * 1000 < Date.now()) {
+          console.log("Token has expired");
+          logout();
+          return;
+        }
+        console.log("Decoded token:", decoded);
         setUser({
           username: decoded.username,
           displayName: decoded.displayName,
