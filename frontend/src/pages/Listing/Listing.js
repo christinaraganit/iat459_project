@@ -55,7 +55,6 @@ export const Listing = () => {
     },
     onError: (err) => {
       console.error(err);
-      alert("Failed to delete listing");
     },
   });
 
@@ -68,7 +67,6 @@ export const Listing = () => {
     },
     onError: (err) => {
       console.error(err);
-      alert("Failed to send interest");
     },
   });
 
@@ -81,7 +79,6 @@ export const Listing = () => {
     },
     onError: (err) => {
       console.error(err);
-      alert("Failed to revoke interest");
     },
   });
 

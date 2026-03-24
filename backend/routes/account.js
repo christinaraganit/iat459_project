@@ -23,11 +23,10 @@ router.post("/wishlist/:id", verifyToken, async (req, res) => {
     if (req.params.id !== req.username)
       return res.status(403).json({ error: "Forbidden" });
     // 1. find user
-    console.log(req.userId);
+
     const user = await User.findOne({ username: req.params.id });
     // 2. get cardID from body
     const cardID = req.body;
-    console.log("Adding card to wishlist:", cardID);
     // 2. add card to wishlist
     user.wishlist.push(req.body.cardId);
     await user.save();
@@ -43,7 +42,6 @@ router.delete("/wishlist/:id/:index", verifyToken, async (req, res) => {
     if (req.params.id !== req.username)
       return res.status(403).json({ error: "Forbidden" });
     // 1. find user
-    console.log(req.userId);
     const user = await User.findOne({ username: req.params.id });
 
     user.wishlist = user.wishlist.filter(
@@ -75,7 +73,6 @@ router.get("/user/:username", async (req, res) => {
 router.get("/isNewUser", verifyToken, async (req, res) => {
   try {
     const user = await User.findOne({ _id: req.userId });
-    console.log(user.isNewUser);
     res.json(user.isNewUser);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -95,9 +92,9 @@ router.post("/rename", verifyToken, async (req, res) => {
   try {
     // 1. find user
     const user = await User.findOne({ _id: req.userId });
-    // console.log(user);
+
     user.isNewUser = false;
-    console.log(req.body);
+
     user.displayName = req.body.displayName;
     await user.save();
     const token = jwt.sign(
@@ -110,7 +107,7 @@ router.post("/rename", verifyToken, async (req, res) => {
       process.env.JWT_SECRET || "fallbackSecret",
       { expiresIn: "1h" },
     );
-    console.log(user);
+
     res.json({ token, user });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -122,7 +119,7 @@ router.get("/interest", verifyToken, async (req, res) => {
     const user = await User.findOne({ _id: req.userId }).populate(
       "listingsOfInterest",
     );
-    console.log("User's listings of interest:", user.listingsOfInterest);
+
     res.json(user.listingsOfInterest);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -133,10 +130,9 @@ router.get("/interest", verifyToken, async (req, res) => {
 router.post("/interest/:id", verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("Adding interesting listing:", id);
 
     const listing = await Listing.findById(id);
-    console.log("Found listing:", listing);
+
     if (!listing) {
       return res.status(404).json({ error: "Listing not found" });
     }
@@ -144,8 +140,7 @@ router.post("/interest/:id", verifyToken, async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    console.log("Found user:", user);
-    console.log(user.listingsOfInterest);
+
     if (user.listingsOfInterest.includes(id)) {
       return res.status(400).json({ error: "Listing already in interests" });
     }
@@ -161,13 +156,12 @@ router.post("/interest/:id", verifyToken, async (req, res) => {
 router.delete("/interest/:id", verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("Removing interesting listing:", id);
 
     const user = await User.findById(req.userId);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    console.log("Found user:", user);
+
     user.listingsOfInterest = user.listingsOfInterest.filter(
       (listingId) => listingId.toString() !== id,
     );
