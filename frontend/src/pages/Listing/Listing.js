@@ -184,6 +184,12 @@ export const Listing = () => {
         (activeOwner && listingQuery.data?.seller._id === user?.id)) && (
         <button onClick={handleDelete}>Delete Listing</button>
       )}
+      {interestedUsersQuery.data?.length > 0 && (
+        <p>
+          {interestedUsersQuery.data.length} interested user
+          {interestedUsersQuery.data.length !== 1 ? "s" : ""}
+        </p>
+      )}
       {activeOwner &&
         user &&
         user.id === listingQuery.data?.seller._id &&
