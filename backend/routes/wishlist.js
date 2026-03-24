@@ -51,6 +51,14 @@ router.delete("/remove", verifyToken, async (req, res) => {
     if (!wishlistItem) {
       return res.status(404).json({ error: "Wishlist item not found" });
     }
+    const wishlistItemBelongsToUser = user.wishlist.some(
+      (item) => item._id.toString() === req.body.id,
+    );
+    if (!wishlistItemBelongsToUser) {
+      return res
+        .status(403)
+        .json({ error: "Unauthorized to modify this wishlist item" });
+    }
     console.log("User found for wishlist removal:", user);
     user.wishlist = user.wishlist.filter(
       (item) => item._id.toString() !== req.body.id,
@@ -75,7 +83,7 @@ router.patch("/status", verifyToken, async (req, res) => {
     const itemInUserWishlist = user.wishlist.find(
       (i) => i._id.toString() === req.body.wishlistItemId,
     );
-    console.log("item found:", itemInUserWishlist);
+
     if (!itemInUserWishlist)
       return res.status(404).json({ error: "Wishlist item not found" });
     const wishlistItemToUpdate = await WishlistItem.findById(

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getListingsFromUser } from "../../api/listings";
 import { getWishlist } from "../../api/wishlist";
-import { WishlistItem } from "../../components/Dashboard/WishlistItem/WishlistItem";
+import { WishlistItem } from "../../components/Dashboard/NameField/WishlistItem/WishlistItem";
 import ListingCard from "../../components/Listing/ListingCard/ListingCard";
 import TCGdex from "@tcgdex/sdk";
 import { getUser } from "../../api/account";
@@ -50,7 +50,8 @@ export const User = () => {
   return userQuery.data ? (
     <div>
       <h1>Profile {user}</h1>
-      <div className="listing__list">
+      <section className="listing__list">
+        <h2>Listings</h2>
         {listingQuery.data?.map((item) => (
           <ListingCard
             key={item._id}
@@ -63,11 +64,16 @@ export const User = () => {
             id={item._id}
           />
         ))}
-      </div>
+      </section>
       <section>
         <h2>Wishlist</h2>
         {wishlistQuery.data?.map((item) => (
-          <WishlistItem key={item._id} card={item.card} item={item} />
+          <WishlistItem
+            key={item._id}
+            card={item.card}
+            item={item}
+            owner={user}
+          />
         ))}
       </section>
     </div>

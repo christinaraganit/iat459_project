@@ -20,7 +20,7 @@ import "leaflet/dist/leaflet.css";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
-import { WishlistItem } from "../../components/Dashboard/WishlistItem/WishlistItem";
+import { WishlistItem } from "../../components/Dashboard/NameField/WishlistItem/WishlistItem";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -167,6 +167,7 @@ export const Dashboard = () => {
               key={`wishlist-card-${i}`}
               card={item.card}
               item={item}
+              owner={user.username}
             />
           ))}
         </div>

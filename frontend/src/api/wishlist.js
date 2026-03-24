@@ -1,5 +1,4 @@
 export const getWishlist = async (id) => {
-  console.log("Fetching wishlist for user:", id);
   try {
     const res = await fetch(`http://localhost:5000/api/wishlist/${id}`, {
       method: "GET",
