@@ -46,7 +46,7 @@ router.post("/rename", verifyToken, async (req, res) => {
     // 1. find user
     const user = await User.findOne({ _id: req.userId });
 
-    user.isNewUser = false;
+    // user.isNewUser = false;
 
     user.displayName = req.body.displayName;
     await user.save();
