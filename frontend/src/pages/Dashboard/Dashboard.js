@@ -45,8 +45,6 @@ export const Dashboard = () => {
     },
   });
 
-  const [newListingOpen, setNewListingOpen] = useState(false);
-
   // Function add card to wishlist
   // Make query refetch the data on success
   const addWishlistCardMutation = useMutation({

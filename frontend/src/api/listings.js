@@ -108,3 +108,20 @@ export const getListingsFromCurrentUser = async (token) => {
 
   return res.json();
 };
+
+export const addListing = async (listing, token) => {
+  const res = await fetch(`http://localhost:5000/api/listings/new`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token,
+    },
+    body: JSON.stringify(listing),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to create listing");
+  }
+
+  return res.json();
+};

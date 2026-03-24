@@ -3,9 +3,12 @@ import { useState, useEffect, useRef } from "react";
 import { Query } from "@tcgdex/sdk";
 import { useAuthContext } from "../../../context/AuthContext";
 import TCGdex from "@tcgdex/sdk";
-import { Navigate } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { addListing } from "../../../api/listings";
+
 export const CreateListing = () => {
+  const navigate = useNavigate();
   const { token } = useAuthContext();
   const tcgdex = new TCGdex("en");
   const [searchQs, setSearchQs] = useState({ results: [], page: 0 });
@@ -20,60 +23,48 @@ export const CreateListing = () => {
   });
   const queryClient = useQueryClient();
   // Current listings do not actually choose a card. This is just testing search queries within the API
-  useEffect(() => {
-    if (searchTerm) {
-      const search = async () => {
+
+  const searchResultsQuery = useQuery({
+    queryKey: ["searchResults", searchTerm, searchQs.page],
+    queryFn: async () => {
+      if (searchTerm) {
         const results = await tcgdex.card.list(
           new Query()
             .like("name", searchTerm)
             .not.equal("image", null)
             .paginate(searchQs.page, 5),
         );
-        setSearchQs({ ...searchQs, results });
-      };
-      search();
-      console.log("Search results:", searchQs);
-    } else {
+        return results;
+      }
+      return [];
+    },
+    enabled: Boolean(searchTerm),
+  });
+  useEffect(() => {
+    if (!searchTerm) {
       setSearchQs({ results: [], page: 1 });
     }
-  }, [searchTerm, searchQs.page]);
+  }, [searchTerm]);
 
-  const addListing = async () => {
-    try {
-      const res = await fetch(`http://localhost:5000/api/listings/new`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-        body: JSON.stringify(listing),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        return data;
-      } else {
-        throw new Error("Failed to create listing");
-      }
-    } catch (er) {
-      console.error("Failed to add listing to db:", er);
-    }
-  };
+  const addListingMutation = useMutation({
+    mutationFn: (listing) => addListing(listing, token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["listings"] });
+      navigate("/dashboard");
+    },
+    onError: (err) => {
+      console.error("Failed to create listing:", err);
+      alert("Failed to create listing");
+    },
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Submitting listing:", listing);
-    addListing().then((test) => {
-      if (test !== undefined) {
-        queryClient.invalidateQueries({ queryKey: ["listings"] });
-        setFinished(true);
-      }
-      console.log("Add listing result:", test);
-    });
+    addListingMutation.mutate(listing);
   };
 
-  return finished ? (
-    <Navigate to="/" />
-  ) : (
+  return (
     <div className="create_listing">
       <div
         style={{
@@ -85,8 +76,8 @@ export const CreateListing = () => {
           gap: "5px",
         }}
       >
-        {searchQs.results &&
-          searchQs.results.map((card, i) => (
+        {searchResultsQuery.data &&
+          searchResultsQuery.data.map((card, i) => (
             <div key={card.id}>
               {card.name} {card.id}
               <img
