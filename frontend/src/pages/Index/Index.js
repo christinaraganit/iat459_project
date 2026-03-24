@@ -28,13 +28,13 @@ export const Index = () => {
   const [order, setOrder] = useState("desc");
   const [sort, setSort] = useState("createdAt");
   const [selected, setSelected] = useState([]);
-
+  const [page, setPage] = useState(1);
   // Listings fetch
   // Maps the saved cards ids to the card from tcgdex
   const listingsQuery = useQuery({
-    queryKey: ["listings", search, order, sort, selected],
+    queryKey: ["listings", search, order, sort, selected, page],
     queryFn: async () => {
-      const listings = await getListings(search, sort, order, selected);
+      const listings = await getListings(search, sort, order, selected, page);
       const cards = await Promise.all(
         listings?.map((listing) => tcgdex.card.get(listing.cardId)),
       );
@@ -80,6 +80,16 @@ export const Index = () => {
             id={item._id}
           />
         ))}
+      </div>
+      <div className="listing__pagination">
+        <button
+          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+          disabled={page === 1}
+        >
+          Previous
+        </button>
+        <span>Page {page}</span>
+        <button onClick={() => setPage((prev) => prev + 1)}>Next</button>
       </div>
     </Fragment>
   );

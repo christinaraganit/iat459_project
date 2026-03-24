@@ -9,7 +9,7 @@ const { verifyToken, verifyAdmin } = require("../middleware/authMiddleware");
 // View all listings
 router.get("/", async (req, res) => {
   try {
-    const { search, sort, order, condition } = req.query;
+    const { search, sort, order, condition, page } = req.query;
 
     const query = {};
     if (search) {
@@ -30,6 +30,7 @@ router.get("/", async (req, res) => {
     const listings = await Listing.find(query)
       // .skip(2)
       .limit(4)
+      .skip((page - 1) * 4)
       .populate("seller", "username displayName")
       .sort({ [sortField]: sortOrder });
     res.json(listings);

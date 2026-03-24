@@ -3,6 +3,7 @@ export const getListings = async (
   sort = "createdAt",
   order = "desc",
   filter = [],
+  page = 1,
 ) => {
   const params = new URLSearchParams();
   if (search) {
@@ -13,6 +14,9 @@ export const getListings = async (
   }
   if (order) {
     params.append("order", order);
+  }
+  if (page) {
+    params.append("page", page);
   }
 
   if (filter.length > 0) {
