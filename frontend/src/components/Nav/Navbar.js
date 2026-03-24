@@ -15,6 +15,7 @@ export const Navbar = () => {
     navigate("/");
     setTimeout(() => {
       logout();
+      setNavOpen(false);
     }, 100);
   };
 
