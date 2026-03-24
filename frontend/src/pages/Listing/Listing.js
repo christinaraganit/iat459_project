@@ -155,7 +155,7 @@ export const Listing = () => {
     onSuccess: () => {
       console.log("Meetup created successfully");
       queryClient.invalidateQueries({
-        queryKey: ["meetups", cardId, token],
+        queryKey: ["meetups"],
       });
     },
     onError: (err) => {
@@ -169,7 +169,7 @@ export const Listing = () => {
     onSuccess: () => {
       console.log("Meetup removed successfully");
       queryClient.invalidateQueries({
-        queryKey: ["meetups", cardId, token],
+        queryKey: ["meetups"],
       });
     },
     onError: (err) => {

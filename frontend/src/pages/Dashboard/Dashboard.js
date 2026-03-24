@@ -7,6 +7,7 @@ import {
   getWishlist,
   removeCardFromWishlist,
 } from "../../api/wishlist";
+import { getMyMeetups, updateMeetupStatus } from "../../api/meetup";
 import { getListingsFromCurrentUser } from "../../api/listings";
 import { getListingsOfInterest } from "../../api/account";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -125,6 +126,30 @@ export const Dashboard = () => {
     },
   });
 
+  const meetupQuery = useQuery({
+    queryKey: ["meetups", token],
+    queryFn: async () => {
+      if (token) {
+        const meetups = await getMyMeetups(token);
+        console.log("Fetched meetups:", meetups);
+        return meetups;
+      }
+      return [];
+    },
+  });
+
+  const updateMeetupStatusMutation = useMutation({
+    mutationFn: async ({ meetupId, status }) => {
+      const res = await updateMeetupStatus(meetupId, status, token);
+      return res;
+    },
+    onSuccess: (data) => {
+      console.log("Meetup status updated:", data);
+      queryClient.invalidateQueries({
+        queryKey: ["meetups"],
+      });
+    },
+  });
   return (
     <Fragment>
       <h1>Dashboard</h1>
@@ -157,6 +182,42 @@ export const Dashboard = () => {
             </Marker>
           </MapContainer>
         </div>
+      </section>
+      <section>
+        <h2>My meetups ({meetupQuery.data?.length || 0})</h2>
+        {meetupQuery.data?.map((meetup, i) => (
+          <div key={`meetup-${i}`}>
+            {meetup.seller._id === user.id ? (
+              <p>
+                <span>Selling to</span>{" "}
+                {meetup.buyer.displayName || meetup.buyer.username} for listing{" "}
+                {meetup.listingId.cardId} on{" "}
+                {new Date(meetup.date).toLocaleString()} - Status:{" "}
+                {meetup.status}{" "}
+              </p>
+            ) : meetup.buyer._id === user.id ? (
+              <p>
+                <span>Buying from</span>{" "}
+                {meetup.seller.displayName || meetup.seller.username} for
+                listing {meetup.listingId.cardId} on{" "}
+                {new Date(meetup.date).toLocaleString()} - Status:{" "}
+                {meetup.status}{" "}
+                {meetup.status === "pending" && (
+                  <button
+                    onClick={() =>
+                      updateMeetupStatusMutation.mutate({
+                        meetupId: meetup._id,
+                        status: "accepted",
+                      })
+                    }
+                  >
+                    Accept meetup
+                  </button>
+                )}
+              </p>
+            ) : null}
+          </div>
+        ))}
       </section>
 
       <section className="dashboard__section dashboard__wishlist">

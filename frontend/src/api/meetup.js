@@ -53,3 +53,31 @@ export const getMeetupsByListingId = async (listingId, token) => {
 
   return res.json();
 };
+
+export const updateMeetupStatus = async (meetupId, status, token) => {
+  const res = await fetch(`http://localhost:5000/api/meetup/status`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token,
+    },
+    body: JSON.stringify({ meetupId, status }),
+  });
+  if (!res.ok) {
+    throw new Error("Failed to update meetup status");
+  }
+  return res.json();
+};
+
+export const getMyMeetups = async (token) => {
+  const res = await fetch(`http://localhost:5000/api/meetup/myMeetups`, {
+    headers: {
+      Authorization: token,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch meetups");
+  }
+  return res.json();
+};

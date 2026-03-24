@@ -24,6 +24,11 @@ const MeetupSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  status: {
+    type: String,
+    enum: ["pending", "accepted", "completed", "cancelled"],
+    default: "pending",
+  },
   createdAt: {
     type: Date,
     default: Date.now,

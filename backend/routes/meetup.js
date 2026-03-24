@@ -59,4 +59,40 @@ router.get("/byListing/:listingId", verifyToken, async (req, res) => {
   }
 });
 
+router.get("/myMeetups", verifyToken, async (req, res) => {
+  try {
+    const meetups = await Meetup.find({
+      $or: [{ seller: req.userId }, { buyer: req.userId }],
+    })
+      .populate("seller", "username displayName id")
+      .populate("buyer", "username displayName id")
+      .populate("listingId", "_id cardId price condition notes");
+    res.json(meetups);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.patch("/status", verifyToken, async (req, res) => {
+  try {
+    const { meetupId, status } = req.body;
+    console.log("Received status update request:", req.body);
+    const meetup = await Meetup.findById(meetupId);
+    if (!meetup) {
+      return res.status(404).json({ error: "Meetup not found" });
+    }
+    if (
+      meetup.seller.toString() !== req.userId &&
+      meetup.buyer.toString() !== req.userId
+    ) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+    meetup.status = status;
+    await meetup.save();
+    res.json({ message: "Meetup status updated successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
