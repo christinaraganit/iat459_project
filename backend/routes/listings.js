@@ -9,7 +9,7 @@ const { verifyToken, verifyAdmin } = require("../middleware/authMiddleware");
 // View all listings
 router.get("/", async (req, res) => {
   try {
-    const { search, sort, order, condition, page } = req.query;
+    const { search, sort, order, condition, page, count } = req.query;
 
     const query = {};
     if (search) {
@@ -29,8 +29,8 @@ router.get("/", async (req, res) => {
 
     const listings = await Listing.find(query)
       // .skip(2)
-      .limit(4)
-      .skip((page - 1) * 4)
+      .limit(parseInt(count) || 4)
+      .skip((page - 1) * (parseInt(count) || 4))
       .populate("seller", "username displayName")
       .sort({ [sortField]: sortOrder });
     res.json(listings);
@@ -177,9 +177,9 @@ router.get("/interest/:id", async (req, res) => {
   try {
     const listing = await Listing.findById(req.params.id).populate(
       "interestedUsers",
-      "username displayName",
+      "username displayName _id",
     );
-
+    console.log(listing);
     if (!listing) {
       return res.status(404).json({ error: "Listing not found" });
     }

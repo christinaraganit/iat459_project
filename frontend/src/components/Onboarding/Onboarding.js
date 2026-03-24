@@ -1,50 +1,27 @@
 import "./Onboarding.css";
 import { useState, useEffect } from "react";
 import { useAuthContext } from "../../context/AuthContext";
+import { NameSubmission } from "./NameSubmission/NameSubmission";
 export const Onboarding = () => {
-  const { user, token, activateNewUser, updateDisplayName, reassignToken } =
-    useAuthContext();
-  const [prospectiveDisplayName, setProspectiveDisplayName] = useState("");
-  const handleRename = async (e) => {
-    e.preventDefault();
-    console.log("Attempting to rename user to:", prospectiveDisplayName);
-
-    try {
-      const res = await fetch("http://localhost:5000/api/account/rename", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: token },
-        body: JSON.stringify({
-          displayName: prospectiveDisplayName,
-        }),
-      });
-
-      const data = await res.json();
-      console.log("Rename response:", data);
-      if (res.ok) {
-        alert("Name updated successfully!");
-        updateDisplayName(prospectiveDisplayName);
-        reassignToken(data.token);
-        activateNewUser();
-      }
-    } catch (er) {
-      console.error("Rename failed:", er);
-    }
-  };
-
-  useEffect(() => {
-    console.log(prospectiveDisplayName);
-  }, [prospectiveDisplayName]);
+  const [step, setStep] = useState(1);
+  const incrementStep = () => setStep((prev) => prev + 1);
+  const decrementStep = () => setStep((prev) => prev - 1);
+  const authContext = useAuthContext();
 
   return (
-    <article className="onboarding">
-      <h2>What's your name?</h2>
-      <form onSubmit={handleRename} className="onboarding__content">
-        <input
-          placeholder={user.username}
-          onChange={(e) => setProspectiveDisplayName(e.target.value)}
-        ></input>
-        <button>Continue</button>
-      </form>
-    </article>
+    <aside className="onboarding">
+      {step === 1 && (
+        <NameSubmission
+          authContext={authContext}
+          incrementStep={incrementStep}
+          decrementStep={decrementStep}
+        />
+      )}
+      {step === 2 && (
+        <article>
+          <h2>Welcome to CardConnect!</h2>
+        </article>
+      )}
+    </aside>
   );
 };

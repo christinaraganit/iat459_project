@@ -7,6 +7,7 @@ import {
   getWishlist,
   removeCardFromWishlist,
 } from "../../api/wishlist";
+import { getMyMeetups, updateMeetupStatus } from "../../api/meetup";
 import { getListingsFromCurrentUser } from "../../api/listings";
 import { getListingsOfInterest } from "../../api/account";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -20,6 +21,7 @@ import "leaflet/dist/leaflet.css";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
+import { WishlistItem } from "../../components/Dashboard/NameField/WishlistItem/WishlistItem";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -40,8 +42,13 @@ export const Dashboard = () => {
     queryKey: ["wishlist", user, token],
     queryFn: async () => {
       if (!user || !token) return [];
-      const data = await getWishlist(user, token);
-      return await Promise.all(data?.map((card) => tcgdex.card.get(card)));
+      const data = await getWishlist(user.username);
+      return await Promise.all(
+        data?.map(async (item) => ({
+          ...item,
+          card: await tcgdex.card.get(item.cardId),
+        })),
+      );
     },
   });
 
@@ -68,7 +75,7 @@ export const Dashboard = () => {
         alert("Card not found");
         return;
       }
-      return addCardToWishlist(user, token, cardId);
+      return addCardToWishlist(cardId, token);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -119,6 +126,30 @@ export const Dashboard = () => {
     },
   });
 
+  const meetupQuery = useQuery({
+    queryKey: ["meetups", token],
+    queryFn: async () => {
+      if (token) {
+        const meetups = await getMyMeetups(token);
+        console.log("Fetched meetups:", meetups);
+        return meetups;
+      }
+      return [];
+    },
+  });
+
+  const updateMeetupStatusMutation = useMutation({
+    mutationFn: async ({ meetupId, status }) => {
+      const res = await updateMeetupStatus(meetupId, status, token);
+      return res;
+    },
+    onSuccess: (data) => {
+      console.log("Meetup status updated:", data);
+      queryClient.invalidateQueries({
+        queryKey: ["meetups"],
+      });
+    },
+  });
   return (
     <Fragment>
       <h1>Dashboard</h1>
@@ -152,19 +183,52 @@ export const Dashboard = () => {
           </MapContainer>
         </div>
       </section>
+      <section>
+        <h2>My meetups ({meetupQuery.data?.length || 0})</h2>
+        {meetupQuery.data?.map((meetup, i) => (
+          <Link key={`meetup-${i}`} to={`/meetups/${meetup._id}`}>
+            {meetup.seller._id === user.id ? (
+              <p>
+                <span>Selling to</span>{" "}
+                {meetup.buyer.displayName || meetup.buyer.username} for listing{" "}
+                {meetup.listingId.cardId} on{" "}
+                {new Date(meetup.date).toLocaleString()} - Status:{" "}
+                {meetup.status}{" "}
+              </p>
+            ) : meetup.buyer._id === user.id ? (
+              <p>
+                <span>Buying from</span>{" "}
+                {meetup.seller.displayName || meetup.seller.username} for
+                listing {meetup.listingId.cardId} on{" "}
+                {new Date(meetup.date).toLocaleString()} - Status:{" "}
+                {meetup.status}{" "}
+                {meetup.status === "pending" && (
+                  <button
+                    onClick={() =>
+                      updateMeetupStatusMutation.mutate({
+                        meetupId: meetup._id,
+                        status: "accepted",
+                      })
+                    }
+                  >
+                    Accept meetup
+                  </button>
+                )}
+              </p>
+            ) : null}
+          </Link>
+        ))}
+      </section>
 
       <section className="dashboard__section dashboard__wishlist">
         <h2>My wishlist ({wishlistQuery.data?.length || 0})</h2>
         <div className="dashboard__section__cards dashboard__wishlist__cards">
-          {wishlistQuery.data?.map((card, i) => (
-            <img
+          {wishlistQuery.data?.map((item, i) => (
+            <WishlistItem
               key={`wishlist-card-${i}`}
-              src={card?.image + "/low.webp"}
-              alt={card?.name}
-              onClick={() => removeWishlistCardMutation.mutate(i)}
-              style={{
-                cursor: "pointer",
-              }}
+              card={item.card}
+              item={item}
+              owner={user.username}
             />
           ))}
         </div>

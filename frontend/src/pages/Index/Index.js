@@ -5,6 +5,10 @@ import { getListings } from "../../api/listings";
 import ListingCard from "../../components/Listing/ListingCard/ListingCard";
 import "./Index.css";
 import ConditionFilter from "../../components/Condition/ConditionFilter";
+import { useGridColumns } from "../../hooks/useGridColumns";
+import { useAuthContext } from "../../context/AuthContext";
+import { getMyMeetups } from "../../api/meetup";
+import { Link } from "react-router-dom";
 
 const options = [
   {
@@ -29,12 +33,21 @@ export const Index = () => {
   const [sort, setSort] = useState("createdAt");
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(1);
+  const count = useGridColumns();
+  const { user, token } = useAuthContext();
   // Listings fetch
   // Maps the saved cards ids to the card from tcgdex
   const listingsQuery = useQuery({
-    queryKey: ["listings", search, order, sort, selected, page],
+    queryKey: ["listings", search, order, sort, selected, page, count],
     queryFn: async () => {
-      const listings = await getListings(search, sort, order, selected, page);
+      const listings = await getListings(
+        search,
+        sort,
+        order,
+        selected,
+        page,
+        count,
+      );
       const cards = await Promise.all(
         listings?.map((listing) => tcgdex.card.get(listing.cardId)),
       );
@@ -49,6 +62,18 @@ export const Index = () => {
   const handleSortChange = (ev) => {
     setSort(ev.target.value);
   };
+
+  const meetupsQuery = useQuery({
+    queryKey: ["meetups", user],
+    queryFn: async () => {
+      if (user) {
+        const meetups = await getMyMeetups(token);
+        console.log(meetups);
+        return meetups;
+      }
+      return [];
+    },
+  });
 
   return (
     <Fragment>
@@ -91,6 +116,32 @@ export const Index = () => {
         <span>Page {page}</span>
         <button onClick={() => setPage((prev) => prev + 1)}>Next</button>
       </div>
+      {user && (
+        <section>
+          <h2>Upcoming meetups</h2>
+          {meetupsQuery.data?.map((meetup, i) => (
+            <Link key={`meetup-${i}`} to={`/meetups/${meetup._id}`}>
+              {meetup.seller._id === user.id ? (
+                <p>
+                  <span>Selling to</span>{" "}
+                  {meetup.buyer.displayName || meetup.buyer.username} for
+                  listing {meetup.listingId.cardId} on{" "}
+                  {new Date(meetup.date).toLocaleString()} - Status:{" "}
+                  {meetup.status}{" "}
+                </p>
+              ) : meetup.buyer._id === user.id ? (
+                <p>
+                  <span>Buying from</span>{" "}
+                  {meetup.seller.displayName || meetup.seller.username} for
+                  listing {meetup.listingId.cardId} on{" "}
+                  {new Date(meetup.date).toLocaleString()} - Status:{" "}
+                  {meetup.status}{" "}
+                </p>
+              ) : null}
+            </Link>
+          ))}
+        </section>
+      )}
     </Fragment>
   );
 };

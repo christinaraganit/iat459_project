@@ -11,7 +11,7 @@ const MeetupSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  listing: {
+  listingId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Listing",
     required: true,
@@ -23,6 +23,11 @@ const MeetupSchema = new mongoose.Schema({
   date: {
     type: Date,
     required: true,
+  },
+  status: {
+    type: String,
+    enum: ["pending", "accepted", "completed", "cancelled"],
+    default: "pending",
   },
   createdAt: {
     type: Date,

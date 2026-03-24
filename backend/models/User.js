@@ -25,7 +25,8 @@ const UserSchema = new mongoose.Schema({
     default: "",
   },
   wishlist: {
-    type: [String],
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "WishlistItem",
     default: [],
   },
   listings: {
@@ -47,6 +48,10 @@ const UserSchema = new mongoose.Schema({
   },
   preferredLocation: {
     type: Object,
+  },
+  rating: {
+    type: Number,
+    default: -1,
   },
 });
 
