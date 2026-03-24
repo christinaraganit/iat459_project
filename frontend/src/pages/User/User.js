@@ -2,6 +2,8 @@ import { useParams } from "react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getListingsFromUser } from "../../api/listings";
+import { getWishlist } from "../../api/wishlist";
+import { WishlistItem } from "../../components/Dashboard/WishlistItem/WishlistItem";
 import ListingCard from "../../components/Listing/ListingCard/ListingCard";
 import TCGdex from "@tcgdex/sdk";
 import { getUser } from "../../api/account";
@@ -32,6 +34,19 @@ export const User = () => {
     },
   });
 
+  const wishlistQuery = useQuery({
+    queryKey: ["wishlist", user],
+    queryFn: async () => {
+      const data = await getWishlist(user);
+      return await Promise.all(
+        data?.map(async (item) => ({
+          ...item,
+          card: await tcgdex.card.get(item.cardId),
+        })),
+      );
+    },
+  });
+
   return userQuery.data ? (
     <div>
       <h1>Profile {user}</h1>
@@ -49,6 +64,12 @@ export const User = () => {
           />
         ))}
       </div>
+      <section>
+        <h2>Wishlist</h2>
+        {wishlistQuery.data?.map((item) => (
+          <WishlistItem key={item._id} card={item.card} item={item} />
+        ))}
+      </section>
     </div>
   ) : (
     <div>Invalid user</div>

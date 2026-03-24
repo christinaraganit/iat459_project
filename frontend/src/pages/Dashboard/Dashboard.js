@@ -20,7 +20,7 @@ import "leaflet/dist/leaflet.css";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
-import { WishlistItem } from "../../components/Dashboard/NameField/WishlistItem/WishlistItem";
+import { WishlistItem } from "../../components/Dashboard/WishlistItem/WishlistItem";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -41,8 +41,7 @@ export const Dashboard = () => {
     queryKey: ["wishlist", user, token],
     queryFn: async () => {
       if (!user || !token) return [];
-      const data = await getWishlist(user, token);
-      console.log("Wishlist data from API:", data);
+      const data = await getWishlist(user.username);
       return await Promise.all(
         data?.map(async (item) => ({
           ...item,

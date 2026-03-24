@@ -7,7 +7,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { verifyToken } = require("../middleware/authMiddleware");
 // Get wishlist
-router.get("/:id", verifyToken, async (req, res) => {
+router.get("/:id", async (req, res) => {
+  console.log("Received request for wishlist of user:", req.params.id);
   try {
     // 1. find user
     const user = await User.findOne({ username: req.params.id }).populate(

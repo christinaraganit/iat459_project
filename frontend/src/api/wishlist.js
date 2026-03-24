@@ -1,14 +1,25 @@
-export const getWishlist = async (user, token) => {
+export const getWishlist = async (id) => {
+  console.log("Fetching wishlist for user:", id);
   try {
-    const res = await fetch(
-      `http://localhost:5000/api/wishlist/${user?.username}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: token,
-        },
+    const res = await fetch(`http://localhost:5000/api/wishlist/${id}`, {
+      method: "GET",
+    });
+    const data = await res.json();
+    return data;
+  } catch (er) {
+    console.error("Failed to retrieve wishlist:", er);
+  }
+};
+
+export const getMyWishlist = async (token) => {
+  try {
+    const res = await fetch(`http://localhost:5000/api/wishlist/currentUser`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
       },
-    );
+    });
     const data = await res.json();
     return data;
   } catch (er) {
@@ -63,7 +74,6 @@ export const updateWishlistItemStatus = async (
   token,
 ) => {
   try {
-    console.log(`Updating wishlist item ${wishlistItemId} status to ${status}`);
     const res = await fetch(`http://localhost:5000/api/wishlist/status`, {
       method: "PATCH",
       headers: {
