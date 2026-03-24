@@ -1,7 +1,11 @@
 import { useParams } from "react-router";
 import { Fragment, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { getListingByID, deleteListingByID } from "../../api/listings";
+import {
+  getListingByID,
+  deleteListingByID,
+  getInterestedUsersByListingId,
+} from "../../api/listings";
 import TCGdex from "@tcgdex/sdk";
 import { useNavigate, Link } from "react-router";
 import { useAuthContext } from "../../context/AuthContext";
@@ -39,6 +43,23 @@ export const Listing = () => {
         return interests?.some((interest) => interest._id === cardId);
       }
       return false;
+    },
+  });
+
+  const interestedUsersQuery = useQuery({
+    queryKey: ["interestedUsers", cardId, token],
+    queryFn: async () => {
+      if (cardId) {
+        const interestedUsers = await getInterestedUsersByListingId(cardId);
+        console.log(
+          "Interested users for listing",
+          cardId,
+          ":",
+          interestedUsers,
+        );
+        return interestedUsers;
+      }
+      return [];
     },
   });
 
@@ -163,6 +184,24 @@ export const Listing = () => {
         (activeOwner && listingQuery.data?.seller._id === user?.id)) && (
         <button onClick={handleDelete}>Delete Listing</button>
       )}
+      {activeOwner &&
+        user &&
+        user.id === listingQuery.data?.seller._id &&
+        interestedUsersQuery.data?.length > 0 && (
+          <div>
+            <h3>Interested Users:</h3>
+            <ul>
+              {interestedUsersQuery.data.map((user, i) => (
+                <li key={`interested-user-${i}`}>
+                  <Link to={`/user/${user.username}`}>
+                    {user.displayName || user.username}
+                    <span>@{user.username}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
     </div>
   );
 };

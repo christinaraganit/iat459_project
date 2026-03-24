@@ -159,6 +159,19 @@ export const removeInterestedUser = async (listingId, token) => {
   if (!res.ok) {
     throw new Error("Failed to remove interested user");
   }
+};
+
+export const getInterestedUsersByListingId = async (listingId) => {
+  const res = await fetch(
+    `http://localhost:5000/api/listings/interest/${listingId}`,
+    {
+      method: "GET",
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch interested users");
+  }
 
   return res.json();
 };

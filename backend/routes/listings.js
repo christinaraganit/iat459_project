@@ -191,4 +191,21 @@ router.delete(`/interest/:id`, verifyToken, async (req, res) => {
   }
 });
 
+router.get("/interest/:id", async (req, res) => {
+  try {
+    const listing = await Listing.findById(req.params.id).populate(
+      "interestedUsers",
+      "username displayName",
+    );
+
+    if (!listing) {
+      return res.status(404).json({ error: "Listing not found" });
+    }
+
+    res.json(listing.interestedUsers);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
