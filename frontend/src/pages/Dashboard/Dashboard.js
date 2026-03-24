@@ -186,7 +186,7 @@ export const Dashboard = () => {
       <section>
         <h2>My meetups ({meetupQuery.data?.length || 0})</h2>
         {meetupQuery.data?.map((meetup, i) => (
-          <div key={`meetup-${i}`}>
+          <Link key={`meetup-${i}`} to={`/meetups/${meetup._id}`}>
             {meetup.seller._id === user.id ? (
               <p>
                 <span>Selling to</span>{" "}
@@ -216,7 +216,7 @@ export const Dashboard = () => {
                 )}
               </p>
             ) : null}
-          </div>
+          </Link>
         ))}
       </section>
 

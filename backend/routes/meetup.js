@@ -59,6 +59,28 @@ router.get("/byListing/:listingId", verifyToken, async (req, res) => {
   }
 });
 
+router.get("/byId/:id", verifyToken, async (req, res) => {
+  try {
+    const meetup = await Meetup.findById(req.params.id)
+      .populate("seller", "username displayName id")
+      .populate("buyer", "username displayName id")
+      .populate("listingId", "_id cardId price condition notes");
+    if (
+      meetup.seller.id.toString() !== req.userId &&
+      meetup.buyer.id.toString() !== req.userId
+    ) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+    console.log(meetup);
+    if (!meetup) {
+      return res.status(404).json({ error: "Meetup not found" });
+    }
+    res.json(meetup);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.get("/myMeetups", verifyToken, async (req, res) => {
   try {
     const meetups = await Meetup.find({

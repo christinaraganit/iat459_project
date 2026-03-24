@@ -37,6 +37,20 @@ export const removeMeetup = async (listingId, buyer, seller, token) => {
   return res.json();
 };
 
+export const getMeetupById = async (meetupId, token) => {
+  const res = await fetch(`http://localhost:5000/api/meetup/byId/${meetupId}`, {
+    headers: {
+      Authorization: token,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch meetup");
+  }
+
+  return res.json();
+};
+
 export const getMeetupsByListingId = async (listingId, token) => {
   const res = await fetch(
     `http://localhost:5000/api/meetup/byListing/${listingId}`,

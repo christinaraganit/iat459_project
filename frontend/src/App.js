@@ -12,6 +12,7 @@ import { Listing } from "./pages/Listing/Listing";
 import { User } from "./pages/User/User";
 import { CreateListing } from "./pages/Dashboard/CreateListing/CreateListing";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Meetup } from "./pages/Meetup/Meetup";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,6 +37,9 @@ function App() {
               <Route path="listings">
                 <Route path=":cardId" element={<Listing />}></Route>
               </Route>
+              <Route path="meetups">
+                <Route path=":meetupId" element={<Meetup />}></Route>
+              </Route>
               <Route path="user">
                 <Route path=":user" element={<User />}></Route>
               </Route>
@@ -50,7 +54,14 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
-                <Route path="create" element={<CreateListing />} />
+                <Route
+                  path="create"
+                  element={
+                    <ProtectedRoute>
+                      <CreateListing />
+                    </ProtectedRoute>
+                  }
+                />
               </Route>
             </Route>
           </Routes>
