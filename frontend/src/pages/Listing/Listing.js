@@ -15,7 +15,11 @@ import {
   getListingsOfInterest,
 } from "../../api/account";
 import { addInterestedUser, removeInterestedUser } from "../../api/listings";
-import { createNewMeetup } from "../../api/meetup";
+import {
+  createNewMeetup,
+  getMeetupsByListingId,
+  removeMeetup,
+} from "../../api/meetup";
 import { queryClient } from "../../App";
 
 export const Listing = () => {
@@ -150,9 +154,38 @@ export const Listing = () => {
       createNewMeetup(listingId, buyer, new Date(2026, 4, 9, 12, 30), token),
     onSuccess: () => {
       console.log("Meetup created successfully");
+      queryClient.invalidateQueries({
+        queryKey: ["meetups", cardId, token],
+      });
     },
     onError: (err) => {
       console.error(err);
+    },
+  });
+
+  const removeMeetupMutation = useMutation({
+    mutationFn: ({ listingId, buyer, seller }) =>
+      removeMeetup(listingId, buyer, seller, token),
+    onSuccess: () => {
+      console.log("Meetup removed successfully");
+      queryClient.invalidateQueries({
+        queryKey: ["meetups", cardId, token],
+      });
+    },
+    onError: (err) => {
+      console.error(err);
+    },
+  });
+
+  const meetupQuery = useQuery({
+    queryKey: ["meetups", cardId, token],
+    queryFn: async () => {
+      if (cardId) {
+        const meetups = await getMeetupsByListingId(cardId, token);
+        console.log("Meetups for listing", cardId, ":", meetups);
+        return meetups;
+      }
+      return [];
     },
   });
 
@@ -222,16 +255,32 @@ export const Listing = () => {
                     {user.displayName || user.username}
                     <span>@{user.username}</span>
                   </Link>
-                  <button
-                    onClick={() =>
-                      createMeetupMutation.mutate({
-                        listingId: listingQuery.data?._id,
-                        buyer: user._id,
-                      })
-                    }
-                  >
-                    Create Meetup
-                  </button>
+                  {meetupQuery.data?.some(
+                    (item) => item.buyer._id === user._id,
+                  ) ? (
+                    <button
+                      onClick={() =>
+                        removeMeetupMutation.mutate({
+                          listingId: listingQuery.data?._id,
+                          buyer: user._id,
+                          seller: listingQuery.data?.seller._id,
+                        })
+                      }
+                    >
+                      Revoke meetup
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() =>
+                        createMeetupMutation.mutate({
+                          listingId: listingQuery.data?._id,
+                          buyer: user._id,
+                        })
+                      }
+                    >
+                      Create Meetup
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>

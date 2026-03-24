@@ -29,4 +29,34 @@ router.post("/new", verifyToken, async (req, res) => {
   }
 });
 
+router.delete("/byListing/:listingId", verifyToken, async (req, res) => {
+  try {
+    console.log("Received delete request for meetup:", req.body);
+    const { buyer, seller } = req.body;
+    const meetup = await Meetup.findOne({
+      listingId: req.params.listingId,
+      buyer: buyer,
+      seller: seller,
+    });
+    if (!meetup) {
+      return res.status(404).json({ error: "Meetup not found" });
+    }
+    await Meetup.findByIdAndDelete(meetup._id);
+    res.json({ message: "Meetup removed successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get("/byListing/:listingId", verifyToken, async (req, res) => {
+  try {
+    const meetups = await Meetup.find({ listingId: req.params.listingId })
+      .populate("seller", "username displayName")
+      .populate("buyer", "username displayName");
+    res.json(meetups);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
