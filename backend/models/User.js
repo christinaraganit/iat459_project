@@ -45,6 +45,9 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  preferredLocation: {
+    type: Object,
+  },
 });
 
 module.exports = mongoose.model("User", UserSchema);

@@ -1,5 +1,5 @@
 import "./Dashboard.css";
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState } from "react";
 import { useAuthContext } from "../../context/AuthContext";
 import TCGdex from "@tcgdex/sdk";
 import {
@@ -14,6 +14,19 @@ import { queryClient } from "../../App";
 import { Onboarding } from "../../components/Onboarding/Onboarding";
 import { NameField } from "../../components/Dashboard/NameField/NameField";
 import { Link } from "react-router-dom";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
 
 export const Dashboard = () => {
   const tcgdex = new TCGdex("en");
@@ -113,6 +126,32 @@ export const Dashboard = () => {
       <p>
         Welcome <NameField /> {role === "admin" && <span>(Admin)</span>}
       </p>
+
+      <section className="dashboard__section">
+        <h2>My preferred meeting location</h2>
+        <div
+          style={{
+            height: "800px",
+          }}
+        >
+          <MapContainer
+            center={[51.505, -0.09]}
+            zoom={13}
+            scrollWheelZoom={false}
+            style={{ height: "100%", width: "100%" }}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <Marker position={[51.505, -0.09]}>
+              <Popup>
+                A pretty CSS3 popup. <br /> Easily customizable.
+              </Popup>
+            </Marker>
+          </MapContainer>
+        </div>
+      </section>
 
       <section className="dashboard__section dashboard__wishlist">
         <h2>My wishlist ({wishlistQuery.data?.length || 0})</h2>

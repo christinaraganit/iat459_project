@@ -12,6 +12,7 @@
     border-bottom: 1px solid
       color-mix(in srgb, var(--background), var(--foreground) 5%);
     color: var(--foreground);
+    z-index: 10000;
   }
 
   & .app__body {

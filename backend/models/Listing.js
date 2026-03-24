@@ -26,7 +26,7 @@ const ListingSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["active", "sold", "removed"],
+    enum: ["active", "pending", "sold"],
     default: "active",
   },
   interestedUsers: {
