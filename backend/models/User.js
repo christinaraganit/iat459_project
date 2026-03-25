@@ -1,5 +1,32 @@
 const mongoose = require("mongoose");
 
+const PreferredLocationSchema = new mongoose.Schema(
+  {
+    type: {
+      type: String,
+      enum: ["Point"],
+      default: "Point",
+    },
+    coordinates: {
+      type: [Number],
+      default: undefined,
+      validate: {
+        validator: (coords) => !coords || coords.length === 2,
+        message: "Preferred location coordinates must include [lng, lat]",
+      },
+    },
+    label: {
+      type: String,
+      default: "",
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { _id: false },
+);
+
 const UserSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -47,7 +74,8 @@ const UserSchema = new mongoose.Schema({
     default: Date.now,
   },
   preferredLocation: {
-    type: Object,
+    type: PreferredLocationSchema,
+    default: null,
   },
   rating: {
     type: Number,

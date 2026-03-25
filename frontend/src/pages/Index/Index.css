@@ -26,6 +26,39 @@
   }
 }
 
+.listing__controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.listing__sort-select {
+  min-height: 2.2rem;
+}
+
+.listing__control-button {
+  min-height: 2.2rem;
+  padding: 0 0.9rem;
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.listing__control-button.is-active {
+  background: #163b66;
+  color: #fff;
+  border-color: #163b66;
+}
+
+.listing__sort-status {
+  font-size: 0.9rem;
+  color: #444;
+  background: #f2f4f8;
+  border-radius: 999px;
+  padding: 0.3rem 0.65rem;
+}
+
 .listing__list {
   display: grid;
   grid-template-columns: repeat(var(--gridColumns), 1fr);

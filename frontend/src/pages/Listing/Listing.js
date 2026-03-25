@@ -21,12 +21,14 @@ import {
   removeMeetup,
 } from "../../api/meetup";
 import { queryClient } from "../../App";
+import { CreateMeetupModal } from "../../components/Listing/Meetup/CreateMeetup";
 
 export const Listing = () => {
   const navigate = useNavigate();
   const { role, user, token } = useAuthContext();
   const tcgdex = new TCGdex("en");
   const { cardId } = useParams();
+  const [activeMeetupBuyer, setActiveMeetupBuyer] = useState(null);
 
   const listingQuery = useQuery({
     queryKey: ["listings", cardId],
@@ -44,7 +46,6 @@ export const Listing = () => {
     queryFn: async () => {
       if (token) {
         const interests = await getListingsOfInterest(token);
-        console.log(interests);
         return interests?.some((interest) => interest._id === cardId);
       }
       return false;
@@ -55,14 +56,7 @@ export const Listing = () => {
     queryKey: ["interestedUsers", cardId, token],
     queryFn: async () => {
       if (cardId) {
-        const interestedUsers = await getInterestedUsersByListingId(cardId);
-        console.log(
-          "Interested users for listing",
-          cardId,
-          ":",
-          interestedUsers,
-        );
-        return interestedUsers;
+        return getInterestedUsersByListingId(cardId);
       }
       return [];
     },
@@ -88,7 +82,6 @@ export const Listing = () => {
   const sendInterestMutation = useMutation({
     mutationFn: (listingId) => addListingOfInterest(listingId, token),
     onSuccess: () => {
-      console.log("Expressing interest for listing:", listingQuery.data?._id);
       addInterestedUserMutation.mutate(listingQuery.data?._id);
     },
     onError: (err) => {
@@ -99,7 +92,6 @@ export const Listing = () => {
   const revokeInterestMutation = useMutation({
     mutationFn: (listingId) => removeListingOfInterest(listingId, token),
     onSuccess: () => {
-      console.log("Revoking interest for listing:", listingQuery.data?._id);
       removeInterestedUserMutation.mutate(listingQuery.data?._id);
     },
     onError: (err) => {
@@ -137,29 +129,18 @@ export const Listing = () => {
     },
   });
 
-  const handleDelete = () => {
-    deleteListingMutation.mutate(listingQuery.data?._id);
-  };
-
-  const handleSendInterest = () => {
-    sendInterestMutation.mutate(listingQuery.data?._id);
-  };
-
-  const handleRevokeInterest = () => {
-    revokeInterestMutation.mutate(listingQuery.data?._id);
-  };
-
   const createMeetupMutation = useMutation({
-    mutationFn: ({ listingId, buyer }) =>
-      createNewMeetup(listingId, buyer, new Date(2026, 4, 9, 12, 30), token),
+    mutationFn: ({ listingId, buyer, date, location }) =>
+      createNewMeetup(listingId, buyer, date, location, token),
     onSuccess: () => {
-      console.log("Meetup created successfully");
       queryClient.invalidateQueries({
         queryKey: ["meetups"],
       });
+      setActiveMeetupBuyer(null);
     },
     onError: (err) => {
       console.error(err);
+      alert(err.message || "Failed to create meetup");
     },
   });
 
@@ -167,7 +148,6 @@ export const Listing = () => {
     mutationFn: ({ listingId, buyer, seller }) =>
       removeMeetup(listingId, buyer, seller, token),
     onSuccess: () => {
-      console.log("Meetup removed successfully");
       queryClient.invalidateQueries({
         queryKey: ["meetups"],
       });
@@ -181,13 +161,23 @@ export const Listing = () => {
     queryKey: ["meetups", cardId, token],
     queryFn: async () => {
       if (cardId) {
-        const meetups = await getMeetupsByListingId(cardId, token);
-        console.log("Meetups for listing", cardId, ":", meetups);
-        return meetups;
+        return getMeetupsByListingId(cardId, token);
       }
       return [];
     },
   });
+
+  const handleDelete = () => {
+    deleteListingMutation.mutate(listingQuery.data?._id);
+  };
+
+  const handleSendInterest = () => {
+    sendInterestMutation.mutate(listingQuery.data?._id);
+  };
+
+  const handleRevokeInterest = () => {
+    revokeInterestMutation.mutate(listingQuery.data?._id);
+  };
 
   return listingQuery.isPending ? (
     <div>Loading listing...</div>
@@ -226,6 +216,7 @@ export const Listing = () => {
           <p>Seller not found</p>
         )}
       </div>
+
       {activeOwner &&
         user &&
         listingQuery.data?.seller._id !== user?.id &&
@@ -237,6 +228,7 @@ export const Listing = () => {
         ) : (
           <button onClick={handleSendInterest}>Send interest</button>
         ))}
+
       {(role === "admin" ||
         (activeOwner && listingQuery.data?.seller._id === user?.id)) && (
         <button onClick={handleDelete}>Delete Listing</button>
@@ -249,20 +241,20 @@ export const Listing = () => {
           <div>
             <h3>Interested Users:</h3>
             <ul>
-              {interestedUsersQuery.data.map((user, i) => (
+              {interestedUsersQuery.data.map((interestedUser, i) => (
                 <li key={`interested-user-${i}`}>
-                  <Link to={`/user/${user.username}`}>
-                    {user.displayName || user.username}
-                    <span>@{user.username}</span>
+                  <Link to={`/user/${interestedUser.username}`}>
+                    {interestedUser.displayName || interestedUser.username}
+                    <span>@{interestedUser.username}</span>
                   </Link>
                   {meetupQuery.data?.some(
-                    (item) => item.buyer._id === user._id,
+                    (item) => item.buyer._id === interestedUser._id,
                   ) ? (
                     <button
                       onClick={() =>
                         removeMeetupMutation.mutate({
                           listingId: listingQuery.data?._id,
-                          buyer: user._id,
+                          buyer: interestedUser._id,
                           seller: listingQuery.data?.seller._id,
                         })
                       }
@@ -270,14 +262,7 @@ export const Listing = () => {
                       Revoke meetup
                     </button>
                   ) : (
-                    <button
-                      onClick={() =>
-                        createMeetupMutation.mutate({
-                          listingId: listingQuery.data?._id,
-                          buyer: user._id,
-                        })
-                      }
-                    >
+                    <button onClick={() => setActiveMeetupBuyer(interestedUser)}>
                       Create Meetup
                     </button>
                   )}
@@ -286,6 +271,16 @@ export const Listing = () => {
             </ul>
           </div>
         )}
+
+      <CreateMeetupModal
+        isOpen={Boolean(activeMeetupBuyer)}
+        token={token}
+        buyer={activeMeetupBuyer}
+        listingId={listingQuery.data?._id}
+        isSubmitting={createMeetupMutation.isPending}
+        onClose={() => setActiveMeetupBuyer(null)}
+        onCreate={(payload) => createMeetupMutation.mutate(payload)}
+      />
     </div>
   );
 };

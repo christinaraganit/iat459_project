@@ -195,13 +195,23 @@ export const Dashboard = () => {
       const res = await updateMeetupStatus(meetupId, status, token);
       return res;
     },
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       console.log("Meetup status updated:", data);
       queryClient.invalidateQueries({
         queryKey: ["meetups"],
       });
+      if (variables?.meetupId) {
+        queryClient.invalidateQueries({
+          queryKey: ["meetup", variables.meetupId],
+        });
+      }
     },
   });
+
+  const sortedMeetups = [...(meetupQuery.data || [])].sort(
+    (a, b) => new Date(a.date) - new Date(b.date),
+  );
+
   return (
     <Fragment>
       <h1>Dashboard</h1>
@@ -237,8 +247,8 @@ export const Dashboard = () => {
         </div>
       </section>
       <section>
-        <h2>My meetups ({meetupQuery.data?.length || 0})</h2>
-        {meetupQuery.data?.map((meetup, i) => (
+        <h2>My meetups ({sortedMeetups.length || 0})</h2>
+        {sortedMeetups.map((meetup, i) => (
           <Link key={`meetup-${i}`} to={`/meetups/${meetup._id}`}>
             {meetup.seller._id === user.id ? (
               <p>

@@ -1,15 +1,11 @@
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
 import TCGdex from "@tcgdex/sdk";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getMeetupById, updateMeetupStatus } from "../../api/meetup";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { Fragment } from "react";
-import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
-import markerIcon from "leaflet/dist/images/marker-icon.png";
-import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import {
   BC_BOUNDS,
   VANCOUVER_CENTER,
@@ -17,6 +13,19 @@ import {
 } from "../../utils/mapBounds";
 
 const parseCoordinateLocation = (locationValue) => {
+  if (
+    locationValue &&
+    typeof locationValue === "object" &&
+    Array.isArray(locationValue.coordinates) &&
+    locationValue.coordinates.length === 2
+  ) {
+    const lng = Number(locationValue.coordinates[0]);
+    const lat = Number(locationValue.coordinates[1]);
+    if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
+      return { lat, lng };
+    }
+  }
+
   if (typeof locationValue !== "string") return null;
 
   const match = locationValue
@@ -34,8 +43,7 @@ const parseCoordinateLocation = (locationValue) => {
 };
 
 export const Meetup = () => {
-  const navigate = useNavigate();
-  const { role, user, token } = useAuthContext();
+  const { user, token } = useAuthContext();
   const tcgdex = new TCGdex("en");
   const { meetupId } = useParams();
 
@@ -65,7 +73,27 @@ export const Meetup = () => {
     ? clampLatLngToBC(parsedMeetupLocation)
     : VANCOUVER_CENTER;
   const mapPosition = [boundedMeetupLocation.lat, boundedMeetupLocation.lng];
-  const mapLabel = meetupQuery.data?.location || "Meetup location";
+  const locationLabelFromObject =
+    meetupQuery.data?.location && typeof meetupQuery.data.location === "object"
+      ? meetupQuery.data.location.label
+      : "";
+  const mapLabel =
+    locationLabelFromObject?.trim() ||
+    (typeof meetupQuery.data?.location === "string"
+      ? meetupQuery.data.location
+      : "Meetup location");
+  const meetupDateTime = meetupQuery.data?.date
+    ? new Date(meetupQuery.data.date).toLocaleString(undefined, {
+        dateStyle: "full",
+        timeStyle: "short",
+      })
+    : "Date/time not set";
+  const googleMapsQuery = parsedMeetupLocation
+    ? `${parsedMeetupLocation.lat},${parsedMeetupLocation.lng}`
+    : mapLabel;
+  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    googleMapsQuery,
+  )}`;
 
   return (
     <div>
@@ -84,9 +112,16 @@ export const Meetup = () => {
               meetupQuery.data.buyer.username}
           </p>
           <p>Status: {meetupQuery.data.status}</p>
-          <p>Location: {meetupQuery.data.location}</p>
+          <p>When: {meetupDateTime}</p>
+          <p>Location: {mapLabel}</p>
+          <p>
+            <a href={googleMapsUrl} target="_blank" rel="noreferrer">
+              Open in Google Maps
+            </a>
+          </p>
           <div>
-            {meetupQuery.data.seller._id === user.id ? (
+            {meetupQuery.data.seller._id === user.id &&
+            meetupQuery.data.status === "accepted" ? (
               <Fragment>
                 <button
                   onClick={() => meetupStatusMutation.mutate("completed")}

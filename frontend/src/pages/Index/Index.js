@@ -28,7 +28,7 @@ const options = [
 export const Index = () => {
   const tcgdex = new TCGdex("en");
 
-  const [search, setSearch] = useState("");
+  const [search] = useState("");
   const [order, setOrder] = useState("desc");
   const [sort, setSort] = useState("createdAt");
   const [selected, setSelected] = useState([]);
@@ -75,20 +75,46 @@ export const Index = () => {
     },
   });
 
+  const sortedMeetups = [...(meetupsQuery.data || [])].sort(
+    (a, b) => new Date(a.date) - new Date(b.date),
+  );
+
   return (
     <Fragment>
       <div className="listing__nav">
         <h1>Listings near you</h1>
-        <div>
-          <select value={sort} onChange={handleSortChange}>
+        <div className="listing__controls">
+          <select
+            className="listing__sort-select"
+            value={sort}
+            onChange={handleSortChange}
+          >
             {options.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
             ))}
           </select>
-          <button onClick={() => setOrder("asc")}>Asc</button>
-          <button onClick={() => setOrder("desc")}>Desc</button>
+          <button
+            className={
+              order === "asc"
+                ? "listing__control-button is-active"
+                : "listing__control-button"
+            }
+            onClick={() => setOrder("asc")}
+          >
+            Asc
+          </button>
+          <button
+            className={
+              order === "desc"
+                ? "listing__control-button is-active"
+                : "listing__control-button"
+            }
+            onClick={() => setOrder("desc")}
+          >
+            Desc
+          </button>
           <ConditionFilter selected={selected} setSelected={setSelected} />
         </div>
       </div>
@@ -119,7 +145,7 @@ export const Index = () => {
       {user && (
         <section>
           <h2>Upcoming meetups</h2>
-          {meetupsQuery.data?.map((meetup, i) => (
+          {sortedMeetups.map((meetup, i) => (
             <Link key={`meetup-${i}`} to={`/meetups/${meetup._id}`}>
               {meetup.seller._id === user.id ? (
                 <p>

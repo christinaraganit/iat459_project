@@ -4,7 +4,7 @@ import { useAuthContext } from "../../context/AuthContext";
 import { NameSubmission } from "./NameSubmission/NameSubmission";
 import { LocationSubmission } from "./LocationSubmission/LocationSubmission";
 export const Onboarding = () => {
-  const [step, setStep] = useState(2);
+  const [step, setStep] = useState(1);
   const incrementStep = () => setStep((prev) => prev + 1);
   const decrementStep = () => setStep((prev) => prev - 1);
   const authContext = useAuthContext();

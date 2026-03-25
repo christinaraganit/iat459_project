@@ -10,8 +10,29 @@ const { verifyToken } = require("../middleware/authMiddleware");
 // Create a new meetup
 router.post("/new", verifyToken, async (req, res) => {
   try {
-    const { listingId, buyer, location, date } = req.body;
+    const { listingId, buyer, date } = req.body;
     console.log("Received listing data:", req.body);
+
+    const seller = await User.findById(req.userId);
+    const preferredLocation = seller?.preferredLocation;
+    const hasCoordinates =
+      Array.isArray(preferredLocation?.coordinates) &&
+      preferredLocation.coordinates.length === 2 &&
+      typeof preferredLocation.coordinates[0] === "number" &&
+      typeof preferredLocation.coordinates[1] === "number";
+
+    if (!hasCoordinates) {
+      return res.status(400).json({
+        error: "Seller has no preferred meeting location set",
+      });
+    }
+
+    const [lng, lat] = preferredLocation.coordinates;
+    const location = {
+      type: "Point",
+      coordinates: [lng, lat],
+      label: preferredLocation.label?.trim() || `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+    };
 
     const newMeetup = new Meetup({
       listingId: listingId,
@@ -132,8 +153,11 @@ router.patch("/status", verifyToken, async (req, res) => {
       }
 
       const [lng, lat] = preferredLocation.coordinates;
-      const label = preferredLocation.label?.trim();
-      meetup.location = label || `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+      meetup.location = {
+        type: "Point",
+        coordinates: [lng, lat],
+        label: preferredLocation.label?.trim() || `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+      };
     }
 
     meetup.status = status;

@@ -17,7 +17,7 @@ const MeetupSchema = new mongoose.Schema({
     required: true,
   },
   location: {
-    type: String,
+    type: mongoose.Schema.Types.Mixed,
     required: true,
   },
   date: {

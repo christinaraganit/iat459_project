@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
 import {
   MapContainer,
@@ -29,6 +29,7 @@ L.Icon.Default.mergeOptions({
 const DEFAULT_LOCATION_ZOOM = 12;
 const RESET_LOCATION_ZOOM = 13;
 const SEARCH_LOCATION_ZOOM = 15;
+const DEFAULT_LOCATION_LABEL = "Vancouver, BC";
 
 const MapClickHandler = ({ onPick }) => {
   useMapEvents({
@@ -56,23 +57,91 @@ export const LocationSubmission = ({ authContext, decrementStep }) => {
   const { token, activateNewUser } = authContext;
   const [location, setLocation] = useState(VANCOUVER_CENTER);
   const [searchValue, setSearchValue] = useState("");
+  const [selectedLocationLabel, setSelectedLocationLabel] = useState(
+    DEFAULT_LOCATION_LABEL,
+  );
   const [isSaving, setIsSaving] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [isResolvingLabel, setIsResolvingLabel] = useState(false);
   const [locationError, setLocationError] = useState("");
   const [recenterRequest, setRecenterRequest] = useState(0);
   const [recenterZoom, setRecenterZoom] = useState(null);
+  const labelRequestIdRef = useRef(0);
 
   const markerPosition = useMemo(
     () => ({ lat: location.lat, lng: location.lng }),
     [location.lat, location.lng],
   );
 
-  const setPickedLocation = (latlng, options = {}) => {
+  const resolveLocaleLabel = async (lat, lng, fallbackLabel) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(
+          lat,
+        )}&lon=${encodeURIComponent(lng)}`,
+        {
+          headers: {
+            Accept: "application/json",
+          },
+        },
+      );
+
+      if (!response.ok) {
+        return fallbackLabel;
+      }
+
+      const data = await response.json();
+      const address = data?.address || {};
+      const locality =
+        address.city ||
+        address.town ||
+        address.village ||
+        address.municipality ||
+        address.suburb ||
+        address.county;
+
+      if (!locality) {
+        return fallbackLabel;
+      }
+
+      return `${locality}, BC`;
+    } catch (_error) {
+      return fallbackLabel;
+    }
+  };
+
+  const setPickedLocation = async (latlng, options = {}) => {
     const boundedLocation = clampLatLngToBC(latlng);
+    const fallbackLabel = options.fallbackLabel || DEFAULT_LOCATION_LABEL;
+
     setLocation({
       lat: Number(boundedLocation.lat.toFixed(6)),
       lng: Number(boundedLocation.lng.toFixed(6)),
     });
+
+    if (options.label) {
+      labelRequestIdRef.current += 1;
+      setSelectedLocationLabel(options.label);
+      setIsResolvingLabel(false);
+    } else if (options.resolveLocaleLabel) {
+      const requestId = labelRequestIdRef.current + 1;
+      labelRequestIdRef.current = requestId;
+      setIsResolvingLabel(true);
+
+      const resolvedLabel = await resolveLocaleLabel(
+        boundedLocation.lat,
+        boundedLocation.lng,
+        fallbackLabel,
+      );
+
+      if (labelRequestIdRef.current === requestId) {
+        setSelectedLocationLabel(resolvedLabel);
+        setIsResolvingLabel(false);
+      }
+    } else {
+      setSelectedLocationLabel(fallbackLabel);
+    }
+
     setRecenterZoom(options.zoom ?? null);
     setRecenterRequest((prev) => prev + 1);
   };
@@ -86,7 +155,7 @@ export const LocationSubmission = ({ authContext, decrementStep }) => {
       {
         lat: location.lat,
         lng: location.lng,
-        label: searchValue.trim(),
+        label: selectedLocationLabel || DEFAULT_LOCATION_LABEL,
       },
       token,
     )
@@ -151,7 +220,11 @@ export const LocationSubmission = ({ authContext, decrementStep }) => {
         return;
       }
 
-      setPickedLocation(searchedLocation, { zoom: SEARCH_LOCATION_ZOOM });
+      setPickedLocation(searchedLocation, {
+        zoom: SEARCH_LOCATION_ZOOM,
+        label: bestMatch.display_name || query,
+        fallbackLabel: DEFAULT_LOCATION_LABEL,
+      });
     } catch (error) {
       setLocationError(error.message || "Unable to search for that place.");
     } finally {
@@ -189,7 +262,10 @@ export const LocationSubmission = ({ authContext, decrementStep }) => {
         <button
           type="button"
           onClick={() =>
-            setPickedLocation(VANCOUVER_CENTER, { zoom: RESET_LOCATION_ZOOM })
+            setPickedLocation(VANCOUVER_CENTER, {
+              zoom: RESET_LOCATION_ZOOM,
+              label: DEFAULT_LOCATION_LABEL,
+            })
           }
         >
           Reset location
@@ -207,7 +283,14 @@ export const LocationSubmission = ({ authContext, decrementStep }) => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <MapClickHandler onPick={setPickedLocation} />
+        <MapClickHandler
+          onPick={(latlng) =>
+            setPickedLocation(latlng, {
+              resolveLocaleLabel: true,
+              fallbackLabel: DEFAULT_LOCATION_LABEL,
+            })
+          }
+        />
         <RecenterMap
           position={markerPosition}
           zoom={recenterZoom}
@@ -218,13 +301,17 @@ export const LocationSubmission = ({ authContext, decrementStep }) => {
           position={markerPosition}
           eventHandlers={{
             dragend: (event) => {
-              setPickedLocation(event.target.getLatLng());
+              setPickedLocation(event.target.getLatLng(), {
+                resolveLocaleLabel: true,
+                fallbackLabel: DEFAULT_LOCATION_LABEL,
+              });
             },
           }}
         >
           <Popup>Your preferred location</Popup>
         </Marker>
       </MapContainer>
+      {isResolvingLabel ? <p>Updating location label...</p> : null}
       <p className="onboarding__location-coords">
         Selected coordinates: {location.lat}, {location.lng}
       </p>

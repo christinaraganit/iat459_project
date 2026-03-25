@@ -87,10 +87,15 @@ router.post("/preferred-location", verifyToken, async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
+    const normalizedLabel =
+      typeof label === "string" && label.trim().length > 0
+        ? label.trim()
+        : `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+
     user.preferredLocation = {
       type: "Point",
       coordinates: [lng, lat],
-      label: label || "",
+      label: normalizedLabel,
       updatedAt: new Date(),
     };
     user.isNewUser = false;
