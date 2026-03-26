@@ -47,6 +47,7 @@ export const Register = () => {
   return (
     <Fragment>
       <form onSubmit={handleRegister}>
+        <h1>Create an account</h1>
         <Input
           type="text"
           placeholder="Username"
@@ -62,15 +63,14 @@ export const Register = () => {
         <Button variant="primary" className="register__submit" type="submit">
           Sign up
         </Button>
+        <LinkButton
+          to="/login"
+          variant="tertiary"
+          className="register__login-link"
+        >
+          Already have an account? Log in
+        </LinkButton>
       </form>
-
-      <LinkButton
-        to="/login"
-        variant="secondary"
-        className="register__login-link"
-      >
-        Log in
-      </LinkButton>
     </Fragment>
   );
 };

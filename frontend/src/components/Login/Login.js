@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../Button/Button";
 import { Input } from "../Input/Input";
 import { LinkButton } from "../LinkButton/LinkButton";
+import "./Login.css";
 
 export const Login = () => {
   const [account, setAccount] = useState({
@@ -42,6 +43,7 @@ export const Login = () => {
   return (
     <Fragment>
       <form onSubmit={handleLogin}>
+        <h1>Login to your account</h1>
         <Input
           type="text"
           placeholder="Username"
@@ -57,11 +59,14 @@ export const Login = () => {
         <Button variant="primary" className="login__submit" type="submit">
           Login
         </Button>
+        <LinkButton
+          to="/register"
+          variant="tertiary"
+          className="login__register-link"
+        >
+          Don't have an account? Register
+        </LinkButton>
       </form>
-
-      <LinkButton to="/register" variant="secondary" className="login__register-link">
-        Register
-      </LinkButton>
     </Fragment>
   );
 };
