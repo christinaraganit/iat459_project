@@ -80,6 +80,9 @@ export const Index = () => {
   const sortedMeetups = [...(meetupsQuery.data || [])].sort(
     (a, b) => new Date(a.date) - new Date(b.date),
   );
+  const currentPageListingsCount = listingsQuery.data?.length ?? 0;
+  const disableNextPage =
+    listingsQuery.isPending || currentPageListingsCount === 0 || currentPageListingsCount < count;
 
   return (
     <Fragment>
@@ -153,6 +156,7 @@ export const Index = () => {
           variant="secondary"
           className="listing__pagination__next"
           onClick={() => setPage((prev) => prev + 1)}
+          disabled={disableNextPage}
         >
           Next
         </Button>

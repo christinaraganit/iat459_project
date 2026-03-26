@@ -49,7 +49,7 @@ export const Navbar = () => {
       </LinkButton>
 
       <div className="navbar__actions">
-        <div className="navbar__search">
+        {/* <div className="navbar__search">
           <div
             className={`navbar__search__elements ${searchOpen ? "navbar__search__elements--active" : ""}`}
           >
@@ -78,7 +78,7 @@ export const Navbar = () => {
           >
             <div className="navbar__search__icon" />
           </Button>
-        </div>
+        </div> */}
 
         <menu
           className={`navbar__actions_menu ${user ? "navbar__actions_menu--activeUser" : ""} ${navOpen ? "navbar__actions_menu--active" : ""}`}
@@ -110,7 +110,11 @@ export const Navbar = () => {
                 </LinkButton>
               </li>
               <div>
-                <Button variant="secondary" className="navbar__logout" onClick={handleLogout}>
+                <Button
+                  variant="secondary"
+                  className="navbar__logout"
+                  onClick={handleLogout}
+                >
                   Logout
                 </Button>
               </div>
@@ -118,12 +122,20 @@ export const Navbar = () => {
           ) : (
             <Fragment>
               <li>
-                <LinkButton to="/login" variant="secondary" className="navbar__login-link">
+                <LinkButton
+                  to="/login"
+                  variant="secondary"
+                  className="navbar__login-link"
+                >
                   Login
                 </LinkButton>
               </li>
               <li>
-                <LinkButton to="/register" variant="primary" className="navbar__signup-link">
+                <LinkButton
+                  to="/register"
+                  variant="primary"
+                  className="navbar__signup-link"
+                >
                   Sign up
                 </LinkButton>
               </li>
@@ -131,7 +143,11 @@ export const Navbar = () => {
           )}
         </menu>
         {role && (
-          <LinkButton to="/dashboard/create" variant="primary" className="navbar__create-link">
+          <LinkButton
+            to="/dashboard/create"
+            variant="primary"
+            className="navbar__create-link"
+          >
             Create listing
           </LinkButton>
         )}
