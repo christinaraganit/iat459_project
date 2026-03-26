@@ -1,5 +1,5 @@
 import "./ListingCard.css";
-import { Fragment, Suspense } from "react";
+import { Fragment } from "react";
 import { useAuthContext } from "../../../context/AuthContext";
 import { Button } from "../../Button/Button";
 import { LinkButton } from "../../LinkButton/LinkButton";
@@ -17,9 +17,11 @@ function ListingCard({
 
   return (
     <LinkButton to={`/listings/${id}`} className="card" variant="tertiary">
-      <Suspense fallback={<div className="card__img_placeholder"></div>}>
+      {image ? (
         <img className="card__img" src={image} alt={cardId} />
-      </Suspense>
+      ) : (
+        <div className="card__img_placeholder" />
+      )}
     </LinkButton>
   );
 }

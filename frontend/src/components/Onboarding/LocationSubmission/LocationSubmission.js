@@ -218,7 +218,9 @@ export const LocationSubmission = ({ authContext, decrementStep }) => {
         searchedLocation.lat !== boundedLocation.lat ||
         searchedLocation.lng !== boundedLocation.lng
       ) {
-        setLocationError("That address is outside BC. Please search within BC.");
+        setLocationError(
+          "That address is outside BC, or it cannot be found. Please search for a location in BC.",
+        );
         return;
       }
 

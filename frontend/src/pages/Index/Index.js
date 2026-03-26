@@ -51,12 +51,19 @@ export const Index = () => {
         count,
       );
       const cards = await Promise.all(
-        listings?.map((listing) => tcgdex.card.get(listing.cardId)),
+        (listings ?? []).map(async (listing) => {
+          try {
+            return await tcgdex.card.get(listing.cardId);
+          } catch (err) {
+            console.error("Failed to load card from tcgdex:", listing.cardId, err);
+            return null;
+          }
+        }),
       );
       console.log(listings);
       return listings.map((listing, i) => ({
         ...listing,
-        card: cards[i],
+        card: cards[i] ?? null,
       }));
     },
   });
