@@ -82,87 +82,91 @@ export const Index = () => {
   );
   const currentPageListingsCount = listingsQuery.data?.length ?? 0;
   const disableNextPage =
-    listingsQuery.isPending || currentPageListingsCount === 0 || currentPageListingsCount < count;
+    listingsQuery.isPending ||
+    currentPageListingsCount === 0 ||
+    currentPageListingsCount < count;
 
   return (
     <Fragment>
       <div className="listing__nav">
-        <h1>Listings near you</h1>
-        <div className="listing__controls">
-          <div className="listing__dropdown-control listing__dropdown-control--select">
-            <select
-              className="listing__sort-select"
-              value={sort}
-              onChange={handleSortChange}
+        <div className="listings__container">
+          <h1>Listings near you</h1>
+          <div className="listing__controls">
+            <div className="listing__dropdown-control listing__dropdown-control--select">
+              <select
+                className="listing__sort-select"
+                value={sort}
+                onChange={handleSortChange}
+              >
+                {options.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="listing__dropdown-chevron" size={16} />
+            </div>
+            <Button
+              variant="secondary"
+              className={
+                order === "asc"
+                  ? "listing__control-button is-active"
+                  : "listing__control-button"
+              }
+              onClick={() => setOrder("asc")}
             >
-              {options.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="listing__dropdown-chevron" size={16} />
+              Asc
+            </Button>
+            <Button
+              variant="secondary"
+              className={
+                order === "desc"
+                  ? "listing__control-button is-active"
+                  : "listing__control-button"
+              }
+              onClick={() => setOrder("desc")}
+            >
+              Desc
+            </Button>
+            <ConditionFilter selected={selected} setSelected={setSelected} />
           </div>
+        </div>
+        <div className="listing__list">
+          {listingsQuery.data?.map((item) => (
+            <ListingCard
+              key={item._id}
+              seller={item.seller}
+              price={item.price}
+              condition={item.condition}
+              image={item.card?.getImageURL("low")}
+              cardId={item.card?.id}
+              cardName={item.card?.name}
+              id={item._id}
+            />
+          ))}
+        </div>
+        <div className="listing__pagination">
           <Button
             variant="secondary"
-            className={
-              order === "asc"
-                ? "listing__control-button is-active"
-                : "listing__control-button"
-            }
-            onClick={() => setOrder("asc")}
+            className="listing__pagination__previous"
+            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+            disabled={page === 1}
           >
-            Asc
+            Previous
           </Button>
+          <span>Page {page}</span>
           <Button
             variant="secondary"
-            className={
-              order === "desc"
-                ? "listing__control-button is-active"
-                : "listing__control-button"
-            }
-            onClick={() => setOrder("desc")}
+            className="listing__pagination__next"
+            onClick={() => setPage((prev) => prev + 1)}
+            disabled={disableNextPage}
           >
-            Desc
+            Next
           </Button>
-          <ConditionFilter selected={selected} setSelected={setSelected} />
         </div>
       </div>
-      <div className="listing__list">
-        {listingsQuery.data?.map((item) => (
-          <ListingCard
-            key={item._id}
-            seller={item.seller}
-            price={item.price}
-            condition={item.condition}
-            image={item.card?.getImageURL("low")}
-            cardId={item.card?.id}
-            cardName={item.card?.name}
-            id={item._id}
-          />
-        ))}
-      </div>
-      <div className="listing__pagination">
-        <Button
-          variant="secondary"
-          className="listing__pagination__previous"
-          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-          disabled={page === 1}
-        >
-          Previous
-        </Button>
-        <span>Page {page}</span>
-        <Button
-          variant="secondary"
-          className="listing__pagination__next"
-          onClick={() => setPage((prev) => prev + 1)}
-          disabled={disableNextPage}
-        >
-          Next
-        </Button>
-      </div>
       {user && (
-        <section>
+        <section className="meetups__container">
           <h2>Upcoming meetups</h2>
           {sortedMeetups.length === 0 ? (
             <p>You currently have no upcoming meetups</p>

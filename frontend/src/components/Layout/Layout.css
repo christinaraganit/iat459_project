@@ -18,6 +18,8 @@
     max-width: var(--max);
     margin: 0 auto;
     padding: var(--margin);
+    display: flex;
+    flex-direction: column;
   }
 }
 
