@@ -9,6 +9,7 @@ import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { Button } from "../../Button/Button";
+import { Input } from "../../Input/Input";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -146,7 +147,7 @@ export const CreateMeetupModal = ({
         <form onSubmit={handleSubmit}>
           <label>
             Date and time
-            <input
+            <Input
               type="datetime-local"
               value={dateTime}
               onChange={(e) => setDateTime(e.target.value)}

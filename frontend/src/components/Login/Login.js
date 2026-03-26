@@ -2,6 +2,7 @@ import { useAuthContext } from "../../context/AuthContext";
 import { Fragment, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../Button/Button";
+import { Input } from "../Input/Input";
 
 export const Login = () => {
   const [account, setAccount] = useState({
@@ -40,13 +41,13 @@ export const Login = () => {
   return (
     <Fragment>
       <form onSubmit={handleLogin}>
-        <input
+        <Input
           type="text"
           placeholder="Username"
           value={account.username}
           onChange={(e) => setAccount({ ...account, username: e.target.value })}
         />
-        <input
+        <Input
           type="password"
           placeholder="Password"
           value={account.password}

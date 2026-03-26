@@ -8,6 +8,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { addListing } from "../../../api/listings";
 import { useGridColumns } from "../../../hooks/useGridColumns";
 import { Button } from "../../../components/Button/Button";
+import { Input } from "../../../components/Input/Input";
 
 export const CreateListing = () => {
   const navigate = useNavigate();
@@ -72,14 +73,14 @@ export const CreateListing = () => {
       <div>
         <label>
           Search for card
-          <input
+          <Input
             type="text"
             onChange={(e) => setSearchTerm(e.target.value)}
-          ></input>
+          />
         </label>
         <label>
           Page{" "}
-          <input
+          <Input
             type="number"
             value={searchQs.page}
             onChange={(e) => setSearchQs({ ...searchQs, page: e.target.value })}
@@ -155,18 +156,18 @@ export const CreateListing = () => {
       <form onSubmit={handleSubmit}>
         <label>
           Card name
-          <input
+          <Input
             type="text"
             ref={ref}
             onChange={(e) => setListing({ ...listing, cardId: e.target.value })}
-          ></input>
+          />
         </label>
         <label>
           Price
-          <input
+          <Input
             type="number"
             onChange={(e) => setListing({ ...listing, price: e.target.value })}
-          ></input>
+          />
         </label>
         <label>
           Condition

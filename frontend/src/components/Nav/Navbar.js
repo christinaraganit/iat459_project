@@ -4,6 +4,7 @@ import { useAuthContext } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { Fragment, useState } from "react";
 import { Button } from "../Button/Button";
+import { Input } from "../Input/Input";
 
 export const Navbar = () => {
   const { user, logout, role } = useAuthContext();
@@ -52,7 +53,7 @@ export const Navbar = () => {
             className={`navbar__search__elements ${searchOpen ? "navbar__search__elements--active" : ""}`}
           >
             <div className="navbar__search__icon" />
-            <input
+            <Input
               className={`navbar__search__input ${searchOpen ? "navbar__search__input--active" : ""}`}
               type="text"
               placeholder="Search cards..."

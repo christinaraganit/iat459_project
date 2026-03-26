@@ -16,6 +16,7 @@ import {
   clampLatLngToBC,
 } from "../../../utils/mapBounds";
 import { Button } from "../../Button/Button";
+import { Input } from "../../Input/Input";
 import "leaflet/dist/leaflet.css";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
@@ -242,7 +243,7 @@ export const LocationSubmission = ({ authContext, decrementStep }) => {
         marker to fine tune.
       </p>
       <div className="onboarding__location-search">
-        <input
+        <Input
           type="text"
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}

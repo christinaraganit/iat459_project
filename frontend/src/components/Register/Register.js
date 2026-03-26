@@ -1,6 +1,7 @@
 import { Fragment, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../Button/Button";
+import { Input } from "../Input/Input";
 
 export const Register = () => {
   const [account, setAccount] = useState({
@@ -44,13 +45,13 @@ export const Register = () => {
   return (
     <Fragment>
       <form onSubmit={handleRegister}>
-        <input
+        <Input
           type="text"
           placeholder="Username"
           value={account.username}
           onChange={(e) => setAccount({ ...account, username: e.target.value })}
         />
-        <input
+        <Input
           type="password"
           placeholder="Password"
           value={account.password}

@@ -2,6 +2,7 @@ import { useState, useEffect, Fragment } from "react";
 import { useAuthContext } from "../../../context/AuthContext";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "../../Button/Button";
+import { Input } from "../../Input/Input";
 export const NameField = () => {
   const { user, updateDisplayName, token, reassignToken } = useAuthContext();
   const [editing, setEditing] = useState(false);
@@ -49,7 +50,7 @@ export const NameField = () => {
     <span>
       {editing ? (
         <>
-          <input
+          <Input
             type="text"
             value={prospectiveDisplayName}
             onChange={(e) => setProspectiveDisplayName(e.target.value)}

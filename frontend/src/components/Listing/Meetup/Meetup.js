@@ -1,4 +1,5 @@
 import { Button } from "../../Button/Button";
+import { Input } from "../../Input/Input";
 
 export const Meetup = () => {
   return (
@@ -6,15 +7,15 @@ export const Meetup = () => {
       <form>
         <label>
           Meetup Name
-          <input type="text"></input>
+          <Input type="text" />
         </label>
         <label>
           Date
-          <input type="date"></input>
+          <Input type="date" />
         </label>
         <label>
           Location
-          <input type="text"></input>
+          <Input type="text" />
         </label>
         <Button variant="primary" className="meetup-form__submit" type="submit">
           Create Meetup

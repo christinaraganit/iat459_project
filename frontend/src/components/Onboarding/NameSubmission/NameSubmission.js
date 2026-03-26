@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "../../Button/Button";
+import { Input } from "../../Input/Input";
 export const NameSubmission = ({
   authContext,
   incrementStep,
@@ -43,7 +44,7 @@ export const NameSubmission = ({
     <article>
       <h2>What's your name?</h2>
       <form onSubmit={handleRename} className="onboarding__content">
-        <input
+        <Input
           placeholder={
             user
               ? user.username.charAt(0).toUpperCase() + user.username.slice(1)
@@ -51,7 +52,7 @@ export const NameSubmission = ({
           }
           value={prospectiveDisplayName}
           onChange={(e) => setProspectiveDisplayName(e.target.value)}
-        ></input>
+        />
         <Button variant="primary" className="onboarding__continue" type="submit">
           Continue
         </Button>

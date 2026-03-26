@@ -1,5 +1,6 @@
 import {useEffect, useRef, useState} from "react";
 import { Button } from "../Button/Button";
+import { Input } from "../Input/Input";
 
 const conditions = ["Mint", "Near Mint", "Lightly Played", "Played"];
 
@@ -51,7 +52,7 @@ function ConditionFilter({selected, setSelected}) {
         }}>
           {conditions.map((condition) => (
             <label key={condition} style={{ display: "block", padding: "4px 0" }}>
-              <input
+              <Input
                 type="checkbox"
                 checked={selected.includes(condition)}
                 onChange={() => toggle(condition)}

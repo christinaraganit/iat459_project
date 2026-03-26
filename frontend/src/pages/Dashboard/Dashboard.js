@@ -28,6 +28,7 @@ import {
   clampLatLngToBC,
 } from "../../utils/mapBounds";
 import { Button } from "../../components/Button/Button";
+import { Input } from "../../components/Input/Input";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -298,7 +299,7 @@ export const Dashboard = () => {
             />
           ))}
         </div>
-        <input
+        <Input
           type="text"
           value={fieldname}
           onChange={(e) => setFieldname(e.target.value)}
