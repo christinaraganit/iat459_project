@@ -1,6 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 import { Button } from "../Button/Button";
 import { Input } from "../Input/Input";
+import { ChevronDown } from "lucide-react";
 
 const conditions = ["Mint", "Near Mint", "Lightly Played", "Played"];
 
@@ -32,10 +33,15 @@ function ConditionFilter({selected, setSelected}) {
     <div ref={ref} style={{ position: "relative", display: "inline-block" }}>
       <Button
         variant="secondary"
-        className={selected.length > 0 ? "listing__control-button is-active" : "listing__control-button"}
+        className={
+          selected.length > 0
+            ? "listing__control-button listing__dropdown-control is-active"
+            : "listing__control-button listing__dropdown-control"
+        }
         onClick={() => setOpen((o) => !o)}
       >
-        {selected.length > 0 ? `Condition (${selected.length})` : "Condition"}
+        <span>{selected.length > 0 ? `Condition (${selected.length})` : "Condition"}</span>
+        <ChevronDown className="listing__dropdown-chevron" size={16} />
       </Button>
       
       {open && (

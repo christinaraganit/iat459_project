@@ -4,5 +4,8 @@
   },
   "scripts": {
     "start": "concurrently \"cd frontend && $npm_execpath run start\" \"cd backend && $npm_execpath run start\""
+  },
+  "dependencies": {
+    "lucide-react": "^1.7.0"
   }
 }

@@ -10,6 +10,7 @@ import { useAuthContext } from "../../context/AuthContext";
 import { getMyMeetups } from "../../api/meetup";
 import { Button } from "../../components/Button/Button";
 import { LinkButton } from "../../components/LinkButton/LinkButton";
+import { ChevronDown } from "lucide-react";
 
 const options = [
   {
@@ -85,17 +86,20 @@ export const Index = () => {
       <div className="listing__nav">
         <h1>Listings near you</h1>
         <div className="listing__controls">
-          <select
-            className="listing__sort-select"
-            value={sort}
-            onChange={handleSortChange}
-          >
-            {options.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          <div className="listing__dropdown-control listing__dropdown-control--select">
+            <select
+              className="listing__sort-select"
+              value={sort}
+              onChange={handleSortChange}
+            >
+              {options.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="listing__dropdown-chevron" size={16} />
+          </div>
           <Button
             variant="secondary"
             className={

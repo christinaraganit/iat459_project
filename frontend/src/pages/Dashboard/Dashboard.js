@@ -294,6 +294,9 @@ export const Dashboard = () => {
 
       <section className="dashboard__section dashboard__wishlist">
         <h2>My wishlist ({wishlistQuery.data?.length || 0})</h2>
+        {wishlistQuery.data?.length === 0 ? (
+          <p>You currently have no cards in your wishlist.</p>
+        ) : null}
         <div className="dashboard__section__cards dashboard__wishlist__cards">
           {wishlistQuery.data?.map((item, i) => (
             <WishlistItem
@@ -326,6 +329,9 @@ export const Dashboard = () => {
       </section>
       <section className="dashboard__section dashboard__offers">
         <h2>My offers ({listingsQuery.data?.length || 0})</h2>
+        {listingsQuery.data?.length === 0 ? (
+          <p>You currently have no active offers.</p>
+        ) : null}
         <div className="dashboard__section__cards dashboard__offers__cards">
           {listingsQuery.data?.map((listing, i) => (
             <LinkButton
@@ -353,6 +359,9 @@ export const Dashboard = () => {
         <h2>
           Listings of interest ({listingsOfInterestQuery.data?.length || 0})
         </h2>
+        {listingsOfInterestQuery.data?.length === 0 ? (
+          <p>You currently have no listings of interest.</p>
+        ) : null}
         <div className="dashboard__section__cards dashboard__listings_of_interest__cards">
           {listingsOfInterestQuery.data?.map((listing, i) => (
             <LinkButton

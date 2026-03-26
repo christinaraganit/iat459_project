@@ -35,6 +35,15 @@
 
 .listing__sort-select {
   min-height: 2.2rem;
+  width: 100%;
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  background: #fff;
+  padding: 0 2rem 0 0.9rem;
+  font: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
 }
 
 .listing__control-button {
@@ -43,6 +52,33 @@
   border: 1px solid #bbb;
   border-radius: 8px;
   background: #fff;
+}
+
+.listing__dropdown-control {
+  min-height: 2.2rem;
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  background: #fff;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-right: 2rem;
+}
+
+.listing__dropdown-control--select {
+  padding-right: 0;
+}
+
+.listing__dropdown-chevron {
+  position: absolute;
+  right: 0.65rem;
+  pointer-events: none;
+  color: #666;
+}
+
+.listing__dropdown-control.listing__control-button {
+  padding-right: 2rem;
 }
 
 .listing__control-button.is-active {

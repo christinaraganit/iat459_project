@@ -63,8 +63,10 @@ export const CreateListing = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Submitting listing:", listing);
-    addListingMutation.mutate(listing);
+    const safePrice = Math.max(0, Number(listing.price) || 0);
+    const listingPayload = { ...listing, price: safePrice };
+    console.log("Submitting listing:", listingPayload);
+    addListingMutation.mutate(listingPayload);
   };
 
   return (
@@ -166,7 +168,12 @@ export const CreateListing = () => {
           Price
           <Input
             type="number"
-            onChange={(e) => setListing({ ...listing, price: e.target.value })}
+            min={0}
+            value={listing.price}
+            onChange={(e) => {
+              const nextPrice = Math.max(0, Number(e.target.value) || 0);
+              setListing({ ...listing, price: nextPrice });
+            }}
           />
         </label>
         <label>
