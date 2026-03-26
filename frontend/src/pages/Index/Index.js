@@ -156,6 +156,9 @@ export const Index = () => {
       {user && (
         <section>
           <h2>Upcoming meetups</h2>
+          {sortedMeetups.length === 0 ? (
+            <p>You currently have no upcoming meetups</p>
+          ) : null}
           {sortedMeetups.map((meetup, i) => (
             <LinkButton
               key={`meetup-${i}`}
