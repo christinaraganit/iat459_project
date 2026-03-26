@@ -22,6 +22,7 @@ import {
 } from "../../api/meetup";
 import { queryClient } from "../../App";
 import { CreateMeetupModal } from "../../components/Listing/Meetup/CreateMeetup";
+import { Button } from "../../components/Button/Button";
 
 export const Listing = () => {
   const navigate = useNavigate();
@@ -223,15 +224,29 @@ export const Listing = () => {
         (currentUserIsInterested.data ? (
           <Fragment>
             <div>Interest sent!</div>
-            <button onClick={handleRevokeInterest}>Revoke interest</button>
+            <Button
+              variant="secondary"
+              className="listing__revoke-interest"
+              onClick={handleRevokeInterest}
+            >
+              Revoke interest
+            </Button>
           </Fragment>
         ) : (
-          <button onClick={handleSendInterest}>Send interest</button>
+          <Button
+            variant="primary"
+            className="listing__send-interest"
+            onClick={handleSendInterest}
+          >
+            Send interest
+          </Button>
         ))}
 
       {(role === "admin" ||
         (activeOwner && listingQuery.data?.seller._id === user?.id)) && (
-        <button onClick={handleDelete}>Delete Listing</button>
+        <Button variant="tertiary" className="listing__delete" onClick={handleDelete}>
+          Delete Listing
+        </Button>
       )}
 
       {activeOwner &&
@@ -250,7 +265,9 @@ export const Listing = () => {
                   {meetupQuery.data?.some(
                     (item) => item.buyer._id === interestedUser._id,
                   ) ? (
-                    <button
+                    <Button
+                      variant="secondary"
+                      className="listing__revoke-meetup"
                       onClick={() =>
                         removeMeetupMutation.mutate({
                           listingId: listingQuery.data?._id,
@@ -260,11 +277,15 @@ export const Listing = () => {
                       }
                     >
                       Revoke meetup
-                    </button>
+                    </Button>
                   ) : (
-                    <button onClick={() => setActiveMeetupBuyer(interestedUser)}>
+                    <Button
+                      variant="primary"
+                      className="listing__create-meetup"
+                      onClick={() => setActiveMeetupBuyer(interestedUser)}
+                    >
                       Create Meetup
-                    </button>
+                    </Button>
                   )}
                 </li>
               ))}

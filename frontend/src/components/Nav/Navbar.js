@@ -3,6 +3,7 @@ import logo from "../../logo.svg";
 import { useAuthContext } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { Fragment, useState } from "react";
+import { Button } from "../Button/Button";
 
 export const Navbar = () => {
   const { user, logout, role } = useAuthContext();
@@ -60,19 +61,21 @@ export const Navbar = () => {
             />
           </div>
           {searchTerm && (
-            <button
+            <Button
+              variant="secondary"
               className="navbar__search__confirm"
               onClick={() => navigate(`/search?s=${searchTerm}`)}
             >
               Search
-            </button>
+            </Button>
           )}
-          <button
+          <Button
+            variant="tertiary"
             className={`navbar__search__mobile_toggle ${searchOpen ? "navbar__search__mobile_toggle--active" : ""}`}
             onClick={handleSearchOpen}
           >
             <div className="navbar__search__icon" />
-          </button>
+          </Button>
         </div>
 
         <menu
@@ -103,7 +106,9 @@ export const Navbar = () => {
                 </Link>
               </li>
               <div>
-                <button onClick={handleLogout}>Logout</button>
+                <Button variant="secondary" className="navbar__logout" onClick={handleLogout}>
+                  Logout
+                </Button>
               </div>
             </Fragment>
           ) : (
@@ -119,10 +124,11 @@ export const Navbar = () => {
         </menu>
         {role && <Link to="/dashboard/create">Create listing</Link>}
         {
-          <button
+          <Button
+            variant="tertiary"
             className={`navbar__toggle_actions ${navOpen ? "navbar__toggle_actions--active" : ""}`}
             onClick={handleNavOpen}
-          ></button>
+          ></Button>
         }
       </div>
     </nav>

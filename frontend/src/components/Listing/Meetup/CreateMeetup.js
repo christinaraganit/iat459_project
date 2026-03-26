@@ -8,6 +8,7 @@ import "leaflet/dist/leaflet.css";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
+import { Button } from "../../Button/Button";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -184,15 +185,22 @@ export const CreateMeetupModal = ({
           )}
 
           <div style={modalStyles.row}>
-            <button type="button" onClick={onClose}>
+            <Button
+              variant="secondary"
+              className="create-meetup__cancel"
+              type="button"
+              onClick={onClose}
+            >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="primary"
+              className="create-meetup__submit"
               type="submit"
               disabled={isSubmitting || preferredLocationQuery.isLoading || !hasPreferredLocation}
             >
               {isSubmitting ? "Creating..." : "Create Meetup"}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

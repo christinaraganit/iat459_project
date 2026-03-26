@@ -27,6 +27,7 @@ import {
   VANCOUVER_CENTER,
   clampLatLngToBC,
 } from "../../utils/mapBounds";
+import { Button } from "../../components/Button/Button";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -266,7 +267,9 @@ export const Dashboard = () => {
                 {new Date(meetup.date).toLocaleString()} - Status:{" "}
                 {meetup.status}{" "}
                 {meetup.status === "pending" && (
-                  <button
+                  <Button
+                    variant="primary"
+                    className="dashboard__accept-meetup"
                     onClick={() =>
                       updateMeetupStatusMutation.mutate({
                         meetupId: meetup._id,
@@ -275,7 +278,7 @@ export const Dashboard = () => {
                     }
                   >
                     Accept meetup
-                  </button>
+                  </Button>
                 )}
               </p>
             ) : null}
@@ -300,12 +303,20 @@ export const Dashboard = () => {
           value={fieldname}
           onChange={(e) => setFieldname(e.target.value)}
         />
-        <button onClick={() => addWishlistCardMutation.mutate(fieldname)}>
+        <Button
+          variant="primary"
+          className="dashboard__add-wishlist-card"
+          onClick={() => addWishlistCardMutation.mutate(fieldname)}
+        >
           Add card by ID
-        </button>
-        <button onClick={() => removeWishlistCardMutation.mutate(0)}>
+        </Button>
+        <Button
+          variant="tertiary"
+          className="dashboard__delete-wishlist-card"
+          onClick={() => removeWishlistCardMutation.mutate(0)}
+        >
           Delete card
-        </button>
+        </Button>
       </section>
       <section className="dashboard__section dashboard__offers">
         <h2>My offers ({listingsQuery.data?.length || 0})</h2>

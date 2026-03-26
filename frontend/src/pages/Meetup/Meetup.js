@@ -11,6 +11,7 @@ import {
   VANCOUVER_CENTER,
   clampLatLngToBC,
 } from "../../utils/mapBounds";
+import { Button } from "../../components/Button/Button";
 
 const parseCoordinateLocation = (locationValue) => {
   if (
@@ -123,16 +124,20 @@ export const Meetup = () => {
             {meetupQuery.data.seller._id === user.id &&
             meetupQuery.data.status === "accepted" ? (
               <Fragment>
-                <button
+                <Button
+                  variant="primary"
+                  className="meetup__complete"
                   onClick={() => meetupStatusMutation.mutate("completed")}
                 >
                   Mark as completed
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="tertiary"
+                  className="meetup__cancel"
                   onClick={() => meetupStatusMutation.mutate("cancelled")}
                 >
                   Cancel meetup
-                </button>
+                </Button>
               </Fragment>
             ) : null}
           </div>

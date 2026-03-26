@@ -2,6 +2,7 @@ import "./ListingCard.css";
 import { Fragment, Suspense } from "react";
 import { useAuthContext } from "../../../context/AuthContext";
 import { Link } from "react-router-dom";
+import { Button } from "../../Button/Button";
 
 function ListingCard({
   seller,
@@ -34,7 +35,13 @@ const Info = ({ seller, price, condition, cardName }) => (
       ) : (
         <Fragment>
           <p>Unavailable Account</p>
-          <button>Report listing</button>
+          <Button
+            variant="tertiary"
+            className="listing-card__report"
+            onClick={() => {}}
+          >
+            Report listing
+          </Button>
         </Fragment>
       )}
       {/* {user && seller !== null && <button>Send Interest</button>} */}

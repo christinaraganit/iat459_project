@@ -1,5 +1,6 @@
 import { Fragment, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Button } from "../Button/Button";
 
 export const Register = () => {
   const [account, setAccount] = useState({
@@ -55,7 +56,9 @@ export const Register = () => {
           value={account.password}
           onChange={(e) => setAccount({ ...account, password: e.target.value })}
         />
-        <button type="submit">Sign up</button>
+        <Button variant="primary" className="register__submit" type="submit">
+          Sign up
+        </Button>
       </form>
 
       <Link to="/login">Log in</Link>

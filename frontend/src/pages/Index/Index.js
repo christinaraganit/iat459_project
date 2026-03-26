@@ -9,6 +9,7 @@ import { useGridColumns } from "../../hooks/useGridColumns";
 import { useAuthContext } from "../../context/AuthContext";
 import { getMyMeetups } from "../../api/meetup";
 import { Link } from "react-router-dom";
+import { Button } from "../../components/Button/Button";
 
 const options = [
   {
@@ -95,7 +96,8 @@ export const Index = () => {
               </option>
             ))}
           </select>
-          <button
+          <Button
+            variant="secondary"
             className={
               order === "asc"
                 ? "listing__control-button is-active"
@@ -104,8 +106,9 @@ export const Index = () => {
             onClick={() => setOrder("asc")}
           >
             Asc
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="secondary"
             className={
               order === "desc"
                 ? "listing__control-button is-active"
@@ -114,7 +117,7 @@ export const Index = () => {
             onClick={() => setOrder("desc")}
           >
             Desc
-          </button>
+          </Button>
           <ConditionFilter selected={selected} setSelected={setSelected} />
         </div>
       </div>
@@ -133,14 +136,22 @@ export const Index = () => {
         ))}
       </div>
       <div className="listing__pagination">
-        <button
+        <Button
+          variant="secondary"
+          className="listing__pagination__previous"
           onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
           disabled={page === 1}
         >
           Previous
-        </button>
+        </Button>
         <span>Page {page}</span>
-        <button onClick={() => setPage((prev) => prev + 1)}>Next</button>
+        <Button
+          variant="secondary"
+          className="listing__pagination__next"
+          onClick={() => setPage((prev) => prev + 1)}
+        >
+          Next
+        </Button>
       </div>
       {user && (
         <section>

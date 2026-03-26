@@ -1,3 +1,5 @@
+import { Button } from "../../Button/Button";
+
 export const Meetup = () => {
   return (
     <div>
@@ -14,7 +16,9 @@ export const Meetup = () => {
           Location
           <input type="text"></input>
         </label>
-        <button type="submit">Create Meetup</button>
+        <Button variant="primary" className="meetup-form__submit" type="submit">
+          Create Meetup
+        </Button>
       </form>
     </div>
   );

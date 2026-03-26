@@ -12,7 +12,11 @@ const wishlistRoutes = require("./routes/wishlist");
 const app = express();
 const PORT = 5000;
 
-app.use(cors({ origin: "http://localhost:3000" })); // allow requests from localhost:3000
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "http://localhost:3002"],
+  }),
+); // allow requests from localhost:3000
 // app.use(cors()); // allow everyone
 app.use(express.json());
 

@@ -1,6 +1,7 @@
 import { useState, useEffect, Fragment } from "react";
 import { useAuthContext } from "../../../context/AuthContext";
 import { useMutation } from "@tanstack/react-query";
+import { Button } from "../../Button/Button";
 export const NameField = () => {
   const { user, updateDisplayName, token, reassignToken } = useAuthContext();
   const [editing, setEditing] = useState(false);
@@ -53,12 +54,24 @@ export const NameField = () => {
             value={prospectiveDisplayName}
             onChange={(e) => setProspectiveDisplayName(e.target.value)}
           />
-          <button onClick={handleRename}>Save</button>
+          <Button
+            variant="primary"
+            className="namefield__save"
+            onClick={handleRename}
+          >
+            Save
+          </Button>
         </>
       ) : (
         <>
           {user?.displayName || user?.username}
-          <button onClick={() => setEditing(true)}>Edit</button>
+          <Button
+            variant="tertiary"
+            className="namefield__edit"
+            onClick={() => setEditing(true)}
+          >
+            Edit
+          </Button>
         </>
       )}
     </span>

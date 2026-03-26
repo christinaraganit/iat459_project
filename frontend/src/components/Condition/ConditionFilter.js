@@ -1,4 +1,5 @@
 import {useEffect, useRef, useState} from "react";
+import { Button } from "../Button/Button";
 
 const conditions = ["Mint", "Near Mint", "Lightly Played", "Played"];
 
@@ -28,12 +29,13 @@ function ConditionFilter({selected, setSelected}) {
   
   return (
     <div ref={ref} style={{ position: "relative", display: "inline-block" }}>
-      <button
+      <Button
+        variant="secondary"
         className={selected.length > 0 ? "listing__control-button is-active" : "listing__control-button"}
         onClick={() => setOpen((o) => !o)}
       >
         {selected.length > 0 ? `Condition (${selected.length})` : "Condition"}
-      </button>
+      </Button>
       
       {open && (
         <div style={{

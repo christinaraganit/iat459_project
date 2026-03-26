@@ -1,6 +1,7 @@
 import { useAuthContext } from "../../context/AuthContext";
 import { Fragment, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Button } from "../Button/Button";
 
 export const Login = () => {
   const [account, setAccount] = useState({
@@ -51,7 +52,9 @@ export const Login = () => {
           value={account.password}
           onChange={(e) => setAccount({ ...account, password: e.target.value })}
         />
-        <button type="submit">Login</button>
+        <Button variant="primary" className="login__submit" type="submit">
+          Login
+        </Button>
       </form>
 
       <Link to="/register">Register</Link>

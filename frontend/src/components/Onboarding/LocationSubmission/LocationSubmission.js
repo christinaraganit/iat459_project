@@ -15,6 +15,7 @@ import {
   VANCOUVER_CENTER,
   clampLatLngToBC,
 } from "../../../utils/mapBounds";
+import { Button } from "../../Button/Button";
 import "leaflet/dist/leaflet.css";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
@@ -247,19 +248,23 @@ export const LocationSubmission = ({ authContext, decrementStep }) => {
           onChange={(e) => setSearchValue(e.target.value)}
           placeholder="Search an address"
         />
-        <button
+        <Button
+          variant="secondary"
+          className="onboarding__search-button"
           type="button"
           onClick={handleLocationSearch}
           disabled={isSearching}
         >
           {isSearching ? "Searching..." : "Search"}
-        </button>
+        </Button>
       </div>
       {locationError ? (
         <p className="onboarding__location-error">{locationError}</p>
       ) : null}
       <div className="onboarding__location-actions">
-        <button
+        <Button
+          variant="tertiary"
+          className="onboarding__reset-location"
           type="button"
           onClick={() =>
             setPickedLocation(VANCOUVER_CENTER, {
@@ -269,7 +274,7 @@ export const LocationSubmission = ({ authContext, decrementStep }) => {
           }
         >
           Reset location
-        </button>
+        </Button>
       </div>
       <MapContainer
         center={VANCOUVER_CENTER}
@@ -316,12 +321,22 @@ export const LocationSubmission = ({ authContext, decrementStep }) => {
         Selected coordinates: {location.lat}, {location.lng}
       </p>
       <div className="onboarding__buttons">
-        <button type="button" onClick={decrementStep}>
+        <Button
+          variant="secondary"
+          className="onboarding__back"
+          type="button"
+          onClick={decrementStep}
+        >
           Back
-        </button>
-        <button type="submit" disabled={isSaving}>
+        </Button>
+        <Button
+          variant="primary"
+          className="onboarding__save-location"
+          type="submit"
+          disabled={isSaving}
+        >
           {isSaving ? "Saving..." : "Save location"}
-        </button>
+        </Button>
       </div>
     </form>
   );

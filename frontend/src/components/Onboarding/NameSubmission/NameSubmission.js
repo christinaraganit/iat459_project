@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Button } from "../../Button/Button";
 export const NameSubmission = ({
   authContext,
   incrementStep,
@@ -51,7 +52,9 @@ export const NameSubmission = ({
           value={prospectiveDisplayName}
           onChange={(e) => setProspectiveDisplayName(e.target.value)}
         ></input>
-        <button>Continue</button>
+        <Button variant="primary" className="onboarding__continue" type="submit">
+          Continue
+        </Button>
       </form>
     </article>
   );

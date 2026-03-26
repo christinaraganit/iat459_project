@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { addListing } from "../../../api/listings";
 import { useGridColumns } from "../../../hooks/useGridColumns";
+import { Button } from "../../../components/Button/Button";
 
 export const CreateListing = () => {
   const navigate = useNavigate();
@@ -84,18 +85,22 @@ export const CreateListing = () => {
             onChange={(e) => setSearchQs({ ...searchQs, page: e.target.value })}
           />
         </label>
-        <button
+        <Button
+          variant="secondary"
+          className="create_listing__page-up"
           type="button"
           onClick={() => setSearchQs({ ...searchQs, page: searchQs.page + 1 })}
         >
           ^
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="secondary"
+          className="create_listing__page-down"
           type="button"
           onClick={() => setSearchQs({ ...searchQs, page: searchQs.page - 1 })}
         >
           v
-        </button>
+        </Button>
       </div>
       <div
         style={{
@@ -182,7 +187,9 @@ export const CreateListing = () => {
           ></textarea>
         </label>
 
-        <button type="submit">Create Listing</button>
+        <Button variant="primary" className="create_listing__submit" type="submit">
+          Create Listing
+        </Button>
       </form>
     </div>
   );

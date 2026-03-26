@@ -5,6 +5,7 @@ import {
 } from "../../../../api/wishlist";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuthContext } from "../../../../context/AuthContext";
+import { Button } from "../../../Button/Button";
 
 export const WishlistItem = ({ card, item, owner }) => {
   const { token, user } = useAuthContext();
@@ -76,7 +77,9 @@ export const WishlistItem = ({ card, item, owner }) => {
         </div>
       )}
       {owner === user?.username && (
-        <button
+        <Button
+          variant="tertiary"
+          className="wishlist-item__remove"
           style={{
             position: "absolute",
             top: 0,
@@ -90,7 +93,7 @@ export const WishlistItem = ({ card, item, owner }) => {
           onClick={() => removeFromWishlistMutation.mutate(item._id)}
         >
           Remove
-        </button>
+        </Button>
       )}
     </div>
   );
