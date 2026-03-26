@@ -101,7 +101,7 @@
         position: relative;
         &.navbar__search__mobile_toggle--active {
           background: var(--foreground);
-          border-radius: 0;
+          border-radius: calc(infinity * 1px);
         }
         & .navbar__search__icon {
           display: block;
@@ -126,7 +126,7 @@
       z-index: 1;
       &.navbar__toggle_actions--active {
         background: var(--foreground);
-        border-radius: 0;
+        border-radius: calc(infinity * 1px);
       }
     }
 
