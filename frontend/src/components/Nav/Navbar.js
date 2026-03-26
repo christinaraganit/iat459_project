@@ -95,9 +95,22 @@ export const Navbar = () => {
                   {user.displayName || user.username}
                 </LinkButton>
 
-                <div className="navbar__actions_menu__user__username">
+                <div
+                  className="navbar__actions_menu__user__username"
+                  style={{ paddingLeft: "1rem" }}
+                >
                   @{user.username}
                 </div>
+              </div>
+              <div style={{ width: "calc(100% - 1rem)", padding: "0.5rem" }}>
+                <div
+                  style={{
+                    height: "1px",
+                    marginTop: "1rem",
+                    marginBottom: "0.75rem",
+                    background: "#E0E0E0",
+                  }}
+                ></div>
               </div>
               <li className="navbar__actions_menu__item">
                 <LinkButton
@@ -111,7 +124,7 @@ export const Navbar = () => {
               </li>
               <div>
                 <Button
-                  variant="secondary"
+                  variant="tertiary"
                   className="navbar__logout"
                   onClick={handleLogout}
                 >

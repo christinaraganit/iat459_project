@@ -216,11 +216,9 @@ export const Dashboard = () => {
 
   return (
     <Fragment>
-      <h1>Dashboard</h1>
-
-      <p>
+      <h1>
         Welcome <NameField /> {role === "admin" && <span>(Admin)</span>}
-      </p>
+      </h1>
 
       <section className="dashboard__section">
         <h2>My preferred meeting location</h2>
@@ -248,8 +246,11 @@ export const Dashboard = () => {
           </MapContainer>
         </div>
       </section>
-      <section>
+      <section className="dashboard__section">
         <h2>My meetups ({sortedMeetups.length || 0})</h2>
+        {sortedMeetups.length === 0 ? (
+          <p>You currently have no meetups.</p>
+        ) : null}
         {sortedMeetups.map((meetup, i) => (
           <LinkButton
             key={`meetup-${i}`}
@@ -351,7 +352,11 @@ export const Dashboard = () => {
             </LinkButton>
           ))}
         </div>
-        <LinkButton to="/dashboard/create" variant="primary" className="dashboard__create-offer-link">
+        <LinkButton
+          to="/dashboard/create"
+          variant="primary"
+          className="dashboard__create-offer-link"
+        >
           Create new offer
         </LinkButton>
       </section>

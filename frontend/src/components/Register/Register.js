@@ -46,7 +46,7 @@ export const Register = () => {
 
   return (
     <Fragment>
-      <form onSubmit={handleRegister}>
+      <form onSubmit={handleRegister} className="register__form">
         <h1>Create an account</h1>
         <Input
           type="text"

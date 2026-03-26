@@ -3,6 +3,7 @@ import { useAuthContext } from "../../../context/AuthContext";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "../../Button/Button";
 import { Input } from "../../Input/Input";
+import { Pencil } from "lucide-react";
 export const NameField = () => {
   const { user, updateDisplayName, token, reassignToken } = useAuthContext();
   const [editing, setEditing] = useState(false);
@@ -71,7 +72,7 @@ export const NameField = () => {
             className="namefield__edit"
             onClick={() => setEditing(true)}
           >
-            Edit
+            <Pencil />
           </Button>
         </>
       )}

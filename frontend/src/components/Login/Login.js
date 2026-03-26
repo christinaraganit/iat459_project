@@ -42,7 +42,7 @@ export const Login = () => {
 
   return (
     <Fragment>
-      <form onSubmit={handleLogin}>
+      <form onSubmit={handleLogin} className="login__form">
         <h1>Login to your account</h1>
         <Input
           type="text"

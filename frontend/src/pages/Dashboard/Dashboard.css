@@ -1,9 +1,18 @@
 .dashboard__section {
-  padding: 1rem var(--margin);
-  background: color-mix(in srgb, var(--background), var(--foreground) 7%);
-  border-radius: 1rem;
-  margin-bottom: 4rem;
+  padding: 1rem;
+  background-color: #f5f5f5;
+  border-radius: 0.75rem;
+  margin-bottom: 1rem;
   /* overflow-x: auto; */
+
+  h1,
+  h2 {
+    margin-top: 0;
+  }
+
+  p {
+    margin-bottom: 0;
+  }
 
   & .dashboard__section__cards {
     display: flex;
