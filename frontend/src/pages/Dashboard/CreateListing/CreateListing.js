@@ -9,6 +9,7 @@ import { addListing } from "../../../api/listings";
 import { useGridColumns } from "../../../hooks/useGridColumns";
 import { Button } from "../../../components/Button/Button";
 import { Input } from "../../../components/Input/Input";
+import { ChevronUp, ChevronDown } from "lucide-react";
 
 export const CreateListing = () => {
   const navigate = useNavigate();
@@ -69,136 +70,170 @@ export const CreateListing = () => {
     addListingMutation.mutate(listingPayload);
   };
 
+  const selectCard = (cardId) => {
+    setListing({ ...listing, cardId });
+    if (ref.current) {
+      ref.current.value = cardId;
+    }
+  };
+  const hasSearchTerm = Boolean(searchTerm.trim());
+  const searchResultCount = searchResultsQuery.data?.length ?? 0;
+  const showSearchPagination = hasSearchTerm && searchResultCount > 0;
+  const disableNextSearchPage =
+    searchResultsQuery.isPending || searchResultCount < gridCols;
+
   return (
     <div className="create_listing">
-      <h1>Create new listing</h1>
-      <div>
-        <label>
-          Search for card
-          <Input
-            type="text"
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </label>
-        <label>
-          Page{" "}
-          <Input
-            type="number"
-            value={searchQs.page}
-            onChange={(e) => setSearchQs({ ...searchQs, page: e.target.value })}
-          />
-        </label>
-        <Button
-          variant="secondary"
-          className="create_listing__page-up"
-          type="button"
-          onClick={() => setSearchQs({ ...searchQs, page: searchQs.page + 1 })}
-        >
-          ^
-        </Button>
-        <Button
-          variant="secondary"
-          className="create_listing__page-down"
-          type="button"
-          onClick={() => setSearchQs({ ...searchQs, page: searchQs.page - 1 })}
-        >
-          v
-        </Button>
-      </div>
-      <div
-        style={{
-          border: "1px solid black",
-          padding: "10px",
-          marginBottom: "20px",
-          display: "flex",
-          overflowX: "hidden",
-          gap: "5px",
-        }}
-      >
-        {searchResultsQuery.data &&
-          searchResultsQuery.data.map((card, i) => (
-            <div
-              key={card.id}
-              style={{
-                border:
-                  listing.cardId === card.id
-                    ? "2px solid blue"
-                    : "2px solid gray",
-                flex: "1 1 0",
-                overflowX: "hidden",
-                boxSizing: "border-box",
-              }}
-            >
-              <h2
-                style={{
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  width: "100%",
+      <section className="create_listing__container">
+        <h1>Create new listing</h1>
+        <div className="create_listing__controls">
+          <label>
+            Search for card
+            <Input
+              type="text"
+              placeholder="e.g. Trubbish"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </label>
+        </div>
+      </section>
+      <section className="create_listing__container">
+        <h2>Card search results</h2>
+        <div className="create_listing__search_results">
+          {!searchTerm.trim() ? (
+            <p className="create_listing__empty_state">
+              Start typing a card name to see results.
+            </p>
+          ) : searchResultsQuery.isPending ? (
+            <p className="create_listing__empty_state">Searching cards...</p>
+          ) : searchResultsQuery.data?.length === 0 ? (
+            <p className="create_listing__empty_state">
+              No cards found for that search.
+            </p>
+          ) : (
+            searchResultsQuery.data.map((card, i) => (
+              <div
+                className={`create_listing__search_card${
+                  listing.cardId === card.id ? " is-selected" : ""
+                }`}
+                key={card.id}
+                onClick={() => selectCard(card.id)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    selectCard(card.id);
+                  }
                 }}
               >
-                {card.name}
-              </h2>
-              <p>{card.id}</p>
-              <img
-                key={`wishlist-card-${i}`}
-                src={card?.image + "/low.webp"}
-                alt={card?.name}
-                onClick={() => {
-                  setListing({ ...listing, cardId: card.id });
-                  ref.current.value = card.id;
-                }}
-                style={{
-                  cursor: "pointer",
-                }}
+                <h2>{card.name}</h2>
+                <p>{card.id}</p>
+                <img
+                  key={`wishlist-card-${i}`}
+                  src={card?.image + "/low.webp"}
+                  alt={card?.name}
+                />
+              </div>
+            ))
+          )}
+        </div>
+        {showSearchPagination ? (
+          <div className="create_listing__pagination">
+            <Button
+              variant="secondary"
+              className="create_listing__pagination__previous"
+              type="button"
+              onClick={() =>
+                setSearchQs({
+                  ...searchQs,
+                  page: Math.max(1, Number(searchQs.page) - 1),
+                })
+              }
+              disabled={Number(searchQs.page) <= 1}
+            >
+              Previous
+            </Button>
+            <span>Page {searchQs.page}</span>
+            <Button
+              variant="secondary"
+              className="create_listing__pagination__next"
+              type="button"
+              onClick={() =>
+                setSearchQs({ ...searchQs, page: Number(searchQs.page) + 1 })
+              }
+              disabled={disableNextSearchPage}
+            >
+              Next
+            </Button>
+          </div>
+        ) : null}
+      </section>
+      <section className="create_listing__container">
+        <h2>Listing details</h2>
+        <form onSubmit={handleSubmit} className="create_listing__form">
+          <label>
+            Card name
+            <Input
+              type="text"
+              ref={ref}
+              onChange={(e) =>
+                setListing({ ...listing, cardId: e.target.value })
+              }
+            />
+          </label>
+          <label>
+            Price
+            <Input
+              type="number"
+              min={0}
+              value={listing.price}
+              onChange={(e) => {
+                const nextPrice = Math.max(0, Number(e.target.value) || 0);
+                setListing({ ...listing, price: nextPrice });
+              }}
+            />
+          </label>
+          <label>
+            Condition
+            <div className="create_listing__dropdown-control create_listing__dropdown-control--select">
+              <select
+                className="create_listing__condition-select"
+                value={listing.condition}
+                onChange={(e) =>
+                  setListing({ ...listing, condition: e.target.value })
+                }
+              >
+                <option value="Mint">Mint</option>
+                <option value="Lightly Played">Lightly Played</option>
+                <option value="Played">Played</option>
+              </select>
+              <ChevronDown
+                className="create_listing__dropdown-chevron"
+                size={16}
               />
             </div>
-          ))}
-      </div>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Card name
-          <Input
-            type="text"
-            ref={ref}
-            onChange={(e) => setListing({ ...listing, cardId: e.target.value })}
-          />
-        </label>
-        <label>
-          Price
-          <Input
-            type="number"
-            min={0}
-            value={listing.price}
-            onChange={(e) => {
-              const nextPrice = Math.max(0, Number(e.target.value) || 0);
-              setListing({ ...listing, price: nextPrice });
-            }}
-          />
-        </label>
-        <label>
-          Condition
-          <select
-            onChange={(e) =>
-              setListing({ ...listing, condition: e.target.value })
-            }
-          >
-            <option value="Mint">Mint</option>
-            <option value="Lightly Played">Lightly Played</option>
-            <option value="Played">Played</option>
-          </select>
-        </label>
-        <label>
-          Notes
-          <textarea
-            onChange={(e) => setListing({ ...listing, notes: e.target.value })}
-          ></textarea>
-        </label>
+          </label>
+          <label>
+            Notes
+            <textarea
+              className="create_listing__notes"
+              onChange={(e) =>
+                setListing({ ...listing, notes: e.target.value })
+              }
+            ></textarea>
+          </label>
 
-        <Button variant="primary" className="create_listing__submit" type="submit">
-          Create Listing
-        </Button>
-      </form>
+          <Button
+            variant="primary"
+            className="create_listing__submit"
+            type="submit"
+          >
+            Create Listing
+          </Button>
+        </form>
+      </section>
     </div>
   );
 };
