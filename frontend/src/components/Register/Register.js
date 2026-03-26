@@ -1,3 +1,4 @@
+import "./Register.css";
 import { Fragment, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../Button/Button";
@@ -63,7 +64,11 @@ export const Register = () => {
         </Button>
       </form>
 
-      <LinkButton to="/login" variant="secondary" className="register__login-link">
+      <LinkButton
+        to="/login"
+        variant="secondary"
+        className="register__login-link"
+      >
         Log in
       </LinkButton>
     </Fragment>

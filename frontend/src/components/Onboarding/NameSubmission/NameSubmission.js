@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./NameSubmission.css";
 import { Button } from "../../Button/Button";
 import { Input } from "../../Input/Input";
 export const NameSubmission = ({
@@ -9,6 +10,7 @@ export const NameSubmission = ({
   const { token, user, reassignToken, activateNewUser, updateDisplayName } =
     authContext;
   const [prospectiveDisplayName, setProspectiveDisplayName] = useState("");
+  const isDisplayNameEmpty = prospectiveDisplayName.trim() === "";
   const handleRename = async (e) => {
     e.preventDefault();
 
@@ -42,7 +44,7 @@ export const NameSubmission = ({
 
   return (
     <article>
-      <h2>What's your name?</h2>
+      <h1>What's your name?</h1>
       <form onSubmit={handleRename} className="onboarding__content">
         <Input
           placeholder={
@@ -53,7 +55,12 @@ export const NameSubmission = ({
           value={prospectiveDisplayName}
           onChange={(e) => setProspectiveDisplayName(e.target.value)}
         />
-        <Button variant="primary" className="onboarding__continue" type="submit">
+        <Button
+          variant="primary"
+          className="onboarding__continue"
+          type="submit"
+          disabled={isDisplayNameEmpty}
+        >
           Continue
         </Button>
       </form>
