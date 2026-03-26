@@ -8,8 +8,8 @@ import ConditionFilter from "../../components/Condition/ConditionFilter";
 import { useGridColumns } from "../../hooks/useGridColumns";
 import { useAuthContext } from "../../context/AuthContext";
 import { getMyMeetups } from "../../api/meetup";
-import { Link } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
+import { LinkButton } from "../../components/LinkButton/LinkButton";
 
 const options = [
   {
@@ -157,7 +157,12 @@ export const Index = () => {
         <section>
           <h2>Upcoming meetups</h2>
           {sortedMeetups.map((meetup, i) => (
-            <Link key={`meetup-${i}`} to={`/meetups/${meetup._id}`}>
+            <LinkButton
+              key={`meetup-${i}`}
+              to={`/meetups/${meetup._id}`}
+              variant="secondary"
+              className="index__meetup-link"
+            >
               {meetup.seller._id === user.id ? (
                 <p>
                   <span>Selling to</span>{" "}
@@ -175,7 +180,7 @@ export const Index = () => {
                   {meetup.status}{" "}
                 </p>
               ) : null}
-            </Link>
+            </LinkButton>
           ))}
         </section>
       )}

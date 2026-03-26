@@ -14,7 +14,6 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "../../App";
 import { Onboarding } from "../../components/Onboarding/Onboarding";
 import { NameField } from "../../components/Dashboard/NameField/NameField";
-import { Link } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -29,6 +28,7 @@ import {
 } from "../../utils/mapBounds";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
+import { LinkButton } from "../../components/LinkButton/LinkButton";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -251,7 +251,12 @@ export const Dashboard = () => {
       <section>
         <h2>My meetups ({sortedMeetups.length || 0})</h2>
         {sortedMeetups.map((meetup, i) => (
-          <Link key={`meetup-${i}`} to={`/meetups/${meetup._id}`}>
+          <LinkButton
+            key={`meetup-${i}`}
+            to={`/meetups/${meetup._id}`}
+            variant="secondary"
+            className="dashboard__meetup-link"
+          >
             {meetup.seller._id === user.id ? (
               <p>
                 <span>Selling to</span>{" "}
@@ -283,7 +288,7 @@ export const Dashboard = () => {
                 )}
               </p>
             ) : null}
-          </Link>
+          </LinkButton>
         ))}
       </section>
 
@@ -323,7 +328,12 @@ export const Dashboard = () => {
         <h2>My offers ({listingsQuery.data?.length || 0})</h2>
         <div className="dashboard__section__cards dashboard__offers__cards">
           {listingsQuery.data?.map((listing, i) => (
-            <Link to={`/listings/${listing._id}`} key={`offers-card-${i}`}>
+            <LinkButton
+              to={`/listings/${listing._id}`}
+              key={`offers-card-${i}`}
+              variant="tertiary"
+              className="dashboard__offer-link"
+            >
               <img
                 key={`offers-card-${i}`}
                 src={listing.card?.image + "/low.webp"}
@@ -332,10 +342,12 @@ export const Dashboard = () => {
                   cursor: "pointer",
                 }}
               />
-            </Link>
+            </LinkButton>
           ))}
         </div>
-        <Link to="/dashboard/create">Create new offer</Link>
+        <LinkButton to="/dashboard/create" variant="primary" className="dashboard__create-offer-link">
+          Create new offer
+        </LinkButton>
       </section>
       <section className="dashboard__section dashboard__listings_of_interest">
         <h2>
@@ -343,7 +355,12 @@ export const Dashboard = () => {
         </h2>
         <div className="dashboard__section__cards dashboard__listings_of_interest__cards">
           {listingsOfInterestQuery.data?.map((listing, i) => (
-            <Link to={`/listings/${listing._id}`} key={`offers-card-${i}`}>
+            <LinkButton
+              to={`/listings/${listing._id}`}
+              key={`offers-card-${i}`}
+              variant="tertiary"
+              className="dashboard__interest-link"
+            >
               <img
                 key={`offers-card-${i}`}
                 src={listing.card?.image + "/low.webp"}
@@ -352,7 +369,7 @@ export const Dashboard = () => {
                   cursor: "pointer",
                 }}
               />
-            </Link>
+            </LinkButton>
           ))}
         </div>
       </section>

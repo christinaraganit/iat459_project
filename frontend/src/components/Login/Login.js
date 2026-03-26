@@ -1,8 +1,9 @@
 import { useAuthContext } from "../../context/AuthContext";
 import { Fragment, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "../Button/Button";
 import { Input } from "../Input/Input";
+import { LinkButton } from "../LinkButton/LinkButton";
 
 export const Login = () => {
   const [account, setAccount] = useState({
@@ -58,7 +59,9 @@ export const Login = () => {
         </Button>
       </form>
 
-      <Link to="/register">Register</Link>
+      <LinkButton to="/register" variant="secondary" className="login__register-link">
+        Register
+      </LinkButton>
     </Fragment>
   );
 };

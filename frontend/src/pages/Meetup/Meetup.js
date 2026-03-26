@@ -12,6 +12,7 @@ import {
   clampLatLngToBC,
 } from "../../utils/mapBounds";
 import { Button } from "../../components/Button/Button";
+import { LinkButton } from "../../components/LinkButton/LinkButton";
 
 const parseCoordinateLocation = (locationValue) => {
   if (
@@ -116,9 +117,15 @@ export const Meetup = () => {
           <p>When: {meetupDateTime}</p>
           <p>Location: {mapLabel}</p>
           <p>
-            <a href={googleMapsUrl} target="_blank" rel="noreferrer">
+            <LinkButton
+              href={googleMapsUrl}
+              target="_blank"
+              rel="noreferrer"
+              variant="secondary"
+              className="meetup__maps-link"
+            >
               Open in Google Maps
-            </a>
+            </LinkButton>
           </p>
           <div>
             {meetupQuery.data.seller._id === user.id &&

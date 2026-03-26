@@ -1,7 +1,8 @@
 import { Fragment, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "../Button/Button";
 import { Input } from "../Input/Input";
+import { LinkButton } from "../LinkButton/LinkButton";
 
 export const Register = () => {
   const [account, setAccount] = useState({
@@ -62,7 +63,9 @@ export const Register = () => {
         </Button>
       </form>
 
-      <Link to="/login">Log in</Link>
+      <LinkButton to="/login" variant="secondary" className="register__login-link">
+        Log in
+      </LinkButton>
     </Fragment>
   );
 };

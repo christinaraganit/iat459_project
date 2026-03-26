@@ -7,7 +7,7 @@ import {
   getInterestedUsersByListingId,
 } from "../../api/listings";
 import TCGdex from "@tcgdex/sdk";
-import { useNavigate, Link } from "react-router";
+import { useNavigate } from "react-router";
 import { useAuthContext } from "../../context/AuthContext";
 import {
   addListingOfInterest,
@@ -23,6 +23,7 @@ import {
 import { queryClient } from "../../App";
 import { CreateMeetupModal } from "../../components/Listing/Meetup/CreateMeetup";
 import { Button } from "../../components/Button/Button";
+import { LinkButton } from "../../components/LinkButton/LinkButton";
 
 export const Listing = () => {
   const navigate = useNavigate();
@@ -205,14 +206,18 @@ export const Listing = () => {
         <p>Condition: {listingQuery.data?.condition}</p>
         <p>Price: ${listingQuery.data?.price?.toFixed(2)}</p>
         {activeOwner ? (
-          <Link to={`/user/${listingQuery.data?.seller.username}`}>
+          <LinkButton
+            to={`/user/${listingQuery.data?.seller.username}`}
+            variant="tertiary"
+            className="listing__seller-link"
+          >
             Seller:{" "}
             {listingQuery.data?.seller.displayName ? (
               <span>{listingQuery.data?.seller.displayName}</span>
             ) : (
               <span>{listingQuery.data?.seller.username}</span>
             )}
-          </Link>
+          </LinkButton>
         ) : (
           <p>Seller not found</p>
         )}
@@ -258,10 +263,14 @@ export const Listing = () => {
             <ul>
               {interestedUsersQuery.data.map((interestedUser, i) => (
                 <li key={`interested-user-${i}`}>
-                  <Link to={`/user/${interestedUser.username}`}>
+                  <LinkButton
+                    to={`/user/${interestedUser.username}`}
+                    variant="tertiary"
+                    className="listing__interested-user-link"
+                  >
                     {interestedUser.displayName || interestedUser.username}
                     <span>@{interestedUser.username}</span>
-                  </Link>
+                  </LinkButton>
                   {meetupQuery.data?.some(
                     (item) => item.buyer._id === interestedUser._id,
                   ) ? (

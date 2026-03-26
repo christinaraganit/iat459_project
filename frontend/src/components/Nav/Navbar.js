@@ -1,10 +1,11 @@
 import "./Navbar.css";
 import logo from "../../logo.svg";
 import { useAuthContext } from "../../context/AuthContext";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Fragment, useState } from "react";
 import { Button } from "../Button/Button";
 import { Input } from "../Input/Input";
+import { LinkButton } from "../LinkButton/LinkButton";
 
 export const Navbar = () => {
   const { user, logout, role } = useAuthContext();
@@ -43,9 +44,9 @@ export const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <Link className="navbar__logo" to="/">
+      <LinkButton className="navbar__logo" to="/" variant="tertiary">
         <img src={logo} alt="logo" />
-      </Link>
+      </LinkButton>
 
       <div className="navbar__actions">
         <div className="navbar__search">
@@ -85,26 +86,28 @@ export const Navbar = () => {
           {user ? (
             <Fragment>
               <div className="navbar__actions_menu__user">
-                <Link
+                <LinkButton
+                  variant="tertiary"
                   className="navbar__actions_menu__user__display-name"
                   to="/dashboard"
                   onClick={handleRedirect}
                 >
                   {user.displayName || user.username}
-                </Link>
+                </LinkButton>
 
                 <div className="navbar__actions_menu__user__username">
                   @{user.username}
                 </div>
               </div>
               <li className="navbar__actions_menu__item">
-                <Link
+                <LinkButton
+                  variant="tertiary"
                   className="navbar__actions_menu__item__link"
                   to="/dashboard"
                   onClick={handleRedirect}
                 >
                   View dashboard
-                </Link>
+                </LinkButton>
               </li>
               <div>
                 <Button variant="secondary" className="navbar__logout" onClick={handleLogout}>
@@ -115,15 +118,23 @@ export const Navbar = () => {
           ) : (
             <Fragment>
               <li>
-                <Link to="/login">Login</Link>
+                <LinkButton to="/login" variant="secondary" className="navbar__login-link">
+                  Login
+                </LinkButton>
               </li>
               <li>
-                <Link to="/register">Sign up</Link>
+                <LinkButton to="/register" variant="primary" className="navbar__signup-link">
+                  Sign up
+                </LinkButton>
               </li>
             </Fragment>
           )}
         </menu>
-        {role && <Link to="/dashboard/create">Create listing</Link>}
+        {role && (
+          <LinkButton to="/dashboard/create" variant="primary" className="navbar__create-link">
+            Create listing
+          </LinkButton>
+        )}
         {
           <Button
             variant="tertiary"
