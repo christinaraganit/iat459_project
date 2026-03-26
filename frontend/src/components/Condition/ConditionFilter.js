@@ -34,9 +34,9 @@ function ConditionFilter({selected, setSelected}) {
       <Button
         variant="secondary"
         className={
-          selected.length > 0
-            ? "listing__control-button listing__dropdown-control is-active"
-            : "listing__control-button listing__dropdown-control"
+          `listing__control-button listing__dropdown-control${
+            selected.length > 0 ? " is-active" : ""
+          }${open ? " is-open" : ""}`
         }
         onClick={() => setOpen((o) => !o)}
       >
@@ -57,13 +57,17 @@ function ConditionFilter({selected, setSelected}) {
           minWidth: 160,
         }}>
           {conditions.map((condition) => (
-            <label key={condition} style={{ display: "block", padding: "4px 0" }}>
+            <label
+              key={condition}
+              className="condition-filter__option"
+            >
               <Input
                 type="checkbox"
+                className="condition-filter__checkbox"
                 checked={selected.includes(condition)}
                 onChange={() => toggle(condition)}
               />
-              {" "}{condition}
+              <span>{condition}</span>
             </label>
           ))}
         </div>
