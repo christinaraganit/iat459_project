@@ -1,16 +1,17 @@
 import { Fragment, useState } from "react";
 import TCGdex from "@tcgdex/sdk";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { getListings } from "../../api/listings";
 import ListingCard from "../../components/Listing/ListingCard/ListingCard";
 import "./Index.css";
 import ConditionFilter from "../../components/Condition/ConditionFilter";
 import { useGridColumns } from "../../hooks/useGridColumns";
 import { useAuthContext } from "../../context/AuthContext";
-import { getMyMeetups } from "../../api/meetup";
+import { getMyMeetups, updateMeetupStatus } from "../../api/meetup";
 import { Button } from "../../components/Button/Button";
 import { LinkButton } from "../../components/LinkButton/LinkButton";
 import { ChevronDown } from "lucide-react";
+import { queryClient } from "../../App";
 
 const options = [
   {
@@ -81,6 +82,16 @@ export const Index = () => {
         return meetups;
       }
       return [];
+    },
+  });
+
+  const updateMeetupStatusMutation = useMutation({
+    mutationFn: ({ meetupId, status }) =>
+      updateMeetupStatus(meetupId, status, token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["meetups"],
+      });
     },
   });
 
@@ -200,6 +211,20 @@ export const Index = () => {
                   listing {meetup.listingId.cardId} on{" "}
                   {new Date(meetup.date).toLocaleString()} - Status:{" "}
                   {meetup.status}{" "}
+                  {meetup.status === "pending" && (
+                    <Button
+                      variant="primary"
+                      className="dashboard__accept-meetup"
+                      onClick={() =>
+                        updateMeetupStatusMutation.mutate({
+                          meetupId: meetup._id,
+                          status: "accepted",
+                        })
+                      }
+                    >
+                      Accept meetup
+                    </Button>
+                  )}
                 </p>
               ) : null}
             </LinkButton>

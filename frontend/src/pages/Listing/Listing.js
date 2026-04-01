@@ -67,6 +67,7 @@ export const Listing = () => {
   const card = listingQuery.data?.card;
   const validListing = Boolean(listingQuery.data);
   const activeOwner = Boolean(listingQuery.data?.seller?.username);
+  const isSold = listingQuery.data?.status === "sold";
 
   const deleteListingMutation = useMutation({
     mutationFn: (id) => deleteListingByID(id, token),
@@ -205,6 +206,7 @@ export const Listing = () => {
       <div>
         <p>Condition: {listingQuery.data?.condition}</p>
         <p>Price: ${listingQuery.data?.price?.toFixed(2)}</p>
+        <p>Status: {isSold ? "Sold" : listingQuery.data?.status}</p>
         {activeOwner ? (
           <LinkButton
             to={`/user/${listingQuery.data?.seller.username}`}
@@ -225,6 +227,7 @@ export const Listing = () => {
 
       {activeOwner &&
         user &&
+        !isSold &&
         listingQuery.data?.seller._id !== user?.id &&
         (currentUserIsInterested.data ? (
           <Fragment>
@@ -256,6 +259,7 @@ export const Listing = () => {
 
       {activeOwner &&
         user &&
+        !isSold &&
         user.id === listingQuery.data?.seller._id &&
         interestedUsersQuery.data?.length > 0 && (
           <div>

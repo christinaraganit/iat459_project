@@ -162,6 +162,12 @@ router.patch("/status", verifyToken, async (req, res) => {
 
     meetup.status = status;
     await meetup.save();
+
+    // When the seller marks the meetup as completed, the listing is sold for all users.
+    if (status === "completed") {
+      await Listing.findByIdAndUpdate(meetup.listingId, { status: "sold" });
+    }
+
     res.json({ message: "Meetup status updated successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
