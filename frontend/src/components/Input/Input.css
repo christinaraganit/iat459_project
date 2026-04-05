@@ -9,8 +9,25 @@
   background: #fff;
 }
 
+/* Checkboxes/radios must not use full-width text-field layout in flex rows */
+.input.input--toggle {
+  width: auto;
+  max-width: none;
+  flex: 0 0 auto;
+  padding: 0;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+}
+
 .input:focus {
   outline: 2px solid #93c5fd;
   outline-offset: 1px;
   border-color: #3b82f6;
+}
+
+.input.input--toggle:focus {
+  outline: 2px solid #93c5fd;
+  outline-offset: 2px;
+  border: none;
 }
