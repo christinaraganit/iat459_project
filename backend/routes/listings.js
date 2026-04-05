@@ -14,6 +14,7 @@ router.get("/", async (req, res) => {
     const query = {};
     if (search) {
       query.$or = [
+        { title: { $regex: search, $options: "i" } },
         { cardId: { $regex: search, $options: "i" } },
         { seller: { $regex: search, $options: "i" } },
         { notes: { $regex: search, $options: "i" } },
@@ -112,11 +113,16 @@ router.delete("/item/:id", verifyToken, async (req, res) => {
 // Create a new listing
 router.post("/new", verifyToken, async (req, res) => {
   try {
-    const { cardId, price, condition, notes } = req.body;
+    const { cardId, price, condition, notes, title } = req.body;
+    const trimmedTitle = typeof title === "string" ? title.trim() : "";
+    if (!trimmedTitle) {
+      return res.status(400).json({ error: "Title is required" });
+    }
     console.log("Received listing data:", req.body);
     // console.log(req);
     // 3. save the user
     const newListing = new Listing({
+      title: trimmedTitle,
       cardId,
       seller: req.userId,
       price,

@@ -1,5 +1,5 @@
 import "./CreateListing.css";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Query } from "@tcgdex/sdk";
 import { useAuthContext } from "../../../context/AuthContext";
 import TCGdex from "@tcgdex/sdk";
@@ -17,8 +17,8 @@ export const CreateListing = () => {
   const tcgdex = new TCGdex("en");
   const [searchQs, setSearchQs] = useState({ results: [], page: 0 });
   const [searchTerm, setSearchTerm] = useState("");
-  const ref = useRef(null);
   const [listing, setListing] = useState({
+    title: "",
     cardId: "",
     price: 0,
     condition: "Mint",
@@ -64,17 +64,26 @@ export const CreateListing = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!listing.title.trim()) {
+      alert("Please enter a listing title.");
+      return;
+    }
+    if (!listing.cardId.trim()) {
+      alert("Please select a card from the search results.");
+      return;
+    }
     const safePrice = Math.max(0, Number(listing.price) || 0);
-    const listingPayload = { ...listing, price: safePrice };
+    const listingPayload = {
+      ...listing,
+      title: listing.title.trim(),
+      price: safePrice,
+    };
     console.log("Submitting listing:", listingPayload);
     addListingMutation.mutate(listingPayload);
   };
 
-  const selectCard = (cardId) => {
-    setListing({ ...listing, cardId });
-    if (ref.current) {
-      ref.current.value = cardId;
-    }
+  const selectCard = (card) => {
+    setListing((prev) => ({ ...prev, cardId: card.id }));
   };
   const hasSearchTerm = Boolean(searchTerm.trim());
   const searchResultCount = searchResultsQuery.data?.length ?? 0;
@@ -118,13 +127,13 @@ export const CreateListing = () => {
                   listing.cardId === card.id ? " is-selected" : ""
                 }`}
                 key={card.id}
-                onClick={() => selectCard(card.id)}
+                onClick={() => selectCard(card)}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(event) => {
                   if (event.key === "Enter" || event.key === " ") {
                     event.preventDefault();
-                    selectCard(card.id);
+                    selectCard(card);
                   }
                 }}
               >
@@ -174,13 +183,25 @@ export const CreateListing = () => {
         <h2>Listing details</h2>
         <form onSubmit={handleSubmit} className="create_listing__form">
           <label>
+            Listing title
+            <Input
+              type="text"
+              placeholder="e.g. Near mint Charizard VMAX"
+              value={listing.title}
+              onChange={(e) =>
+                setListing({ ...listing, title: e.target.value })
+              }
+            />
+          </label>
+          <label>
             Card name
             <Input
               type="text"
-              ref={ref}
-              onChange={(e) =>
-                setListing({ ...listing, cardId: e.target.value })
-              }
+              readOnly
+              className="create_listing__card-name-input"
+              value={listing.cardId}
+              placeholder="Select a card from the search results above"
+              aria-readonly="true"
             />
           </label>
           <label>

@@ -78,6 +78,12 @@
   gap: 0.75rem;
 }
 
+.create_listing__card-name-input[readonly] {
+  cursor: default;
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
 .create_listing__dropdown-control {
   min-height: 2.2rem;
   border-radius: 8px;
