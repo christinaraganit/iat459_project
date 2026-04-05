@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const ListingSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+  },
   cardId: {
     type: String,
     required: true,

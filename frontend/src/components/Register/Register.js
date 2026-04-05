@@ -7,13 +7,10 @@ export const Register = () => {
     password: "",
   });
 
-  const [error, setError] = useState(null);
-
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setError(""); // Clear previous errors
 
     try {
       const res = await fetch("http://localhost:5000/api/auth/register", {
@@ -32,11 +29,10 @@ export const Register = () => {
         navigate("/login");
       } else {
         // if the username is taken, show the error on the screen
-        setError(data.message || data.error || "Registration failed");
+        alert(data.message || data.error || "Registration failed");
       }
     } catch (err) {
       console.error(err);
-      setError("An error occurred. Please try again.");
     }
   };
 

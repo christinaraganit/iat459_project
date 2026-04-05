@@ -160,7 +160,12 @@ export const CreateListing = () => {
           Price
           <input
             type="number"
-            onChange={(e) => setListing({ ...listing, price: e.target.value })}
+            onChange={(e) => {
+              if (/^\d*\.?\d*$/.test(e.target.value)) {
+                setListing({ ...listing, price: e.target.value });
+              }
+            }}
+            value={listing.price}
           ></input>
         </label>
         <label>
