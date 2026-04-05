@@ -1,5 +1,5 @@
 import "./Dashboard.css";
-import { Fragment, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { useAuthContext } from "../../context/AuthContext";
 import TCGdex from "@tcgdex/sdk";
 import {
@@ -36,6 +36,34 @@ L.Icon.Default.mergeOptions({
   iconUrl: markerIcon,
   shadowUrl: markerShadow,
 });
+
+const getBoundedPreferredCoords = (preferred) => {
+  if (!preferred) return null;
+
+  if (
+    Array.isArray(preferred.coordinates) &&
+    preferred.coordinates.length === 2 &&
+    typeof preferred.coordinates[0] === "number" &&
+    typeof preferred.coordinates[1] === "number"
+  ) {
+    return clampLatLngToBC({
+      lat: preferred.coordinates[1],
+      lng: preferred.coordinates[0],
+    });
+  }
+
+  if (
+    typeof preferred.lat === "number" &&
+    typeof preferred.lng === "number"
+  ) {
+    return clampLatLngToBC({
+      lat: preferred.lat,
+      lng: preferred.lng,
+    });
+  }
+
+  return null;
+};
 
 export const Dashboard = () => {
   const tcgdex = new TCGdex("en");
@@ -155,42 +183,28 @@ export const Dashboard = () => {
     },
   });
 
-  const getMapPosition = () => {
-    const preferred = preferredLocationQuery.data;
-    if (!preferred) return DEFAULT_MAP_POSITION;
+  const boundedPreferredCoords = useMemo(
+    () => getBoundedPreferredCoords(preferredLocationQuery.data),
+    [preferredLocationQuery.data],
+  );
 
-    if (
-      Array.isArray(preferred.coordinates) &&
-      preferred.coordinates.length === 2 &&
-      typeof preferred.coordinates[0] === "number" &&
-      typeof preferred.coordinates[1] === "number"
-    ) {
-      const boundedLocation = clampLatLngToBC({
-        lat: preferred.coordinates[1],
-        lng: preferred.coordinates[0],
-      });
-      return [boundedLocation.lat, boundedLocation.lng];
-    }
-
-    if (
-      typeof preferred.lat === "number" &&
-      typeof preferred.lng === "number"
-    ) {
-      const boundedLocation = clampLatLngToBC({
-        lat: preferred.lat,
-        lng: preferred.lng,
-      });
-      return [boundedLocation.lat, boundedLocation.lng];
-    }
-
-    return DEFAULT_MAP_POSITION;
-  };
-
-  const mapPosition = getMapPosition();
+  const mapPosition = boundedPreferredCoords
+    ? [boundedPreferredCoords.lat, boundedPreferredCoords.lng]
+    : DEFAULT_MAP_POSITION;
 
   const mapLabel =
     preferredLocationQuery.data?.label?.trim() ||
     "Your preferred meeting location";
+
+  const preferredLocationCard = useMemo(() => {
+    if (!boundedPreferredCoords) return null;
+    const rawLabel = preferredLocationQuery.data?.label?.trim();
+    const coordText = `${boundedPreferredCoords.lat.toFixed(6)}, ${boundedPreferredCoords.lng.toFixed(6)}`;
+    return {
+      name: rawLabel || coordText,
+      coordinates: coordText,
+    };
+  }, [boundedPreferredCoords, preferredLocationQuery.data]);
 
   const updateMeetupStatusMutation = useMutation({
     mutationFn: async ({ meetupId, status }) => {
@@ -222,7 +236,24 @@ export const Dashboard = () => {
 
       <section className="dashboard__section">
         <h2>My preferred meeting location</h2>
+        {preferredLocationQuery.isLoading ? (
+          <p className="dashboard__preferred-location-meta">Loading location…</p>
+        ) : preferredLocationCard ? (
+          <div className="dashboard__preferred-location-card">
+            <p className="dashboard__preferred-location-name">
+              {preferredLocationCard.name}
+            </p>
+            <p className="dashboard__preferred-location-coords">
+              Coordinates: {preferredLocationCard.coordinates}
+            </p>
+          </div>
+        ) : (
+          <p className="dashboard__preferred-location-meta">
+            No preferred location saved yet. Complete onboarding to set one.
+          </p>
+        )}
         <div
+          className="dashboard__preferred-location-map-wrap"
           style={{
             height: "80vh",
           }}

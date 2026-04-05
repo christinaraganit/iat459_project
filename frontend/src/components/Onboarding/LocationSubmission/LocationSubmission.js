@@ -14,6 +14,8 @@ import {
   BC_BOUNDS,
   VANCOUVER_CENTER,
   clampLatLngToBC,
+  getNominatimViewbox,
+  isLatLngInBounds,
 } from "../../../utils/mapBounds";
 import { Button } from "../../Button/Button";
 import { Input } from "../../Input/Input";
@@ -21,6 +23,13 @@ import "leaflet/dist/leaflet.css";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
+
+const NOMINATIM_HEADERS = {
+  Accept: "application/json",
+  "User-Agent": "IAT459-TCG-Meetup/1.0 (student project; contact via repo)",
+};
+
+const NOMINATIM_SEARCH_LIMIT = 10;
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x,
@@ -66,6 +75,7 @@ export const LocationSubmission = ({ authContext, decrementStep }) => {
   const [isSearching, setIsSearching] = useState(false);
   const [isResolvingLabel, setIsResolvingLabel] = useState(false);
   const [locationError, setLocationError] = useState("");
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
   const [recenterRequest, setRecenterRequest] = useState(0);
   const [recenterZoom, setRecenterZoom] = useState(null);
   const labelRequestIdRef = useRef(0);
@@ -82,9 +92,7 @@ export const LocationSubmission = ({ authContext, decrementStep }) => {
           lat,
         )}&lon=${encodeURIComponent(lng)}`,
         {
-          headers: {
-            Accept: "application/json",
-          },
+          headers: NOMINATIM_HEADERS,
         },
       );
 
@@ -184,18 +192,22 @@ export const LocationSubmission = ({ authContext, decrementStep }) => {
     }
 
     setLocationError("");
+    setSearchSuggestions([]);
     setIsSearching(true);
 
     try {
+      const viewbox = getNominatimViewbox();
+      const params = new URLSearchParams({
+        format: "jsonv2",
+        limit: String(NOMINATIM_SEARCH_LIMIT),
+        q: query,
+        countrycodes: "ca",
+        bounded: "1",
+        viewbox,
+      });
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(
-          query,
-        )}`,
-        {
-          headers: {
-            Accept: "application/json",
-          },
-        },
+        `https://nominatim.openstreetmap.org/search?${params.toString()}`,
+        { headers: NOMINATIM_HEADERS },
       );
 
       if (!response.ok) {
@@ -207,33 +219,46 @@ export const LocationSubmission = ({ authContext, decrementStep }) => {
         throw new Error("No matching address found.");
       }
 
-      const bestMatch = results[0];
-      const searchedLocation = {
-        lat: Number(bestMatch.lat),
-        lng: Number(bestMatch.lon),
-      };
-      const boundedLocation = clampLatLngToBC(searchedLocation);
+      const mapped = results.map((item, index) => ({
+        placeId: item.place_id ?? `idx-${index}`,
+        lat: Number(item.lat),
+        lng: Number(item.lon),
+        displayName: item.display_name || query,
+      }));
 
-      if (
-        searchedLocation.lat !== boundedLocation.lat ||
-        searchedLocation.lng !== boundedLocation.lng
-      ) {
+      const inBounds = mapped.filter(
+        (row) =>
+          !Number.isNaN(row.lat) &&
+          !Number.isNaN(row.lng) &&
+          isLatLngInBounds({ lat: row.lat, lng: row.lng }),
+      );
+
+      if (!inBounds.length) {
         setLocationError(
-          "That address is outside BC, or it cannot be found. Please search for a location in BC.",
+          "No matches in the allowed map area. Try a more specific name or address.",
         );
         return;
       }
 
-      setPickedLocation(searchedLocation, {
-        zoom: SEARCH_LOCATION_ZOOM,
-        label: bestMatch.display_name || query,
-        fallbackLabel: DEFAULT_LOCATION_LABEL,
-      });
+      setSearchSuggestions(inBounds);
     } catch (error) {
       setLocationError(error.message || "Unable to search for that place.");
     } finally {
       setIsSearching(false);
     }
+  };
+
+  const handlePickSuggestion = (suggestion) => {
+    setSearchSuggestions([]);
+    setLocationError("");
+    setPickedLocation(
+      { lat: suggestion.lat, lng: suggestion.lng },
+      {
+        zoom: SEARCH_LOCATION_ZOOM,
+        label: suggestion.displayName,
+        fallbackLabel: DEFAULT_LOCATION_LABEL,
+      },
+    );
   };
 
   return (
@@ -248,7 +273,10 @@ export const LocationSubmission = ({ authContext, decrementStep }) => {
         <Input
           type="text"
           value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
+          onChange={(e) => {
+            setSearchValue(e.target.value);
+            setSearchSuggestions([]);
+          }}
           placeholder="Search an address"
         />
         <Button
@@ -261,6 +289,26 @@ export const LocationSubmission = ({ authContext, decrementStep }) => {
           {isSearching ? "Searching..." : "Search"}
         </Button>
       </div>
+      {searchSuggestions.length > 0 ? (
+        <ul
+          className="onboarding__location-suggestions"
+          aria-label="Location search results"
+        >
+          {searchSuggestions.map((suggestion) => (
+            <li key={suggestion.placeId}>
+              <button
+                type="button"
+                className="onboarding__location-suggestion"
+                onClick={() => handlePickSuggestion(suggestion)}
+              >
+                {suggestion.displayName.length > 120
+                  ? `${suggestion.displayName.slice(0, 117)}…`
+                  : suggestion.displayName}
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
       {locationError ? (
         <p className="onboarding__location-error">{locationError}</p>
       ) : null}
