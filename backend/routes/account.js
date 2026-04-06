@@ -14,6 +14,7 @@ router.get("/user/:username", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
     res.json({
+      _id: user._id,
       username: user.username,
       displayName: user.displayName,
       role: user.role,

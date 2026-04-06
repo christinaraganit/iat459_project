@@ -8,6 +8,7 @@ const accountRoutes = require("./routes/account");
 const listingsRoutes = require("./routes/listings");
 const meetupRoutes = require("./routes/meetup");
 const wishlistRoutes = require("./routes/wishlist");
+const reviewsRoutes = require("./routes/reviews");
 
 const app = express();
 const PORT = 5000;
@@ -54,6 +55,7 @@ app.use("/api/account", accountRoutes);
 app.use("/api/listings", listingsRoutes);
 app.use("/api/meetup", meetupRoutes);
 app.use("/api/wishlist", wishlistRoutes);
+app.use("/api/reviews", reviewsRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

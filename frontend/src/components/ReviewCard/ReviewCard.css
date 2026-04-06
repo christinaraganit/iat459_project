@@ -1,0 +1,150 @@
+.review-card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.35rem;
+}
+
+.review-card__avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #374151;
+  flex-shrink: 0;
+}
+
+.review-card__user-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.review-card__display-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.review-card__stars {
+  color: #facc15;
+  font-size: 1rem;
+  margin: 0.15rem 0;
+}
+
+.review-card__menu-wrap {
+  position: relative;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.review-card__menu-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  color: #6b7280;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.review-card__menu-btn:hover {
+  background: #e5e7eb;
+}
+
+.review-card__dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+  min-width: 8rem;
+  overflow: hidden;
+}
+
+.review-card__dropdown button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: #111;
+}
+
+.review-card__dropdown button:hover {
+  background: #f3f4f6;
+}
+
+.review-card__dropdown button.review-card__delete {
+  color: #dc2626;
+}
+
+.review-card__edit-stars {
+  display: flex;
+  gap: 0.2rem;
+  margin: 0.25rem 0;
+}
+
+.review-card__edit-star {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.25rem;
+  padding: 0;
+  line-height: 1;
+  color: #d1d5db;
+  transition: color 0.15s;
+}
+
+.review-card__edit-star--filled {
+  color: #facc15;
+}
+
+.review-card__edit-star:hover {
+  color: #fbbf24;
+}
+
+.review-card__edit-comment {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  font: inherit;
+  font-size: 0.9rem;
+  min-height: 3rem;
+  resize: vertical;
+  margin-top: 0.25rem;
+}
+
+.review-card__edit-actions {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+
+.review-card__comment {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.review-card__date {
+  margin: 0.3rem 0 0;
+  font-size: 0.8rem;
+  color: #9ca3af;
+}

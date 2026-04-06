@@ -1,15 +1,14 @@
 import "./CreateListing.css";
-import { useState, useEffect } from "react";
-import { Query } from "@tcgdex/sdk";
-import { useAuthContext } from "../../../context/AuthContext";
-import TCGdex from "@tcgdex/sdk";
-import { useNavigate } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { addListing } from "../../../api/listings";
-import { useGridColumns } from "../../../hooks/useGridColumns";
-import { Button } from "../../../components/Button/Button";
-import { Input } from "../../../components/Input/Input";
-import { ChevronUp, ChevronDown } from "lucide-react";
+import {useEffect, useState} from "react";
+import TCGdex, {Query} from "@tcgdex/sdk";
+import {useAuthContext} from "../../../context/AuthContext";
+import {useNavigate} from "react-router-dom";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {addListing} from "../../../api/listings";
+import {useGridColumns} from "../../../hooks/useGridColumns";
+import {Button} from "../../../components/Button/Button";
+import {Input} from "../../../components/Input/Input";
+import {ChevronDown} from "lucide-react";
 
 export const CreateListing = () => {
   const navigate = useNavigate();
@@ -20,7 +19,7 @@ export const CreateListing = () => {
   const [listing, setListing] = useState({
     title: "",
     cardId: "",
-    price: 0,
+    price: "",
     condition: "Mint",
     notes: "",
   });
@@ -32,13 +31,12 @@ export const CreateListing = () => {
     queryKey: ["searchResults", searchTerm, searchQs.page, gridCols],
     queryFn: async () => {
       if (searchTerm) {
-        const results = await tcgdex.card.list(
+        return await tcgdex.card.list(
           new Query()
             .like("name", searchTerm)
             .not.equal("image", null)
             .paginate(searchQs.page, gridCols),
         );
-        return results;
       }
       return [];
     },
@@ -211,8 +209,10 @@ export const CreateListing = () => {
               min={0}
               value={listing.price}
               onChange={(e) => {
-                const nextPrice = Math.max(0, Number(e.target.value) || 0);
-                setListing({ ...listing, price: nextPrice });
+                const val = e.target.value;
+                if (val === "" || Number(val) >= 0) {
+                  setListing({ ...listing, price: val });
+                }
               }}
             />
           </label>
