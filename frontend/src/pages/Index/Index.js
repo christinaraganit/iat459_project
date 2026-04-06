@@ -12,6 +12,7 @@ import { Button } from "../../components/Button/Button";
 import { LinkButton } from "../../components/LinkButton/LinkButton";
 import { ChevronDown } from "lucide-react";
 import { queryClient } from "../../App";
+import { AdminReviews } from "../../components/AdminReviews/AdminReviews";
 
 const options = [
   {
@@ -37,7 +38,7 @@ export const Index = () => {
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(1);
   const count = useGridColumns();
-  const { user, token } = useAuthContext();
+  const { user, token, role } = useAuthContext();
   // Listings fetch
   // Maps the saved cards ids to the card from tcgdex
   const listingsQuery = useQuery({
@@ -106,6 +107,7 @@ export const Index = () => {
 
   return (
     <Fragment>
+      {role === "admin" ? <AdminReviews /> : null}
       <div className="listing__nav">
         <div className="listings__container">
           <h1>Listings near you</h1>

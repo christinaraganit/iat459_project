@@ -89,7 +89,7 @@ export const Navbar = () => {
                 <LinkButton
                   variant="tertiary"
                   className="navbar__actions_menu__user__display-name"
-                  to={`/users/${user.username}`}
+                  to={`/user/${user.username}`}
                   onClick={handleRedirect}
                 >
                   {user.displayName || user.username}

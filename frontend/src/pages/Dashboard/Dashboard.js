@@ -33,6 +33,7 @@ import { getReviewsForUser } from "../../api/reviews";
 import { ReviewCard } from "../../components/ReviewCard/ReviewCard";
 import { SubmitReview } from "../../components/SubmitReview/SubmitReview";
 import { DeleteReviewDialog } from "../../components/DeleteReviewDialog/DeleteReviewDialog";
+import { AdminReviews } from "../../components/AdminReviews/AdminReviews";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -251,6 +252,8 @@ export const Dashboard = () => {
       <h1>
         Welcome <NameField /> {role === "admin" && <span>(Admin)</span>}
       </h1>
+
+      {role === "admin" ? <AdminReviews /> : null}
 
       <section className="dashboard__section">
         <h2>My preferred meeting location</h2>

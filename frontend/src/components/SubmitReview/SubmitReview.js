@@ -21,6 +21,7 @@ export const SubmitReview = ({ revieweeId, revieweeUsername, open, onClose, revi
         : submitReview(revieweeId, score, comment, token),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["reviews", revieweeUsername] });
+      queryClient.invalidateQueries({ queryKey: ["allReviews"] });
       setScore(0);
       setComment("");
       onClose();

@@ -1,0 +1,10 @@
+.admin-reviews__footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.admin-reviews__toggle {
+  width: fit-content;
+  border-radius: 0.7rem;
+}

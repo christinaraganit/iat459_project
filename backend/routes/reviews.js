@@ -2,7 +2,21 @@ const express = require("express");
 const router = express.Router();
 const Review = require("../models/Review");
 const User = require("../models/User");
-const { verifyToken } = require("../middleware/authMiddleware");
+const { verifyToken, verifyAdmin } = require("../middleware/authMiddleware");
+
+// Get all reviews (admin only)
+router.get("/", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const reviews = await Review.find({})
+      .populate("reviewer", "username displayName")
+      .populate("reviewee", "username displayName")
+      .sort({ createdAt: -1 });
+
+    res.json(reviews);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // Get all reviews for a specific user (by username)
 router.get("/user/:username", async (req, res) => {

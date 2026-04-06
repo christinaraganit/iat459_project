@@ -15,6 +15,7 @@ export const DeleteReviewDialog = ({ review, revieweeUsername, open, onClose }) 
     mutationFn: () => deleteReview(review._id, token),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["reviews", revieweeUsername] });
+      queryClient.invalidateQueries({ queryKey: ["allReviews"] });
       onClose();
     },
   });

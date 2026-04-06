@@ -3,7 +3,7 @@ import { useAuthContext } from "../../context/AuthContext";
 import { EllipsisVertical } from "lucide-react";
 import "./ReviewCard.css";
 
-export const ReviewCard = ({ review, onEdit, onDelete }) => {
+export const ReviewCard = ({ review, onEdit, onDelete, subtitle = "" }) => {
   const { user: currentUser, role } = useAuthContext();
   const reviewer = review.reviewer;
   const displayName = reviewer?.displayName?.trim() || reviewer?.username;
@@ -47,6 +47,7 @@ export const ReviewCard = ({ review, onEdit, onDelete }) => {
             {displayName}
             {reviewer?.displayName?.trim() ? `@${reviewer.username}` : null}
           </p>
+          {subtitle ? <p className="review-card__subtitle">{subtitle}</p> : null}
           <p className="review-card__date">{formattedDate}</p>
         </div>
         {canManage ? (

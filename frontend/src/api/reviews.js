@@ -47,3 +47,15 @@ export const getReviewsForUser = async (username) => {
     console.error("Failed to retrieve reviews:", er);
   }
 };
+
+export const getAllReviews = async (token) => {
+  const res = await fetch("http://localhost:5000/api/reviews", {
+    method: "GET",
+    headers: {
+      Authorization: token,
+    },
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Failed to fetch reviews");
+  return data;
+};

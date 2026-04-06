@@ -32,6 +32,12 @@
   line-height: 1.2;
 }
 
+.review-card__subtitle {
+  margin: 0.15rem 0 0;
+  color: #4b5563;
+  font-size: 0.8rem;
+}
+
 .review-card__stars {
   color: #facc15;
   font-size: 1rem;
@@ -144,7 +150,7 @@
 }
 
 .review-card__date {
-  margin: 0.3rem 0 0;
+  margin: 0.2rem 0 0;
   font-size: 0.8rem;
   color: #9ca3af;
 }
