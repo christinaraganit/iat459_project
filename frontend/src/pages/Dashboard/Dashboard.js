@@ -29,6 +29,10 @@ import {
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
 import { LinkButton } from "../../components/LinkButton/LinkButton";
+import { getReviewsForUser } from "../../api/reviews";
+import { ReviewCard } from "../../components/ReviewCard/ReviewCard";
+import { SubmitReview } from "../../components/SubmitReview/SubmitReview";
+import { DeleteReviewDialog } from "../../components/DeleteReviewDialog/DeleteReviewDialog";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -68,6 +72,9 @@ const getBoundedPreferredCoords = (preferred) => {
 export const Dashboard = () => {
   const tcgdex = new TCGdex("en");
   const { token, user, isNewUser, role } = useAuthContext();
+  const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
+  const [editingReview, setEditingReview] = useState(null);
+  const [deletingReview, setDeletingReview] = useState(null);
 
   const DEFAULT_MAP_POSITION = [VANCOUVER_CENTER.lat, VANCOUVER_CENTER.lng];
 
@@ -163,6 +170,12 @@ export const Dashboard = () => {
     },
   });
 
+  const reviewsQuery = useQuery({
+    queryKey: ["reviews", user?.username],
+    queryFn: () => getReviewsForUser(user.username),
+    enabled: Boolean(user?.username),
+  });
+
   const meetupQuery = useQuery({
     queryKey: ["meetups", token],
     queryFn: async () => {
@@ -227,6 +240,11 @@ export const Dashboard = () => {
   const sortedMeetups = [...(meetupQuery.data || [])].sort(
     (a, b) => new Date(a.date) - new Date(b.date),
   );
+  const reviews = reviewsQuery.data ?? [];
+  const averageRating =
+    reviews.length > 0
+      ? (reviews.reduce((sum, r) => sum + r.score, 0) / reviews.length).toFixed(1)
+      : null;
 
   return (
     <Fragment>
@@ -418,7 +436,60 @@ export const Dashboard = () => {
           ))}
         </div>
       </section>
+      <section className="dashboard__section">
+        <h2>My reviews ({reviews.length})</h2>
+        {reviewsQuery.isLoading ? (
+          <p className="dashboard__preferred-location-meta">Loading reviews…</p>
+        ) : reviews.length === 0 ? (
+          <p className="dashboard__preferred-location-meta">
+            You have no reviews yet.
+          </p>
+        ) : (
+          <>
+            <div className="dashboard__preferred-location-card">
+              <p
+                className="dashboard__preferred-location-name"
+                style={{ color: "#facc15" }}
+              >
+                {"★".repeat(Math.round(averageRating))}
+                {"☆".repeat(5 - Math.round(averageRating))}{" "}
+                <span style={{ color: "#111" }}>{averageRating} / 5</span>
+              </p>
+              <p className="dashboard__preferred-location-coords">
+                Based on {reviews.length} review{reviews.length !== 1 ? "s" : ""}
+              </p>
+            </div>
+            {reviews.map((review) => (
+              <ReviewCard
+                key={review._id}
+                review={review}
+                onEdit={(r) => {
+                  setEditingReview(r);
+                  setReviewDialogOpen(true);
+                }}
+                onDelete={(r) => setDeletingReview(r)}
+              />
+            ))}
+          </>
+        )}
+      </section>
       {isNewUser && <Onboarding />}
+      <SubmitReview
+        revieweeId={user?.id}
+        revieweeUsername={user?.username}
+        open={reviewDialogOpen}
+        onClose={() => {
+          setReviewDialogOpen(false);
+          setEditingReview(null);
+        }}
+        review={editingReview}
+      />
+      <DeleteReviewDialog
+        review={deletingReview}
+        revieweeUsername={user?.username}
+        open={Boolean(deletingReview)}
+        onClose={() => setDeletingReview(null)}
+      />
     </Fragment>
   );
 };
